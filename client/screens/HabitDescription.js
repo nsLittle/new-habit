@@ -112,7 +112,7 @@ export default function HabitDescriptionScreen() {
     try {
       console.log("Ready to fetch data");
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/detailed-habit`,
+        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
         {
           method: "PATCH",
           headers: {
@@ -179,6 +179,7 @@ export default function HabitDescriptionScreen() {
             onChangeText={setDescriptionInput}
             textAlignVertical="top"
             textAlign="left"
+            multiline={true}
           />
           <Text style={styles.charCount}>{descriptionInput.length}/500</Text>
         </View>
@@ -206,10 +207,13 @@ const styles = StyleSheet.create({
   },
   body: {
     flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+  },
+  bodyTitleContainer: {
+    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+    alignItems: "center",
+    justifyContent: "center",
   },
   bodyTitleText: {
     fontSize: 26,
@@ -219,15 +223,17 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "100%",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
     textAlignVertical: "top",
-    textAlign: "left",
   },
   input: {
-    height: 240,
+    height: 80,
     borderColor: "#A9A9A9",
     borderWidth: 1,
     padding: 10,
-    paddingTop: 15,
+    paddingTop: 0,
+    lineHeight: 50,
     marginBottom: 10,
     borderRadius: 5,
     backgroundColor: "#F0F0F0",

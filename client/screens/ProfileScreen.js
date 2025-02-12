@@ -267,7 +267,7 @@ export default function ProfileScreen() {
                         Your Reminder Cadence:
                       </Text>
                       <Text style={styles.habitData}>
-                        {habit.reminders || "Unnamed Reminder Cadence"}
+                        {/* {habit.reminders || "Unnamed Reminder Cadence"} */}
                       </Text>
                     </View>
                   ))

@@ -1,0 +1,141 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Product Lister API
+  description: API documentation for the Product Lister application.
+host: localhost:8000
+basePath: /api
+schemes:
+  - http
+paths:
+  /products:
+    get:
+      summary: Get all products
+      description: Retrieves a list of all products with optional filtering, sorting, and pagination.
+      parameters:
+        - in: query
+          name: page
+          type: integer
+          description: Page number for pagination (default is 1).
+        - in: query
+          name: category
+          type: string
+          description: Filter by product category.
+        - in: query
+          name: price
+          type: string
+          enum: [highest, lowest]
+          description: Sort by price (highest or lowest).
+      responses:
+        '200':
+          description: Successfully retrieved the list of products
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+        '500':
+          description: Server error
+
+  /products/{id}:
+    get:
+      summary: Get product details
+      description: Retrieves details of a specific product by its ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Product details retrieved successfully
+          schema:
+            $ref: '#/definitions/Product'
+        '404':
+          description: Product not found
+        '500':
+          description: Server error
+
+  /reviews/{productId}:
+    get:
+      summary: Get reviews for a product
+      description: Retrieves all reviews for a given product.
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved reviews
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Review'
+        '404':
+          description: Product not found
+        '500':
+          description: Server error
+    post:
+      summary: Add a review to a product
+      description: Submits a new review for a given product.
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              reviewer:
+                type: string
+              reviewText:
+                type: string
+            required:
+              - reviewer
+              - reviewText
+      responses:
+        '201':
+          description: Review created successfully
+        '400':
+          description: Invalid request body
+        '500':
+          description: Server error
+
+definitions:
+  Product:
+    type: object
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      category:
+        type: string
+      price:
+        type: number
+      description:
+        type: string
+      image:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+
+  Review:
+    type: object
+    properties:
+      _id:
+        type: string
+      reviewer:
+        type: string
+      reviewText:
+        type: string
+      product:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+

@@ -34,11 +34,12 @@ export default function CreateHabitScreen() {
   };
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token } = userContext || {};
+  const { username, userId, token, habitId } = userContext || {};
   console.log("UserContext:", userContext);
   console.log("Username: ", username);
   console.log("UserId: ", userId);
   console.log("Token: ", token);
+  console.log("Habit Id: ", habitId);
 
   const checkDuplication = async () => {
     console.log(`Checking for existing habit...`);
@@ -61,6 +62,10 @@ export default function CreateHabitScreen() {
 
       if (response.ok && data.habits && data.habits.length > 0) {
         console.log("User already has a habit.", data);
+        setUserContext((prevContext) => ({
+          ...prevContext,
+          habitId: data.habits[0]._id, // Make sure _id exists
+        }));
         showDialog("You already have a habit.", () => {
           setDialogVisible(false);
           navigation.navigate("HabitDescriptionScreen");
