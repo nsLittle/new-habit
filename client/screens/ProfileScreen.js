@@ -241,40 +241,6 @@ export default function ProfileScreen() {
               </View>
 
               <Text style={styles.sectionTitle}></Text>
-
-              <View style={styles.habitDataBox}>
-                {habits.length > 0 ? (
-                  habits.map((habit, index) => (
-                    <View key={`habit-${index}`} style={styles.habitBox}>
-                      <Text style={styles.sectionTitle}>
-                        Your Feedback Cadence:
-                      </Text>
-                      <Text style={styles.habitData}>
-                        {habit.feedbackCadence || "Unnamed Feedback Cadence"}
-                      </Text>
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.noProfileData}>No habits available.</Text>
-                )}
-              </View>
-
-              <View style={styles.habitDataBox}>
-                {habits.length > 0 ? (
-                  habits.map((habit, index) => (
-                    <View key={`habit-${index}`} style={styles.habitBox}>
-                      <Text style={styles.sectionTitle}>
-                        Your Reminder Cadence:
-                      </Text>
-                      <Text style={styles.habitData}>
-                        {/* {habit.reminders || "Unnamed Reminder Cadence"} */}
-                      </Text>
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.noProfileData}>No habits available.</Text>
-                )}
-              </View>
             </View>
 
             <View style={styles.profileTeams}>
@@ -344,6 +310,42 @@ export default function ProfileScreen() {
                   </View>
                 ))}
               </View>
+            </View>
+
+            <View style={styles.habitDataBox}>
+              {habits.length > 0 ? (
+                habits.map((habit, index) => (
+                  <View key={`habit-${index}`} style={styles.habitBox}>
+                    <Text style={styles.sectionTitle}>
+                      Your Feedback Cadence:
+                    </Text>
+                    <Text style={styles.habitData}>
+                      {habit.feedbackCadence
+                        ? habit.feedbackCadence
+                        : "No feedback cadence set"}
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.noProfileData}>No habits available.</Text>
+              )}
+            </View>
+
+            <View style={styles.habitDataBox}>
+              {habits.length > 0 ? (
+                habits.map((habit, index) => (
+                  <View key={`habit-${index}`} style={styles.habitBox}>
+                    <Text style={styles.sectionTitle}>
+                      Your Reminder Cadence:
+                    </Text>
+                    <Text style={styles.habitData}>
+                      {/* {habit.reminders || "Unnamed Reminder Cadence"} */}
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.noProfileData}>No habits available.</Text>
+              )}
             </View>
           </View>
         </View>
@@ -418,6 +420,7 @@ const styles = StyleSheet.create({
   profileTeams: {
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 30,
   },
   profileData: {
     textAlign: "center",

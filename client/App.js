@@ -6,11 +6,14 @@ import { PaperProvider } from "react-native-paper";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import CreateAccountScreen from "./screens/CreateAccountScreen";
 import LoginScreen from "./screens/LoginScreen";
+import LogoutScreen from "./screens/LogoutScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import EditAccountScreen from "./screens/EditAccountScreen";
 import CreateHabitScreen from "./screens/CreateHabitScreen";
 import HabitDescriptionScreen from "./screens/HabitDescription";
 import TeamInviteScreen from "./screens/TeamInviteScreen";
+import AddTeammemberScreen from "./screens/AddTeammemberScreen";
+import EditTeammemberScreen from "./screens/EditTeammemberScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -31,6 +34,7 @@ export default function App() {
               component={CreateAccountScreen}
             />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="LogoutScreen" component={LogoutScreen} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen
               name="CreateHabitScreen"
@@ -43,6 +47,14 @@ export default function App() {
             <Stack.Screen
               name="TeamInviteScreen"
               component={TeamInviteScreen}
+            />
+            <Stack.Screen
+              name="AddTeammemberScreen"
+              component={AddTeammemberScreen}
+            />
+            <Stack.Screen
+              name="EditTeammemberScreen"
+              component={EditTeammemberScreen}
             />
             <Stack.Screen
               name="EditAccountScreen"
