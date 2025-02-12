@@ -51,7 +51,7 @@ export default function CadenceScreen() {
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/detailed-habit`,
+        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
         {
           method: "PATCH",
           headers: {

@@ -14,6 +14,8 @@ import HabitDescriptionScreen from "./screens/HabitDescription";
 import TeamInviteScreen from "./screens/TeamInviteScreen";
 import AddTeammemberScreen from "./screens/AddTeammemberScreen";
 import EditTeammemberScreen from "./screens/EditTeammemberScreen";
+import CadenceScreen from "./screens/CadenceScreen";
+import ReminderScreen from "./screens/ReminderScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -37,6 +39,10 @@ export default function App() {
             <Stack.Screen name="LogoutScreen" component={LogoutScreen} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen
+              name="EditAccountScreen"
+              component={EditAccountScreen}
+            />
+            <Stack.Screen
               name="CreateHabitScreen"
               component={CreateHabitScreen}
             />
@@ -56,10 +62,8 @@ export default function App() {
               name="EditTeammemberScreen"
               component={EditTeammemberScreen}
             />
-            <Stack.Screen
-              name="EditAccountScreen"
-              component={EditAccountScreen}
-            />
+            <Stack.Screen name="CadenceScreen" component={CadenceScreen} />
+            <Stack.Screen name="ReminderScreen" component={ReminderScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>

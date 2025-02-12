@@ -150,7 +150,7 @@ export default function Header() {
                 habitId: userContext.habitId,
               })
             }>
-            <Text style={styles.menuItem}>Reminders</Text>
+            <Text style={styles.menuItem}>Reminder Cadence</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
