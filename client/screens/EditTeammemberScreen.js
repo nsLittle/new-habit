@@ -97,10 +97,10 @@ export default function EditTeammemberScreen() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            editedFirstName,
-            editedLastName,
-            editedEmail,
-            editedProfilePic,
+            teamMemberFirstName: editedFirstName,
+            teamMemberLastName: editedLastName,
+            teamMemberEmail: editedEmail,
+            teamMemberProfilePic: editedProfilePic,
           }),
         }
       );

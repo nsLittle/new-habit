@@ -179,7 +179,7 @@ export default function TeamInviteScreen() {
                     color="black"
                     style={styles.iconEdit}
                     onPress={() =>
-                      navigation.navigate("EditTeammemberScreen", {
+                      navigation.push("EditTeammemberScreen", {
                         teamMember_id: teammember.teamMember_id,
                         firstName: teammember.firstName,
                         lastName: teammember.lastName,
