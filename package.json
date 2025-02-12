@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "react-native-async-storage": "^0.0.1",
+    "react-navigation": "^5.0.0"
   },
   "scripts": {
     "start": "node index.js",
