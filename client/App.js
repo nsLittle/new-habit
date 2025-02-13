@@ -16,6 +16,7 @@ import AddTeammemberScreen from "./screens/AddTeammemberScreen";
 import EditTeammemberScreen from "./screens/EditTeammemberScreen";
 import CadenceScreen from "./screens/CadenceScreen";
 import ReminderScreen from "./screens/ReminderScreen";
+import ReviewScreen from "./screens/ReviewScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -64,6 +65,7 @@ export default function App() {
             />
             <Stack.Screen name="CadenceScreen" component={CadenceScreen} />
             <Stack.Screen name="ReminderScreen" component={ReminderScreen} />
+            <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>

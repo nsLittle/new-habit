@@ -130,8 +130,6 @@ export default function CadenceScreen() {
         </View>
 
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>Stuff and stuff</Text>
-
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.backButton}

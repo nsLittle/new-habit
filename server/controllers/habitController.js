@@ -93,6 +93,9 @@ exports.getDetailedHabit = async (req, res) => {
 
 exports.editedDetailedHabit = async (req, res) => {
   try {
+    console.log("Incoming request to edit habit for:", req.params.username);
+    console.log("Reqeust Body: ", req.body);
+
     const { username, habitId } = req.params;
     console.log("Updating Habit:", habitId, "for User:", username);
 

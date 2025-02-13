@@ -171,7 +171,7 @@ export default function TeamInviteScreen() {
                     size={24}
                     color="black"
                     style={styles.iconSend}
-                    onPress={() => sendEmail(teammember.teamMemberEmail)}
+                    onPress={() => sendEmail(teammember.email)}
                   />
                   <MaterialIcons
                     name="edit"

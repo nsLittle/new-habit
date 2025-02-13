@@ -58,6 +58,7 @@ export default function HabitDescriptionScreen() {
 
       const data = await response.json();
       console.log("Got Data: ", data);
+      console.log("Habit ID: ", data.descriptions[0]._id);
 
       if (!response.ok) {
         console.error("Error fetching description:", data.message);

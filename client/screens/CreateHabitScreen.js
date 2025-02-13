@@ -19,6 +19,8 @@ import {
 export default function CreateHabitScreen() {
   const navigation = useNavigation();
   const [habitInput, setHabitInput] = useState("");
+  const [habitData, setHabitData] = useState({ habits: [] });
+  const [error, setError] = useState(null);
 
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -41,6 +43,69 @@ export default function CreateHabitScreen() {
   console.log("Token: ", token);
   console.log("Habit Id: ", habitId);
 
+  const fetchUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) throw new Error("Authentication token is missing.");
+
+      const [userResponse, habitsResponse, teamMemberResponse] =
+        await Promise.all([
+          fetch(`http://192.168.1.174:8000/user/${username}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/habit/${username}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
+      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
+      if (!teamMemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
+
+      const userData = await userResponse.json();
+      const habitData = await habitsResponse.json();
+      const fetchedHabitData = await habitsResponse.json();
+      setHabitData(fetchedHabitData);
+      console.log("Set Habit Data: ", setHabitData);
+
+      const teamMemberData = await teamMemberResponse.json();
+      const habitValue = habitData.habits[0].habit;
+      console.log("User Data: ", userData);
+      console.log("Habit Data: ", habitData);
+      console.log("Habit Data - Habit: ", habitData.habits[0].habit);
+      console.log("Habit Value: ", habitValue);
+      f;
+      console.log("Team Member Data: ", teamMemberData);
+
+      setProfileData((prev) => ({
+        ...prev,
+        firstName: userData?.firstName || "",
+        lastName: userData?.lastName || "",
+        profilePic: userData?.profilePic || "",
+        email: userData?.email || "",
+        habits: habitData?.habits || [],
+        teammembers: [...teamMemberData?.teamMembers] || [],
+      }));
+
+      console.log("Profile Data: ", profileData);
+      console.log("User First Name; ", profileData.firstName);
+      console.log("Teammembers: ", profileData.teammembers);
+    } catch (error) {
+      console.error("Error with data retrieval:", error);
+      setError(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (username) {
+      fetchUserData();
+    }
+  }, [username]);
+
   const checkDuplication = async () => {
     console.log(`Checking for existing habit...`);
 
@@ -58,18 +123,15 @@ export default function CreateHabitScreen() {
 
       const data = await response.json();
       console.log("Got Data: ", data);
-      console.log("Data.habit: ", data.habit);
+      console.log("Data.habit: ", data.habits[0].habit);
 
       if (response.ok && data.habits && data.habits.length > 0) {
         console.log("User already has a habit.", data);
         setUserContext((prevContext) => ({
           ...prevContext,
-          habitId: data.habits[0]._id, // Make sure _id exists
+          habitId: data.habits[0]._id,
         }));
-        showDialog("You already have a habit.", () => {
-          setDialogVisible(false);
-          navigation.navigate("HabitDescriptionScreen");
-        });
+        setHabitInput(data.habits[0].habit);
         return true;
       } else {
         console.log("No existing habits found.");
@@ -83,9 +145,7 @@ export default function CreateHabitScreen() {
   useEffect(() => {
     const checkForExistingHabit = async () => {
       const isDuplicate = await checkDuplication();
-      if (isDuplicate) {
-        navigation.navigate("HabitDescriptionScreen");
-      }
+      console.log("Checked for Dup");
     };
 
     checkForExistingHabit();
@@ -98,12 +158,12 @@ export default function CreateHabitScreen() {
     if (!habitInput.trim()) return showDialog("You must enter a habit.");
     if (!username) return showDialog("Failed to find user.");
 
-    const isDuplicate = await checkDuplication();
-    if (isDuplicate) {
-      showDialog("You already have a habit.");
-      navigation.navigate("HabitDescriptionScreen");
-      return;
-    }
+    // const isDuplicate = await checkDuplication();
+    // if (isDuplicate) {
+    //   showDialog("You already have a habit; would you like to edit it");
+
+    //   return;
+    // }
 
     try {
       const response = await fetch(
@@ -180,9 +240,9 @@ export default function CreateHabitScreen() {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="I want to become a..."
+            placeholder={habitInput ? habitInput : "I want to become a..."}
             maxLength={50}
-            value={habitInput ?? ""}
+            value={habitInput}
             onChangeText={setHabitInput}
           />
           <Text style={styles.charCount}>{habitInput.length}/50</Text>

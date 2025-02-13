@@ -18,7 +18,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-export default function ProfileScreen() {
+export default function ReviewScreen() {
   const [userData, setUserData] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -206,23 +206,149 @@ export default function ProfileScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Profile</Text>
+          <Text style={styles.bodyTitleText}>Review and Finish</Text>
         </View>
 
-        <View style={styles.profileDataBox}>
-          {profilePic ? (
-            <Image source={{ uri: profilePic }} style={styles.profilePicMain} />
-          ) : null}
+        <View style={styles.reviewBox}>
+          <View style={styles.reviewHabit}>
+            {habits.length > 0 ? (
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.sectionTitle}>
+                  <View style={styles.habitBox}>
+                    <Text style={styles.habitData}>
+                      {habit.habit || "Unnamed Habit"}
+                    </Text>
+                    <Text>
+                      If you were doing this well, what would that look like?
+                    </Text>
+                    <Text style={styles.habitData}>
+                      {habit.description || "Unnamed Habit Description"}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>No habits available.</Text>
+            )}
+          </View>
+          <View style={styles.reviewTeams}>
+            <View style={styles.teamMemberDataBox}>
+              <Text style={styles.sectionTitle}>Your feedback circle:</Text>
 
-          <Text style={styles.bodyTitleTextSub}>{username}</Text>
-
-          <View style={styles.profileDetails}>
-            <View style={styles.profileMain}>
-              <Text style={styles.profileData}>
-                {firstName} {lastName}
-              </Text>
-              <Text style={styles.profileData}>{email}</Text>
+              {teammembers.map((teammember, index) => (
+                <View style={styles.buttonContainer} key={index}>
+                  <TouchableOpacity style={styles.contactPersonButton}>
+                    {teammember.teamMemberProfilePic ? (
+                      <Image
+                        source={{ uri: teammember.teamMemberProfilePic }}
+                        style={styles.teamMemberProfilePic}
+                        onError={(error) =>
+                          console.error("Image Load Error:", error?.nativeEvent)
+                        }
+                      />
+                    ) : (
+                      <Text style={styles.profileData}>
+                        No profile picture available.
+                      </Text>
+                    )}
+                    <View style={styles.contactPersonNameColumn}>
+                      <Text style={styles.contactName}>
+                        {teammember.teamMemberFirstName}{" "}
+                        {teammember.teamMemberLastName}
+                      </Text>
+                      <Text style={styles.contactEmail}>
+                        {teammember.teamMemberEmail}
+                      </Text>
+                    </View>
+                    <View style={styles.iconsColumn}>
+                      <MaterialIcons
+                        name="send"
+                        size={24}
+                        color="black"
+                        style={styles.iconSend}
+                        onPress={() => sendEmail(teammember.teamMemberEmail)}
+                      />
+                      <MaterialIcons
+                        name="edit"
+                        size={24}
+                        color="black"
+                        style={styles.iconEdit}
+                        onPress={() =>
+                          navigation.push("EditTeammemberScreen", {
+                            teamMember_id: teammember.teamMember_id,
+                            firstName: teammember.firstName,
+                            lastName: teammember.lastName,
+                            email: teammember.email,
+                            profilePic: teammember.profilePic,
+                          })
+                        }
+                      />
+                      <MaterialIcons
+                        name="delete"
+                        size={24}
+                        color="black"
+                        style={styles.iconDelete}
+                        onPress={() => {
+                          setDialogMessage(
+                            "ARE YOU SURE YOU WANT TO DLETE YOUR TEAM MEMBER?"
+                          );
+                        }}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
+          </View>
+
+          <View style={styles.reviewCadence}>
+            {habits.length > 0 ? (
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.habitBox}>
+                  <Text style={styles.sectionTitle}>
+                    Your Feedback Cadence:
+                  </Text>
+                  <Text style={styles.habitData}>
+                    {habit.feedbackCadence || "Unnamed Feedback Cadence"}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>No habits available.</Text>
+            )}
+          </View>
+
+          <View style={styles.reviewReminders}>
+            {habits.length > 0 ? (
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.habitBox}>
+                  <Text style={styles.sectionTitle}>
+                    Your Reminder Cadence:
+                  </Text>
+                  <Text style={styles.habitData}>
+                    {habit.reminders
+                      ? `Time: ${habit.reminders.selectedTime.hour}:${habit.reminders.selectedTime.minute}:${habit.reminders.selectedTime.second}\n` +
+                        `Reminder Enabled: ${
+                          habit.reminders.isReminderEnabled ? "Yes" : "No"
+                        }\n` +
+                        `Email Reminder: ${
+                          habit.reminders.isEmailReminderEnabled ? "Yes" : "No"
+                        }\n` +
+                        `Text Reminder: ${
+                          habit.reminders.isTextReminderEnabled ? "Yes" : "No"
+                        }\n` +
+                        `Days: ${
+                          habit.reminders.selectedDays.length > 0
+                            ? habit.reminders.selectedDays.join(", ")
+                            : "No days selected"
+                        }`
+                      : "Unnamed Reminder Cadence"}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>No habits available.</Text>
+            )}
           </View>
         </View>
 

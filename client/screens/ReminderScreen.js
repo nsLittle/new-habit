@@ -5,7 +5,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Linking,
   Switch,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -45,30 +44,33 @@ export default function ReminderScreen() {
   const [selectedMinute, setSelectedMinute] = useState(0);
   const [selectedSecond, setSelectedSecond] = useState(0);
 
-  const toggleReminderSwitch = () =>
-    setIsReminderEnabled((previousState) => !previousState);
-  const toggleEmailSwitch = () =>
-    setIsEmailReminderEnabled((previousState) => !previousState);
-  const toggleTextSwitch = () =>
-    setIsTextReminderEnabled((previousState) => !previousState);
+  const toggleReminderSwitch = (value) => setIsReminderEnabled(value);
+  const toggleEmailSwitch = (value) => setIsEmailReminderEnabled(value);
+  const toggleTextSwitch = (value) => setIsTextReminderEnabled(value);
 
   const days = ["Su", "M", "T", "W", "Th", "F", "Sa"];
 
   const toggleDay = (day) => {
-    console.log("Day: ", day);
-    setSelectedDays(day);
+    setSelectedDays((prevSelectedDays) => {
+      if (!prevSelectedDays.includes(day)) {
+        // If the day is not already selected, add it
+        return [...prevSelectedDays, day];
+      }
+      // If the day is already selected, return the previous state unchanged
+      return prevSelectedDays;
+    });
   };
 
   const generateOptions = (range) => Array.from({ length: range }, (_, i) => i);
 
-  const handleScroll = (setter, event) => {
-    const itemHeight = 50; // Adjust based on your row height
-    const index = Math.round(event.nativeEvent.contentOffset.y / itemHeight);
-    setter(index);
-  };
+  // const handleScroll = (setter, event) => {
+  //   const itemHeight = 50; // Adjust based on your row height
+  //   const index = Math.round(event.nativeEvent.contentOffset.y / itemHeight);
+  //   setter(index);
+  // };
 
-  const handleSave = async () => {
-    console.log(`I'm ready to reminder cadence!`);
+  const saveReminders = async () => {
+    console.log(`I'm ready to save reminder cadence!`);
     console.log("Username", username);
     console.log("Habit ID:", habitId);
 
@@ -83,6 +85,8 @@ export default function ReminderScreen() {
         second: selectedSecond,
       },
     };
+
+    console.log(reminderData);
 
     try {
       console.log("Ready to fetch data");
@@ -99,7 +103,7 @@ export default function ReminderScreen() {
       );
 
       const data = await response.json();
-      console.log("Data: ", data);
+      console.log("Reminder Data: ", data);
 
       if (response.ok) {
         await AsyncStorage.setItem("habitId", data.habitId);
@@ -117,7 +121,7 @@ export default function ReminderScreen() {
         setSelectedHour(0);
         setSelectedMinute(0);
         setSelectedSecond(0);
-        navigation.navigate("ProfileScreen");
+        navigation.navigate("ReviewScreen");
       } else {
         console.error("Failed to save reminder:", data.message);
       }
@@ -181,7 +185,7 @@ export default function ReminderScreen() {
               key={index}
               style={[
                 styles.daySquare,
-                selectedDays === day && styles.selectedDay,
+                selectedDays.includes(day) && styles.selectedDay,
               ]}
               onPress={() => toggleDay(day)}>
               <Text style={styles.dayText}>{day}</Text>
@@ -222,7 +226,7 @@ export default function ReminderScreen() {
             onPress={() => navigation.navigate("WelcomeScreen")}>
             <Text style={styles.buttonText}>◀ Back</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <TouchableOpacity style={styles.saveButton} onPress={saveReminders}>
             <Text style={styles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
