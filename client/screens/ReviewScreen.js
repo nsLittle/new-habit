@@ -218,7 +218,7 @@ export default function ReviewScreen() {
                     <Text style={styles.habitData}>
                       {habit.habit || "Unnamed Habit"}
                     </Text>
-                    <Text>
+                    <Text style={styles.bold}>
                       If you were doing this well, what would that look like?
                     </Text>
                     <Text style={styles.habitData}>
@@ -231,6 +231,57 @@ export default function ReviewScreen() {
               <Text style={styles.noProfileData}>No habits available.</Text>
             )}
           </View>
+
+          <View style={styles.reviewCadence}>
+            {habits.length > 0 ? (
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.habitBox}>
+                  <Text style={styles.sectionTitle}>
+                    Your Feedback Cadence:
+                  </Text>
+                  <Text style={styles.habitData}>
+                    {habit.feedbackCadence || "Unnamed Feedback Cadence"}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>No habits available.</Text>
+            )}
+          </View>
+
+          <View style={styles.reviewReminders}>
+            {habits.length > 0 ? (
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.habitBox}>
+                  <Text style={styles.sectionTitle}>
+                    Your Reminder Cadence:
+                  </Text>
+                  <Text style={styles.habitData}>
+                    {habit.reminders
+                      ? `Time: ${habit.reminders.selectedTime.hour}:${habit.reminders.selectedTime.minute}:${habit.reminders.selectedTime.second}\n` +
+                        `Reminder Enabled: ${
+                          habit.reminders.isReminderEnabled ? "Yes" : "No"
+                        }\n` +
+                        `Email Reminder: ${
+                          habit.reminders.isEmailReminderEnabled ? "Yes" : "No"
+                        }\n` +
+                        `Text Reminder: ${
+                          habit.reminders.isTextReminderEnabled ? "Yes" : "No"
+                        }\n` +
+                        `Days: ${
+                          habit.reminders.selectedDays.length > 0
+                            ? habit.reminders.selectedDays.join(", ")
+                            : "No days selected"
+                        }`
+                      : "Unnamed Reminder Cadence"}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>No habits available.</Text>
+            )}
+          </View>
+
           <View style={styles.reviewTeams}>
             <View style={styles.teamMemberDataBox}>
               <Text style={styles.sectionTitle}>Your feedback circle:</Text>
@@ -300,56 +351,6 @@ export default function ReviewScreen() {
               ))}
             </View>
           </View>
-
-          <View style={styles.reviewCadence}>
-            {habits.length > 0 ? (
-              habits.map((habit, index) => (
-                <View key={`habit-${index}`} style={styles.habitBox}>
-                  <Text style={styles.sectionTitle}>
-                    Your Feedback Cadence:
-                  </Text>
-                  <Text style={styles.habitData}>
-                    {habit.feedbackCadence || "Unnamed Feedback Cadence"}
-                  </Text>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noProfileData}>No habits available.</Text>
-            )}
-          </View>
-
-          <View style={styles.reviewReminders}>
-            {habits.length > 0 ? (
-              habits.map((habit, index) => (
-                <View key={`habit-${index}`} style={styles.habitBox}>
-                  <Text style={styles.sectionTitle}>
-                    Your Reminder Cadence:
-                  </Text>
-                  <Text style={styles.habitData}>
-                    {habit.reminders
-                      ? `Time: ${habit.reminders.selectedTime.hour}:${habit.reminders.selectedTime.minute}:${habit.reminders.selectedTime.second}\n` +
-                        `Reminder Enabled: ${
-                          habit.reminders.isReminderEnabled ? "Yes" : "No"
-                        }\n` +
-                        `Email Reminder: ${
-                          habit.reminders.isEmailReminderEnabled ? "Yes" : "No"
-                        }\n` +
-                        `Text Reminder: ${
-                          habit.reminders.isTextReminderEnabled ? "Yes" : "No"
-                        }\n` +
-                        `Days: ${
-                          habit.reminders.selectedDays.length > 0
-                            ? habit.reminders.selectedDays.join(", ")
-                            : "No days selected"
-                        }`
-                      : "Unnamed Reminder Cadence"}
-                  </Text>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noProfileData}>No habits available.</Text>
-            )}
-          </View>
         </View>
 
         <View style={styles.buttonRow}>
@@ -361,8 +362,8 @@ export default function ReviewScreen() {
 
           <TouchableOpacity
             style={styles.saveButton}
-            onPress={() => navigation.navigate("EditAccountScreen")}>
-            <Text style={styles.saveButtonText}>Edit ▶</Text>
+            onPress={() => navigation.navigate("FeedbackRequestScreen")}>
+            <Text style={styles.saveButtonText}>FINISH ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -394,35 +395,39 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
+  bold: {
+    fontWeight: "bold",
+  },
   sectionTitle: {
     fontSize: 14,
     textAlign: "center",
     fontWeight: "bold",
   },
-  profileDataBox: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    marginBottom: 10,
-    width: "100%",
+  reviewHabit: {
+    borderColor: "#D3D3D3",
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
-  profileDetails: {
-    justifyContent: "center",
-    alignItems: "center",
+  reviewCadence: {
+    borderColor: "#D3D3D3",
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
-  profileMain: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
+  reviewReminders: {
+    borderColor: "#D3D3D3",
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
-  profileHabits: {
-    marginBottom: 10,
+  reviewTeams: {
+    borderColor: "#D3D3D3",
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
-  profileTeams: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   profileData: {
     textAlign: "center",
     alignSelf: "center",

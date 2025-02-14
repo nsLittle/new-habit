@@ -229,14 +229,14 @@ export default function ProfileScreen() {
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.navigate("LogoutScreen")}>
-            <Text style={styles.backButtonText}>◀ Logout</Text>
+            onPress={() => navigation.navigate("EditAccountScreen")}>
+            <Text style={styles.backButtonText}>◀ Edit Account</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.saveButton}
-            onPress={() => navigation.navigate("EditAccountScreen")}>
-            <Text style={styles.saveButtonText}>Edit ▶</Text>
+            onPress={() => navigation.navigate("ReviewScreen")}>
+            <Text style={styles.saveButtonText}>Review & Finish ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
