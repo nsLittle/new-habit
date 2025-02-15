@@ -86,7 +86,7 @@ export default function ReminderScreen() {
       },
     };
 
-    console.log(reminderData);
+    console.log("Reminder Data: ", reminderData);
 
     try {
       console.log("Ready to fetch data");

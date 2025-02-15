@@ -4,10 +4,14 @@ import {
   StyleSheet,
   View,
   Text,
+  TextInput,
   TouchableOpacity,
-  Linking,
 } from "react-native";
+import { useState, useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Portal, Dialog, Button } from "react-native-paper";
+import { UserContext } from "../context/UserContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -80,23 +84,23 @@ export default function FeedbackRequestScreen() {
           fetch(`http://192.168.1.174:8000/habit/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          // fetch(`http://192.168.1.174:8000/teammember/${username}`, {
-          //   headers: { Authorization: `Bearer ${token}` },
-          // }),
+          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
-      // if (!teamMemberResponse.ok)
-      //   throw new Error("Failed to fetch team member data.");
+      if (!teamMemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
 
       const userData = await userResponse.json();
       const habitData = await habitsResponse.json();
-      // const teamMemberData = await teamMemberResponse.json();
+      const teamMemberData = await teamMemberResponse.json();
 
       console.log("User Data: ", userData);
       console.log("Habit Data: ", habitData);
-      // console.log("Team Member Data: ", teamMemberData);
+      console.log("Team Member Data: ", teamMemberData);
 
       setProfileData((prev) => ({
         ...prev,
@@ -105,12 +109,12 @@ export default function FeedbackRequestScreen() {
         profilePic: userData?.profilePic || "",
         email: userData?.email || "",
         habits: habitData?.habits || [],
-        // teammembers: [...teamMemberData?.teamMembers] || [],
+        teammembers: [...teamMemberData?.teamMembers] || [],
       }));
 
       console.log("Profile Data: ", profileData);
       console.log("User First Name; ", profileData.firstName);
-      // console.log("Teammembers: ", profileData.teammembers);
+      console.log("Teammembers: ", profileData.teammembers);
     } catch (error) {
       console.error("Error with data retrieval:", error);
       setError(error.message);
@@ -127,9 +131,9 @@ export default function FeedbackRequestScreen() {
         <View style={styles.bodyIntroContainer}>
           <Text style={styles.bodyIntroText}>Stuff and stuff</Text>
 
-          {profilePic ? (
+          {/* {profilePic ? (
             <Image source={{ uri: profilePic }} style={styles.profilePicMain} />
-          ) : null}
+          ) : null} */}
 
           <View style={styles.buttonRow}>
             <TouchableOpacity
