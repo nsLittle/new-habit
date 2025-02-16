@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const UserProvider = ({ children }) => {
   const [userContext, setUserContext] = useState({
-    username: null,
+    userName: null,
     userId: null,
     habitId: null,
     teammemberId: null,
@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const storedUsername = await AsyncStorage.getItem("username");
+        const storedUserName = await AsyncStorage.getItem("userName");
         const storedUserId = await AsyncStorage.getItem("userId");
         const storedHabitId = await AsyncStorage.getItem("habitId");
         const storedTeammemberId = await AsyncStorage.getItem("teammemberId");
@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
 
         if (storedUsername && storedUserId) {
           setUserContext({
-            username: storedUsername,
+            userName: storedUserName,
             userId: storedUserId,
             habitId: storedHabitId,
             teammemberId: storedTeammemberId,

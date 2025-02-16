@@ -15,17 +15,26 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
 export default function CreateAccountScreen() {
   const navigation = useNavigation();
 
-  const { setUserContext } = useContext(UserContext);
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { userName, userId, habitId, teammemberId, firstname, token } =
+    userContext || {};
+  console.log("UserContext:", userContext);
+  console.log("Username: ", userName);
+  console.log("User Id: ", userId);
+  console.log("Habit Id: ", habitId);
+  console.log("Teammember Id: ", teammemberId);
+  console.log("First Name: ", firstname);
+  console.log("Token: ", token);
 
-  const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+
   const [showPictureDialog, setShowPictureDialog] = useState(false);
   const [showUsernameDialog, setShowUsernameDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -40,11 +49,40 @@ export default function CreateAccountScreen() {
 
   const [filledFields, setFilledFields] = useState({});
 
-  const [existingUsernames, setExistingUsernames] = useState(new Set());
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleBlur = (field, value) => {
-    setFilledFields((prev) => ({ ...prev, [field]: value.trim() !== "" }));
+  const nonDuplicateUsername = async () => {
+    try {
+      console.log("Checking for duplicate username.");
+      console.log("Username: ", username);
+      const response = await fetch(`http://192.168.1.174:8000/user`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to check username.");
+      }
+
+      const data = await response.json();
+      console.log("Data: ", data);
+
+      const usernames = data.usernames;
+
+      if (!Array.isArray(usernames)) {
+        console.error("API response is not an array:", data);
+        return false;
+      }
+
+      const isDuplicate = usernames.includes(username);
+
+      return !isDuplicate;
+    } catch (error) {
+      console.error("Error looking for duplication", error);
+      return false;
+    }
   };
 
   const isValidPassword = (password) => {
@@ -52,33 +90,8 @@ export default function CreateAccountScreen() {
     return passwordRegex.test(password);
   };
 
-  const nonDuplicateUsername = async () => {
-    try {
-      console.log("Checking for duplicate username.");
-      const response = await fetch(`http://192.168.1.174:8000/user`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user }),
-      });
-
-      const data = await response.json();
-      console.log("Data: ", data);
-
-      if (response.ok) {
-        // setUserContext(data);
-        // console.log(userContext);
-        // showDialog("Description created successfully!");
-        // console.log("Description saved successfully:", data);
-        // setDescriptionInput("");
-        // navigation.navigate("TeamInviteScreen");
-      } else {
-        console.error("Error looking for duplication:", data.message);
-      }
-    } catch (error) {
-      console.error("Error looking for duplication", error);
-    }
+  const handleBlur = (field, value) => {
+    setFilledFields((prev) => ({ ...prev, [field]: value.trim() !== "" }));
   };
 
   const handleSave = async () => {
@@ -103,6 +116,15 @@ export default function CreateAccountScreen() {
       return;
     }
 
+    const isUniqueUsername = await nonDuplicateUsername();
+    if (!isUniqueUsername) {
+      setDialogMessage(
+        "This username is already taken. Please choose another one."
+      );
+      setShowDialog(true);
+      return;
+    }
+
     const userData = {
       firstName,
       lastName,
@@ -117,40 +139,26 @@ export default function CreateAccountScreen() {
     try {
       const response = await fetch("http://192.168.1.174:8000/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
 
       const data = await response.json();
-      console.log("Signup Response:", data);
 
       if (!response.ok) {
-        setDialogMessage(data.error || "Signup failed.");
-        setShowDialog(true);
-        return;
+        throw new Error(data.error || "Signup failed.");
       }
 
-      // await AsyncStorage.setItem("username", data.user.username);
-      // await AsyncStorage.setItem("userId", data.user._id);
-      // await AsyncStorage.setItem("token", data.token);
-      // console.log("Storing Username", data.user.username);
-      // console.log("Storing UserID: ", data.user._id);
-      // console.log("Storing Token:", data.token);
-
       setUserContext({
-        username: data.username,
+        username: data.user.username,
         userId: data.user._id,
         token: data.token,
-        firstName: data.firstName,
-        profilePic: data.profilePic,
+        firstName: data.user.firstName,
+        profilePic: data.user.profilePic,
       });
 
-      // setUsername(data.username);
       setDialogMessage("Account created successfully!");
       setShowDialog(true);
-      console.log("Account created successfully!");
       navigation.navigate("CreateHabitScreen");
     } catch (error) {
       setDialogMessage("Signup error. Please try again.");

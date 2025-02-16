@@ -74,11 +74,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-  // bodyIntroContainer: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   paddingHorizontal: 20,
-  // },
   bodyIntroText: {
     textAlign: "center",
     fontSize: 14,
