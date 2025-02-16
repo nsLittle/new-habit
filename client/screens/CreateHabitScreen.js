@@ -1,43 +1,41 @@
+import { useState, useContext, useEffect } from "react";
 import {
+  Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { useState, useContext, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Portal, Dialog, Button } from "react-native-paper";
-import { UserContext } from "../context/UserContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function CreateHabitScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token, habitId } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
-  console.log("Habit Id: ", habitId);
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message, callback = null) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-    if (callback) {
-      setTimeout(() => {
-        callback();
-      }, 1000);
+  const { userName, userId, habitId, teammemberId, firstname, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("Username: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstname);
+      console.log("Token: ", token);
     }
-  };
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
 
   const [error, setError] = useState(null);
 
@@ -46,7 +44,6 @@ export default function CreateHabitScreen() {
 
   const fetchUserData = async () => {
     try {
-      // const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Authentication token is missing.");
 
       const [userResponse, habitsResponse, teamMemberResponse] =
@@ -159,13 +156,6 @@ export default function CreateHabitScreen() {
     if (!habitInput.trim()) return showDialog("You must enter a habit.");
     if (!username) return showDialog("Failed to find user.");
 
-    // const isDuplicate = await checkDuplication();
-    // if (isDuplicate) {
-    //   showDialog("You already have a habit; would you like to edit it");
-
-    //   return;
-    // }
-
     try {
       const response = await fetch(
         `http://192.168.1.174:8000/habit/${username}`,
@@ -187,18 +177,19 @@ export default function CreateHabitScreen() {
       if (!response.ok)
         throw new Error(data.message || "Failed to save the habit.");
 
-      await AsyncStorage.setItem("habitId", data.habitId);
-      await AsyncStorage.setItem("userId", data.userId);
-      console.log("Storing Habit Id:", data.habitId);
-      console.log("Storing User Id:", data.userId);
+      // await AsyncStorage.setItem("habitId", data.habitId);
+      // await AsyncStorage.setItem("userId", data.userId);
+      // console.log("Storing Habit Id:", data.habitId);
+      // console.log("Storing User Id:", data.userId);
 
       setUserContext((prev) => ({
         ...prev,
         habitId: data.habitId,
-        userId: data.userId ?? prev.userId,
+        // userId: data.userId ?? prev.userId,
       }));
 
-      showDialog("Habit created successfully!");
+      setDialogMessage("Habit created successfully!");
+      setShowDialog(true);
       setHabitInput("");
 
       navigation.navigate("HabitDescriptionScreen", {

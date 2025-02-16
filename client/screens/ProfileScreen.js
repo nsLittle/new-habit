@@ -1,28 +1,45 @@
+import { useState, useEffect, useContext } from "react";
 import {
+  Image,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Linking,
+  View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useContext } from "react";
-import { Image } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserContext } from "../context/UserContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { userName, userId, habitId, teammemberId, firstname, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("Username: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstname);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+
   const [userData, setUserData] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigation = useNavigation();
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -42,21 +59,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-  };
-
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token, habitId } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
-  console.log("Habit Id: ", habitId);
-
   useEffect(() => {
     const retrieveProfile = async () => {
       if (!token) {
@@ -69,7 +71,7 @@ export default function ProfileScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/user/${username}`,
+          `http://192.168.1.174:8000/user/${userName}`,
           {
             method: "GET",
             headers: {
@@ -82,7 +84,7 @@ export default function ProfileScreen() {
         if (!response.ok) {
           const errorData = await response.json();
           setDialogMessage(errorData.error || "We can't find you.");
-          setDialogVisible(true);
+          setShowDialog(true);
           console.log(`We can't find you.`);
           setLoading(false);
           return;
@@ -93,7 +95,7 @@ export default function ProfileScreen() {
         setUserData(data);
       } catch (error) {
         setDialogMessage("An error occurred while retrieving your data.");
-        setDialogVisible(true);
+        setShowDialog(true);
         console.error("Data Retrieval Error:", error);
       }
       setLoading(false);
@@ -101,69 +103,68 @@ export default function ProfileScreen() {
     retrieveProfile();
   }, []);
 
-  const fetchUserData = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) throw new Error("Authentication token is missing.");
+  // const fetchUserData = async () => {
+  //   try {
+  //     if (!token) throw new Error("Authentication token is missing.");
 
-      const [userResponse, habitsResponse, teamMemberResponse] =
-        await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/habit/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+  //     const [userResponse, habitsResponse, teamMemberResponse] =
+  //       await Promise.all([
+  //         fetch(`http://192.168.1.174:8000/user/${username}`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }),
+  //         fetch(`http://192.168.1.174:8000/habit/${username}`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }),
+  //         fetch(`http://192.168.1.174:8000/teammember/${username}`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }),
+  //       ]);
 
-      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
-      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
-      if (!teamMemberResponse.ok)
-        throw new Error("Failed to fetch team member data.");
+  //     if (!userResponse.ok) throw new Error("Failed to fetch user data.");
+  //     if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
+  //     if (!teamMemberResponse.ok)
+  //       throw new Error("Failed to fetch team member data.");
 
-      const userData = await userResponse.json();
-      const habitData = await habitsResponse.json();
-      const teamMemberData = await teamMemberResponse.json();
+  //     const userData = await userResponse.json();
+  //     const habitData = await habitsResponse.json();
+  //     const teamMemberData = await teamMemberResponse.json();
 
-      console.log("User Data: ", userData);
-      console.log("Habit Data: ", habitData);
-      console.log("Team Member Data: ", teamMemberData);
+  //     console.log("User Data: ", userData);
+  //     console.log("Habit Data: ", habitData);
+  //     console.log("Team Member Data: ", teamMemberData);
 
-      setProfileData((prev) => ({
-        ...prev,
-        firstName: userData?.firstName || "",
-        lastName: userData?.lastName || "",
-        profilePic: userData?.profilePic || "",
-        email: userData?.email || "",
-        habits: habitData?.habits || [],
-        teammembers: [...teamMemberData?.teamMembers] || [],
-      }));
+  //     setProfileData((prev) => ({
+  //       ...prev,
+  //       firstName: userData?.firstName || "",
+  //       lastName: userData?.lastName || "",
+  //       profilePic: userData?.profilePic || "",
+  //       email: userData?.email || "",
+  //       habits: habitData?.habits || [],
+  //       teammembers: [...teamMemberData?.teamMembers] || [],
+  //     }));
 
-      console.log("Profile Data: ", profileData);
-      console.log("User First Name; ", profileData.firstName);
-      console.log("Teammembers: ", profileData.teammembers);
-    } catch (error) {
-      console.error("Error with data retrieval:", error);
-      setError(error.message);
-    }
-  };
+  //     console.log("Profile Data: ", profileData);
+  //     console.log("User First Name; ", profileData.firstName);
+  //     console.log("Teammembers: ", profileData.teammembers);
+  //   } catch (error) {
+  //     console.error("Error with data retrieval:", error);
+  //     setError(error.message);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (username) {
-      fetchUserData();
-    }
-  }, [username]);
+  // useEffect(() => {
+  //   if (userName) {
+  //     fetchUserData();
+  //   }
+  // }, [userName]);
 
-  if (loading) {
-    return (
-      <View style={styles.body}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.body}>
+  //       <Text>Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -194,11 +195,11 @@ export default function ProfileScreen() {
         console.error("Failed to open email client", err)
       );
       setDialogMessage("Failed to open email client.");
-      setDialogVisible(true);
+      setShowDialog(true);
     } else {
       console.error("No email address provided");
       setDialogMessage("No email address provided");
-      setDialogVisible(true);
+      setShowDialog(true);
     }
   };
 
@@ -214,7 +215,7 @@ export default function ProfileScreen() {
             <Image source={{ uri: profilePic }} style={styles.profilePicMain} />
           ) : null}
 
-          <Text style={styles.bodyTitleTextSub}>{username}</Text>
+          <Text style={styles.bodyTitleTextSub}>{userName}</Text>
 
           <View style={styles.profileDetails}>
             <View style={styles.profileMain}>

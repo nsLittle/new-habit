@@ -1,3 +1,5 @@
+import * as SecureStore from "expo-secure-store";
+import { useState, useContext } from "react";
 import {
   Platform,
   ScrollView,
@@ -7,26 +9,40 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { useState, useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Portal, Dialog, Button } from "react-native-paper";
-import { UserContext } from "../context/UserContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import * as SecureStore from "expo-secure-store";
+import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function LoginScreen() {
-  const { setUserContext } = useContext(UserContext);
+  const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { userName, userId, habitId, teammemberId, firstname, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("Username: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstname);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const navigation = useNavigation();
 
   const login = async () => {
     try {

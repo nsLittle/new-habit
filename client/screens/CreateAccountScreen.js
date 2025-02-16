@@ -24,22 +24,24 @@ export default function CreateAccountScreen() {
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const { userName, userId, habitId, teammemberId, firstname, token } =
     userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", userName);
-  console.log("User Id: ", userId);
-  console.log("Habit Id: ", habitId);
-  console.log("Teammember Id: ", teammemberId);
-  console.log("First Name: ", firstname);
-  console.log("Token: ", token);
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("Username: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstname);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
-  const [showDialog, setShowDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
 
   const [showPictureDialog, setShowPictureDialog] = useState(false);
-  const [showUsernameDialog, setShowUsernameDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 
-  const [isValid, setIsValid] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -207,25 +209,6 @@ export default function CreateAccountScreen() {
             </Button>
           </Dialog.Actions>
         </Dialog>
-
-        {/* <Dialog
-          visible={showUsernameDialog}
-          onDismiss={() => setShowUsernameDialog(false)}
-          style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "blue", fontWeight: "bold" }}>
-            Username Generation
-          </Dialog.Title>
-          <Dialog.Content>
-            <Text>Your username will be automatically generated!</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button
-              onPress={() => setShowUsernameDialog(false)}
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
-              Close
-            </Button>
-          </Dialog.Actions>
-        </Dialog> */}
 
         <Dialog
           visible={showPasswordDialog}
@@ -422,16 +405,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#E6FFCC",
     marginBottom: 10,
   },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    placeholderTextColor: "gray",
-  },
+  // passwordContainer: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   borderColor: "#A9A9A9",
+  //   borderWidth: 1,
+  //   borderRadius: 5,
+  //   backgroundColor: "#F0F0F0",
+  //   placeholderTextColor: "gray",
+  // },
   iconButton: {
     padding: 10,
   },
