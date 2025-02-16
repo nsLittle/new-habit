@@ -18,22 +18,6 @@ import {
 
 export default function CreateHabitScreen() {
   const navigation = useNavigation();
-  const [habitInput, setHabitInput] = useState("");
-  const [habitData, setHabitData] = useState({ habits: [] });
-  const [error, setError] = useState(null);
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message, callback = null) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-
-    if (callback) {
-      setTimeout(() => {
-        callback();
-      }, 1000);
-    }
-  };
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const { username, userId, token, habitId } = userContext || {};
@@ -43,9 +27,26 @@ export default function CreateHabitScreen() {
   console.log("Token: ", token);
   console.log("Habit Id: ", habitId);
 
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const showDialog = (message, callback = null) => {
+    setDialogMessage(message);
+    setDialogVisible(true);
+    if (callback) {
+      setTimeout(() => {
+        callback();
+      }, 1000);
+    }
+  };
+
+  const [error, setError] = useState(null);
+
+  const [habitInput, setHabitInput] = useState("");
+  const [habitData, setHabitData] = useState({ habits: [] });
+
   const fetchUserData = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
+      // const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Authentication token is missing.");
 
       const [userResponse, habitsResponse, teamMemberResponse] =

@@ -474,9 +474,9 @@ const styles = StyleSheet.create({
     width: 80,
   },
   contactPersonButton: {
-    backgroundColor: "#F8F8F8",
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
+    // backgroundColor: "#F8F8F8",
+    // borderColor: "#D3D3D3",
+    // borderWidth: 1,
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 25,

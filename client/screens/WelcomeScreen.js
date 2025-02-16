@@ -1,6 +1,17 @@
-import { Platform, ScrollView, StyleSheet, View, Text, TouchableOpacity, Linking } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
@@ -16,25 +27,28 @@ export default function WelcomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Welcome</Text>
-        </View>
+        <Text style={styles.bodyTitleText}>Welcome</Text>
 
-        <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>The proven habit formation method</Text>
-          <TouchableOpacity onPress={openWebLink}>
-            <Text style={styles.bodyIntroInviteText}>Discover</Text>
+        <Text style={styles.bodyIntroText}>
+          The proven habit formation method{" "}
+        </Text>
+
+        <TouchableOpacity onPress={openWebLink}>
+          <Text style={styles.bodyIntroInviteText}>Discover</Text>
+        </TouchableOpacity>
+
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => navigation.navigate("LoginScreen")}>
+            <Text style={styles.loginButtonText}>Login ▶</Text>
           </TouchableOpacity>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("LoginScreen")}>
-              <Text style={styles.loginButtonText}>Login ▶</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.createAccountButton} onPress={() => navigation.navigate("CreateAccountScreen")}>
-              <Text style={styles.createAccountButtonText}>Create Account ▶</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.createAccountButton}
+            onPress={() => navigation.navigate("CreateAccountScreen")}>
+            <Text style={styles.createAccountButtonText}>Create Account ▶</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -44,7 +58,7 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingHorizontal: wp("5%"),
   },
   body: {
@@ -60,11 +74,11 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-  bodyIntroContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
+  // bodyIntroContainer: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   paddingHorizontal: 20,
+  // },
   bodyIntroText: {
     textAlign: "center",
     fontSize: 14,

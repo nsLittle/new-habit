@@ -1,3 +1,4 @@
+import { useState, useContext, useEffect } from "react";
 import {
   Platform,
   ScrollView,
@@ -8,30 +9,17 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState, useContext, useEffect } from "react";
 import { Dialog, Portal, Button } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserContext } from "../context/UserContext";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function HabitDescriptionScreen() {
   const navigation = useNavigation();
-  const [descriptionInput, setDescriptionInput] = useState("");
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message, callback = null) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-    if (callback) {
-      setTimeout(() => {
-        callback();
-      }, 1000);
-    }
-  };
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const { username, userId, habitId, token } = userContext || {};
@@ -40,6 +28,20 @@ export default function HabitDescriptionScreen() {
   console.log("UserId: ", userId);
   console.log("HabitId: ", habitId);
   console.log("Token: ", token);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  // const showDialog = (message, callback = null) => {
+  //   setDialogMessage(message);
+  //   setShowDialog(true);
+  //   if (callback) {
+  //     setTimeout(() => {
+  //       callback();
+  //     }, 1000);
+  //   }
+  // };
+
+  const [descriptionInput, setDescriptionInput] = useState("");
 
   const checkDuplication = async () => {
     console.log(`Checking for existing description....`);
@@ -75,7 +77,7 @@ export default function HabitDescriptionScreen() {
           data.updatedHabit.description
         );
         showDialog("You already have a description.", () => {
-          setDialogVisible(false);
+          setShowDialog(false);
           navigation.navigate("TeamInviteScreen");
         });
         return true;
@@ -128,11 +130,13 @@ export default function HabitDescriptionScreen() {
       console.log("Data: ", data);
 
       if (response.ok) {
-        await AsyncStorage.setItem("habitId", data.habitId);
-        await AsyncStorage.setItem("userId", data.userId);
-        console.log("Storing Habit Id:", data.habitId);
-        console.log("Storing User Id:", data.userId);
+        // await AsyncStorage.setItem("habitId", data.habitId);
+        // await AsyncStorage.setItem("userId", data.userId);
+        // console.log("Storing Habit Id:", data.habitId);
+        // console.log("Storing User Id:", data.userId);
 
+        setUserContext(data);
+        console.log(userContext);
         showDialog("Description created successfully!");
         console.log("Description saved successfully:", data);
         setDescriptionInput("");
@@ -149,8 +153,8 @@ export default function HabitDescriptionScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
         <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
           <Dialog.Content>
@@ -158,7 +162,7 @@ export default function HabitDescriptionScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setDialogVisible(false)}
+              onPress={() => setShowDialog(false)}
               labelStyle={styles.dialogButton}>
               OK
             </Button>
@@ -227,6 +231,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
     textAlignVertical: "top",
+    position: "relative",
   },
   input: {
     height: 80,
@@ -240,6 +245,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     width: "100%",
     textAlignVertical: "top",
+  },
+  charCount: {
+    paddingTop: 5,
+    textAlign: "right",
+    color: "gray",
+    fontSize: 12,
+    alignSelf: "flex-end",
+    position: "absolute",
+    right: 10,
+    bottom: 20,
   },
   buttonRow: {
     flexDirection: "row",

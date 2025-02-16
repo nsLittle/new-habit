@@ -1,78 +1,47 @@
+import { useEffect, useContext, useState } from "react";
 import {
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Image,
+  View,
 } from "react-native";
-import { useState, useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { TextInput } from "react-native-gesture-handler";
-import { UserContext } from "../context/UserContext";
-import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dialog, Portal, Button } from "react-native-paper";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useEffect } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function CreateAccountScreen() {
-  const [isValid, setIsValid] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [profilePic, setProfilePic] = useState("");
-  const [email, setEmail] = useState("");
-  const [filledFields, setFilledFields] = useState({});
-  const [showDialog, setShowDialog] = useState(false);
-  const [showPictureDialog, setShowPictureDialog] = useState(false);
-  const [showUsernameDialog, setShowUsernameDialog] = useState(false);
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const [existingUsernames, setExistingUsernames] = useState(new Set());
-  const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation();
 
   const { setUserContext } = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchExistingUsernames = async () => {
-      try {
-        const response = await fetch(`http://192.168.1.174:8000/${username}`);
-        if (!response.ok) console.log("Yay! No duplicate username.");
-      } catch (error) {
-        console.error("Error fetching usernames:", error);
-      }
-    };
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [showPictureDialog, setShowPictureDialog] = useState(false);
+  const [showUsernameDialog, setShowUsernameDialog] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 
-    fetchExistingUsernames();
-  }, []);
+  const [isValid, setIsValid] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [profilePic, setProfilePic] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    if (firstName && lastName) {
-      setIsValid(true);
+  const [filledFields, setFilledFields] = useState({});
 
-      let baseUsername = `${firstName[0].toUpperCase()}${lastName
-        .charAt(0)
-        .toUpperCase()}${lastName.slice(1).toLowerCase()}`;
-      let newUsername = baseUsername;
-      let count = 1;
-
-      while (existingUsernames.has(newUsername)) {
-        count++;
-        newUsername = `${baseUsername}${count}`;
-      }
-
-      setUsername(newUsername);
-    } else {
-      setIsValid(false);
-    }
-  }, [firstName, lastName]);
+  const [existingUsernames, setExistingUsernames] = useState(new Set());
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleBlur = (field, value) => {
     setFilledFields((prev) => ({ ...prev, [field]: value.trim() !== "" }));
@@ -83,8 +52,44 @@ export default function CreateAccountScreen() {
     return passwordRegex.test(password);
   };
 
+  const nonDuplicateUsername = async () => {
+    try {
+      console.log("Checking for duplicate username.");
+      const response = await fetch(`http://192.168.1.174:8000/user`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user }),
+      });
+
+      const data = await response.json();
+      console.log("Data: ", data);
+
+      if (response.ok) {
+        // setUserContext(data);
+        // console.log(userContext);
+        // showDialog("Description created successfully!");
+        // console.log("Description saved successfully:", data);
+        // setDescriptionInput("");
+        // navigation.navigate("TeamInviteScreen");
+      } else {
+        console.error("Error looking for duplication:", data.message);
+      }
+    } catch (error) {
+      console.error("Error looking for duplication", error);
+    }
+  };
+
   const handleSave = async () => {
-    if (!firstName || !lastName || !email || !profilePic || !password) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !profilePic ||
+      !username ||
+      !password
+    ) {
       setDialogMessage("Please fill out all required fields.");
       setShowDialog(true);
       return;
@@ -127,25 +132,28 @@ export default function CreateAccountScreen() {
         return;
       }
 
-      await AsyncStorage.setItem("username", data.user.username);
-      await AsyncStorage.setItem("userId", data.user._id);
-      await AsyncStorage.setItem("token", data.token);
-      console.log("Storing Username", data.user.username);
-      console.log("Storing UserID: ", data.user._id);
-      console.log("Storing Token:", data.token);
+      // await AsyncStorage.setItem("username", data.user.username);
+      // await AsyncStorage.setItem("userId", data.user._id);
+      // await AsyncStorage.setItem("token", data.token);
+      // console.log("Storing Username", data.user.username);
+      // console.log("Storing UserID: ", data.user._id);
+      // console.log("Storing Token:", data.token);
 
       setUserContext({
         username: data.username,
         userId: data.user._id,
         token: data.token,
+        firstName: data.firstName,
+        profilePic: data.profilePic,
       });
 
-      setUsername(data.username);
-
-      console.log("User created successfully!");
+      // setUsername(data.username);
+      setDialogMessage("Account created successfully!");
+      setShowDialog(true);
+      console.log("Account created successfully!");
       navigation.navigate("CreateHabitScreen");
     } catch (error) {
-      setDialogMessage("An error occurred while saving your data.");
+      setDialogMessage("Signup error. Please try again.");
       setShowDialog(true);
       console.error("Signup Error:", error);
     }
@@ -192,7 +200,7 @@ export default function CreateAccountScreen() {
           </Dialog.Actions>
         </Dialog>
 
-        <Dialog
+        {/* <Dialog
           visible={showUsernameDialog}
           onDismiss={() => setShowUsernameDialog(false)}
           style={{ backgroundColor: "white" }}>
@@ -209,7 +217,7 @@ export default function CreateAccountScreen() {
               Close
             </Button>
           </Dialog.Actions>
-        </Dialog>
+        </Dialog> */}
 
         <Dialog
           visible={showPasswordDialog}
@@ -292,8 +300,9 @@ export default function CreateAccountScreen() {
               ]}
               placeholder="Username"
               value={username}
+              onChangeText={setUsername}
               placeholderTextColor="gray"
-              editable={false}
+              onBlur={() => handleBlur("username", username)}
             />
             <TouchableOpacity
               onPress={() => setShowUsernameDialog(true)}

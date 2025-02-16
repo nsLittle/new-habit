@@ -94,18 +94,21 @@ export default function TeamInviteScreen() {
   }, [userContext]);
 
   const sendEmail = (email) => {
-    if (email) {
-      const mailtoURL = `mailto:${email}`;
-      Linking.openURL(mailtoURL).catch((err) =>
-        console.error("Failed to open email client", err)
-      );
-      setDialogMessage("Failed to open email client.");
-      setDialogVisible(true);
-    } else {
+    if (!email) {
       console.error("No email address provided");
       setDialogMessage("No email address provided");
       setDialogVisible(true);
+      return;
     }
+
+    const mailtoURL = `mailto:${email}`;
+
+    Linking.openURL(mailtoURL).catch((err) => {
+      // Catch errors from openURL
+      console.error("Failed to open email client", err);
+      setDialogMessage("Failed to open email client.");
+      setDialogVisible(true);
+    });
   };
 
   return (
