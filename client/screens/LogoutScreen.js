@@ -32,14 +32,6 @@ export default function LogoutScreen() {
     }
   };
 
-  // const openWebLink = async () => {
-  //   try {
-  //     await Linking.openURL("https://www.westwoodintl.com/");
-  //   } catch (error) {
-  //     console.error("Failed to open URL:", error);
-  //   }
-  // };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
@@ -51,9 +43,6 @@ export default function LogoutScreen() {
           <Text style={styles.bodyIntroText}>
             We hope you enjoyed strengthening your habit.
           </Text>
-          {/* <TouchableOpacity onPress={openWebLink}>
-            <Text style={styles.bodyIntroInviteText}>More</Text>
-          </TouchableOpacity> */}
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.logoutButton} onPress={logout}>

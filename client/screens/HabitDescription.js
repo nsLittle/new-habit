@@ -1,18 +1,17 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
-  Linking,
+  View,
 } from "react-native";
-import { Dialog, Portal, Button } from "react-native-paper";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
@@ -21,33 +20,94 @@ export default function HabitDescriptionScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, habitId, token } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("HabitId: ", habitId);
-  console.log("Token: ", token);
+  const { userName, userId, habitId, teammemberId, firstName, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
-  // const showDialog = (message, callback = null) => {
-  //   setDialogMessage(message);
-  //   setShowDialog(true);
-  //   if (callback) {
-  //     setTimeout(() => {
-  //       callback();
-  //     }, 1000);
-  //   }
-  // };
 
   const [descriptionInput, setDescriptionInput] = useState("");
+  const [habitData, setHabitData] = useState({ habits: [] });
+
+  useEffect(() => {
+    if (userName) {
+      fetchUserData();
+    }
+  }, [userName]);
+
+  const fetchUserData = async () => {
+    try {
+      if (!token) throw new Error("Authentication token is missing.");
+
+      const [userResponse, habitsResponse, teamMemberResponse] =
+        await Promise.all([
+          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
+      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
+      if (!teamMemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
+
+      const userData = await userResponse.json();
+      const habitData = await habitsResponse.json();
+      // const fetchedHabitData = await habitsResponse.json();
+      // setHabitData(fetchedHabitData);
+      console.log("Set Habit Data: ", setHabitData);
+
+      const teamMemberData = await teamMemberResponse.json();
+      const habitValue = habitData.habits[0].habit;
+      console.log("User Data: ", userData);
+      console.log("Habit Data: ", habitData);
+      console.log("Habit Data - Habit: ", habitData.habits[0].habit);
+      console.log("Habit Value: ", habitValue);
+      console.log("Habit Descpription Value");
+      console.log("Team Member Data: ", teamMemberData);
+
+      setProfileData((prev) => ({
+        ...prev,
+        firstName: userData?.firstName || "",
+        lastName: userData?.lastName || "",
+        profilePic: userData?.profilePic || "",
+        email: userData?.email || "",
+        habits: habitData?.habits || [],
+        teammembers: [...teamMemberData?.teamMembers] || [],
+      }));
+
+      console.log("Profile Data: ", profileData);
+      console.log("User First Name; ", profileData.firstName);
+      console.log("Teammembers: ", profileData.teammembers);
+    } catch (error) {
+      console.error("Error with data retrieval:", error);
+      // setError(error.message);
+    }
+  };
 
   const checkDuplication = async () => {
-    console.log(`Checking for existing description....`);
+    console.log(`Checking for existing description...`);
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/get-detailed-habit`,
+        `http://192.168.1.174:8000/habit/${userName}`,
         {
           method: "GET",
           headers: {
@@ -57,94 +117,147 @@ export default function HabitDescriptionScreen() {
         }
       );
 
-      const data = await response.json();
-      console.log("Got Data: ", data);
-      console.log("Habit ID: ", data.descriptions[0]._id);
-
       if (!response.ok) {
-        console.error("Error fetching description:", data.message);
+        console.error("Failed to fetch habits.");
         return false;
       }
 
-      if (
-        data.updatedHabit &&
-        data.updatedHabit.description &&
-        data.updatedHabit.description.trim().length > 0
-      ) {
-        console.log(
-          "User already has a description:",
-          data.updatedHabit.description
-        );
-        showDialog("You already have a description.", () => {
-          setShowDialog(false);
-          navigation.navigate("TeamInviteScreen");
-        });
-        return true;
-      } else {
-        console.log("No existing descriptions found.");
-        return false;
+      const data = await response.json();
+      console.log("Data: ", data);
+      console.log("Habit: ", data.habits[0]?.description);
+      console.log("WHAT IS MY DESCRIPTION???");
+      setDescriptionInput(data.habits[0].description);
+      console.log("Habit Completed?: ", data.habits[0].completed);
+
+      if (data.habits[0].completed === false) {
+        console.log("Description found:", data.habits[0].description);
+        setDialogMessage("ARE YOU SURE YOU WANT TO EDIT YOUR DESCRIPTION?");
+        // setShowDialog(true);
       }
     } catch (error) {
-      console.error("Error checking habit duplication:", error);
+      console.error("Error checking description duplication:", error);
       return false;
     }
   };
+
   useEffect(() => {
-    console.log("Looking for duplicates");
-    const checkForExistingDescription = async () => {
+    const checkForExistingHabit = async () => {
       const isDuplicate = await checkDuplication();
-      if (isDuplicate) {
-        console.log("Navigating to TeamInviteScreen...");
-        navigation.navigate("TeamInviteScreen");
-      }
+      console.log("Checking for pre-existing habit...");
     };
 
-    checkForExistingDescription();
+    checkForExistingHabit();
   }, []);
 
   const saveDescription = async () => {
-    console.log(`I'm ready to save description!`);
-    console.log("Habit Description:", descriptionInput);
-    console.log("Habit ID:", habitId);
+    console.log(`Attempting to save description.`);
+    console.log("Habit Descrption:", descriptionInput);
 
-    if (!descriptionInput.trim())
-      return showDialog("You must enter a description.");
-    if (!username) return showDialog("Failed to find user.");
+    if (!descriptionInput.trim()) {
+      setDialogMessage("You must enter a description.");
+      // setShowDialog(true);
+      return;
+    }
+    if (!userName) {
+      setDialogMessage("Failed to find user.");
+      // setShowDialog(true);
+      return;
+    }
 
     try {
-      console.log("Ready to fetch data");
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
+        `http://192.168.1.174:8000/habit/${userName}`,
         {
-          method: "PATCH",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ description: descriptionInput }),
         }
       );
 
+      if (!response.ok)
+        throw new Error("Failed to fetch existing descriptions");
+
       const data = await response.json();
       console.log("Data: ", data);
+      const existingHabit = data.habits.length > 0 ? data.habits[0] : null;
 
-      if (response.ok) {
-        // await AsyncStorage.setItem("habitId", data.habitId);
-        // await AsyncStorage.setItem("userId", data.userId);
-        // console.log("Storing Habit Id:", data.habitId);
-        // console.log("Storing User Id:", data.userId);
+      if (existingHabit) {
+        console.log("Existing Description:", existingHabit.habit);
+        console.log("Completed Status:", existingHabit.completed);
+        console.log("Habit Id: ", existingHabit._id);
+        const habitId = existingHabit._id;
+        console.log("Set Habit Id:", habitId);
 
-        setUserContext(data);
-        console.log(userContext);
-        showDialog("Description created successfully!");
-        console.log("Description saved successfully:", data);
-        setDescriptionInput("");
-        navigation.navigate("TeamInviteScreen");
-      } else {
-        console.error("Failed to save description:", data.message);
+        if (existingHabit.habit === descriptionInput) {
+          console.log("Habit is unchanged. No need to update.");
+          setDialogMessage("No changes detected.");
+          // setShowDialog(true);
+          return;
+        }
+
+        if (!existingHabit.completed) {
+          console.log("Updating existing habit...");
+
+          const updateResponse = await fetch(
+            `http://192.168.1.174:8000/habit/${userName}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                habit: descriptionInput,
+              }),
+            }
+          );
+
+          if (!updateResponse.ok)
+            throw new Error("Failed to update the habit.");
+
+          const updatedData = await updateResponse.json();
+          console.log("Updated Description:", updatedData);
+
+          setDialogMessage("Description updated successfully!");
+          // setShowDialog(true);
+          setDescriptionInput("");
+          navigation.navigate("TeamInviteScreen");
+        }
       }
+
+      console.log("Creating a new description...");
+
+      const createResponse = await fetch(
+        `http://192.168.1.174:8000/habit/${userName}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            habit: habitDescription,
+            userId: userId,
+          }),
+        }
+      );
+
+      if (!createResponse.ok) throw new Error("Failed to create a new habit.");
+
+      const newData = await createResponse.json();
+      console.log("New Description Created:", newData);
+
+      setDialogMessage("Description created successfully!");
+      // setShowDialog(true);
+      setDescriptionInput("");
+
+      navigation.navigate("HabitDescriptionScreen");
     } catch (error) {
-      console.error("Error saving habit description:", error);
+      console.error("Error saving description:", error);
+      setDialogMessage("Could not save description.");
+      // setShowDialog(true);
     }
   };
 
@@ -185,7 +298,9 @@ export default function HabitDescriptionScreen() {
             textAlign="left"
             multiline={true}
           />
-          <Text style={styles.charCount}>{descriptionInput.length}/500</Text>
+          <Text style={styles.charCount}>
+            {descriptionInput?.length || 0}/500
+          </Text>
         </View>
 
         <View style={styles.buttonRow}>
@@ -204,6 +319,18 @@ export default function HabitDescriptionScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -258,21 +385,11 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
-    width: "100%",
-    gap: 15,
-    marginTop: 20,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
     alignItems: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 14,
-    textAlign: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    gap: 15,
+    marginTop: 50,
   },
   backButton: {
     backgroundColor: "#D3D3D3",
@@ -280,23 +397,30 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
   },
   backButtonText: {
     color: "black",
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
-  },
-
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
     fontWeight: "bold",
   },
-  dialogButton: {
-    color: "green",
+  saveButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  saveButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
     fontWeight: "bold",
-    fontSize: 18,
   },
 });

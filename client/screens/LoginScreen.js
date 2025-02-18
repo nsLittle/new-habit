@@ -1,21 +1,19 @@
-import * as SecureStore from "expo-secure-store";
-import { useState, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { Portal, Dialog, Button } from "react-native-paper";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
@@ -23,16 +21,35 @@ export default function LoginScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstname, token } =
-    userContext || {};
+  const {
+    userName,
+    userId,
+    habitId,
+    teammemberId,
+    firstName,
+    lastName,
+    email,
+    profilePic,
+    token,
+  } = userContext || {};
+
+  useEffect(() => {
+    resetUserContext();
+  }, []);
+
+  const resetUserContext = () => {
+    setUserContext(null); // Or whatever clean slate looks like
+  };
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("Username: ", userName);
+      console.log("User Name: ", userName);
       console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstname);
+      console.log("First Name: ", firstName);
+      console.log("Last Name: ", lastName);
+      console.log("email: ", email);
+      console.log("Profile Pic: ", profilePic);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -46,7 +63,7 @@ export default function LoginScreen() {
 
   const login = async () => {
     try {
-      console.log("Starting logiin...");
+      console.log("Starting login...");
       console.log("Username: ", username);
       console.log("Password: ", password);
 
@@ -62,9 +79,6 @@ export default function LoginScreen() {
       });
 
       const data = await response.json();
-      console.log("Response Status:", response.status);
-      console.log("Response Data:", data);
-      console.log("Login Response:", data);
 
       if (!response.ok) {
         setDialogMessage("Invalid username or password.");
@@ -73,18 +87,16 @@ export default function LoginScreen() {
         return;
       }
 
-      await AsyncStorage.setItem("username", data.username);
-      await AsyncStorage.setItem("userId", data.userId);
-      await AsyncStorage.setItem("token", data.token);
-      console.log("Storing Username", data.username);
-      console.log("Storing UserID: ", data.userId);
-      console.log("Storing Token:", data.token);
-
-      await setUserContext({
-        username: data.username,
+      setUserContext((prev) => ({
+        ...prev,
+        userName: data.username,
         userId: data.userId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        profilePic: data.profilePic,
         token: data.token,
-      });
+      }));
 
       setTimeout(() => {
         console.log("UserContext Updated! Navigating...");
@@ -126,41 +138,40 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.inputContainer}>
-          <View style={styles.inputContainer}>
-            <View style={styles.usernameContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Username"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
-                placeholderTextColor="gray"
-              />
-            </View>
+          <View style={styles.usernameContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Username"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
+              placeholderTextColor="gray"
+            />
+          </View>
 
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Password"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                placeholderTextColor="gray"
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Password"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              placeholderTextColor="gray"
+            />
+            <TouchableOpacity
+              style={styles.eyeIcon}
+              onPress={() => setShowPassword(!showPassword)}>
+              <MaterialIcons
+                name={showPassword ? "visibility" : "visibility-off"}
+                size={20}
+                color="gray"
               />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowPassword(!showPassword)}>
-                <MaterialIcons
-                  name={showPassword ? "visibility" : "visibility-off"}
-                  size={20}
-                  color="gray"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.infoIcon}>
-                <MaterialIcons name="info-outline" size={20} color="gray" />
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.infoIcon}>
+              <MaterialIcons name="info-outline" size={20} color="gray" />
+            </TouchableOpacity>
           </View>
         </View>
+        {/* </View> */}
 
         <View style={styles.resetContainer}>
           <TouchableOpacity
@@ -264,22 +275,6 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  loginButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  loginButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
   backButton: {
     backgroundColor: "#D3D3D3",
     borderRadius: 25,
@@ -291,6 +286,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   backButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  loginButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  loginButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

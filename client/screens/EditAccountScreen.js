@@ -1,25 +1,43 @@
+import { useContext, useEffect, useState } from "react";
 import {
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
-  Image,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { useState, useEffect, useContext } from "react";
+import { Portal, Dialog, Button } from "react-native-paper";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 
 export default function EditAccountScreen() {
   const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { userName, userId, habitId, teammemberId, firstname, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("UserName: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Last Name: ", lastName);
+      console.log("Email: ", email);
+      console.log("Profile Pic: ", profilePic);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   const [habits, setHabits] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -34,25 +52,10 @@ export default function EditAccountScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message, callback = null) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
+  const [dialogMessage, setDialogMessage] = useState(false);
+  const [showDialog, setShowDialog] = useState("");
 
-    if (callback) {
-      setTimeout(() => {
-        callback();
-      }, 1000);
-    }
-  };
-
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
+  const [showUsernameDialog, setShowUsernameDialog] = useState("");
 
   const [filledFields, setFilledFields] = useState({});
   const [firstName, setFirstName] = useState("");
@@ -75,7 +78,7 @@ export default function EditAccountScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/user/${username}`,
+          `http://192.168.1.174:8000/user/${userName}`,
           {
             method: "GET",
             headers: {
@@ -121,11 +124,11 @@ export default function EditAccountScreen() {
       };
       console.log("Updated User Data: ", updates);
 
-      const token = await AsyncStorage.getItem("token");
+      // const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Authentication token is missing.");
 
       const response = await fetch(
-        `http://192.168.1.174:8000/user/${username}`,
+        `http://192.168.1.174:8000/user/${userName}`,
         {
           method: "PATCH",
           headers: {
@@ -143,7 +146,7 @@ export default function EditAccountScreen() {
       if (!response.ok) throw new Error("Failed to update user data");
 
       setDialogMessage("Success", "Account updated successfully!");
-      navigation.navigate("ProfileScreen", { username });
+      navigation.navigate("ProfileScreen", { userName });
     } catch (err) {
       console.log("Error", err.message);
     }
@@ -163,6 +166,27 @@ export default function EditAccountScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Portal>
+        <Dialog
+          visible={showUsernameDialog}
+          onDismiss={() => setShowUsernameDialog(false)}
+          style={{ backgroundColor: "white" }}>
+          <Dialog.Title style={{ color: "blue", fontWeight: "bold" }}>
+            Username
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text>Username can not be changed!</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={() => setShowUsernameDialog(false)}
+              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
+              Okay
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>Edit Account</Text>

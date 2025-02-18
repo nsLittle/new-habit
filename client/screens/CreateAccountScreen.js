@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Image,
   Platform,
@@ -11,8 +11,8 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import { Dialog, Portal, Button } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -151,17 +151,27 @@ export default function CreateAccountScreen() {
         throw new Error(data.error || "Signup failed.");
       }
 
-      setUserContext({
-        username: data.user.username,
-        userId: data.user._id,
-        token: data.token,
-        firstName: data.user.firstName,
-        profilePic: data.user.profilePic,
+      console.log("Saved Data: ", data);
+
+      setUserContext((prevContext) => {
+        const updatedContext = {
+          ...prevContext,
+          username: data.user.username,
+          userId: data.user._id,
+          token: data.token,
+          firstName: data.user.firstName,
+          profilePic: data.user.profilePic,
+        };
+
+        console.log("Saved User Context: ", updatedContext);
+        setDialogMessage("Account created successfully!");
+        setShowDialog(true);
+        return updatedContext;
       });
 
-      setDialogMessage("Account created successfully!");
-      setShowDialog(true);
-      navigation.navigate("CreateHabitScreen");
+      setTimeout(() => {
+        navigation.navigate("CreateHabitScreen");
+      }, 500);
     } catch (error) {
       setDialogMessage("Signup error. Please try again.");
       setShowDialog(true);
@@ -405,16 +415,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#E6FFCC",
     marginBottom: 10,
   },
-  // passwordContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   borderColor: "#A9A9A9",
-  //   borderWidth: 1,
-  //   borderRadius: 5,
-  //   backgroundColor: "#F0F0F0",
-  //   placeholderTextColor: "gray",
-  // },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    borderColor: "#A9A9A9",
+    borderWidth: 1,
+    borderRadius: 5,
+    backgroundColor: "#F0F0F0",
+    placeholderTextColor: "gray",
+  },
   iconButton: {
     padding: 10,
   },

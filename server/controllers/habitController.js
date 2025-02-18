@@ -93,24 +93,21 @@ exports.getDetailedHabit = async (req, res) => {
 
 exports.editedDetailedHabit = async (req, res) => {
   try {
-    console.log("Incoming request to edit habit for:", req.params.username);
-    console.log("Reqeust Body: ", req.body);
+    console.log("Fetching edited detailed habit for:", req.params.username);
+    console.log("Request Body: ", req.body);
 
-    const { username, habitId } = req.params;
-    console.log("Updating Habit:", habitId, "for User:", username);
+    const { username, habit_id } = req.params;
+    console.log("Req Params: ", req.params);
+    console.log("Updating Habit:", habit_id, "for User:", username);
 
     const user = await User.findOne({ username });
+    console.log("User: ", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const habit = await Habit.findOne({ user });
-    if (!habit) {
-      return res.status(404).json({ message: "Habit not found" });
-    }
-
     const updatedHabit = await Habit.findOneAndUpdate(
-      { _id: habit._id, user: user._id },
+      { _id: habit_id, user: user._id },
       req.body,
       { new: true }
     );

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Portal, Dialog, Button } from "react-native-paper";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,16 +20,16 @@ export default function CreateHabitScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstname, token } =
+  const { userName, userId, habitId, teammemberId, firstName, token } =
     userContext || {};
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("Username: ", userName);
+      console.log("User Name: ", userName);
       console.log("User Id: ", userId);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstname);
+      console.log("First Name: ", firstName);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -42,19 +42,25 @@ export default function CreateHabitScreen() {
   const [habitInput, setHabitInput] = useState("");
   const [habitData, setHabitData] = useState({ habits: [] });
 
+  useEffect(() => {
+    if (userName) {
+      fetchUserData();
+    }
+  }, [userName]);
+
   const fetchUserData = async () => {
     try {
       if (!token) throw new Error("Authentication token is missing.");
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${username}`, {
+          fetch(`http://192.168.1.174:8000/user/${userName}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${username}`, {
+          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
+          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -98,18 +104,12 @@ export default function CreateHabitScreen() {
     }
   };
 
-  useEffect(() => {
-    if (username) {
-      fetchUserData();
-    }
-  }, [username]);
-
   const checkDuplication = async () => {
     console.log(`Checking for existing habit...`);
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}`,
+        `http://192.168.1.174:8000/habit/${userName}`,
         {
           method: "GET",
           headers: {
@@ -119,31 +119,32 @@ export default function CreateHabitScreen() {
         }
       );
 
-      const data = await response.json();
-      console.log("Got Data: ", data);
-      console.log("Data.habit: ", data.habits[0].habit);
-
-      if (response.ok && data.habits && data.habits.length > 0) {
-        console.log("User already has a habit.", data);
-        setUserContext((prevContext) => ({
-          ...prevContext,
-          habitId: data.habits[0]._id,
-        }));
-        setHabitInput(data.habits[0].habit);
-        return true;
-      } else {
-        console.log("No existing habits found.");
+      if (!response.ok) {
+        console.error("Failed to fetch habits.");
         return false;
+      }
+
+      const data = await response.json();
+      console.log("Data: ", data);
+      console.log("Habit: ", data.habits[0].habit);
+      setHabitInput(data.habits[0].habit);
+      console.log("Habit Completed?: ", data.habits[0].completed);
+
+      if (data.habits[0].completed === false) {
+        console.log("Habit found:", data.habits[0].habit);
+        setDialogMessage("ARE YOU SURE YOU WANT TO EDIT YOUR HABIT?");
+        setShowDialog(true);
       }
     } catch (error) {
       console.error("Error checking habit duplication:", error);
+      return false;
     }
   };
 
   useEffect(() => {
     const checkForExistingHabit = async () => {
       const isDuplicate = await checkDuplication();
-      console.log("Checked for Dup");
+      console.log("Checking for pre-existing habit...");
     };
 
     checkForExistingHabit();
@@ -153,12 +154,84 @@ export default function CreateHabitScreen() {
     console.log(`Attempting to save habit.`);
     console.log("Habit Input:", habitInput);
 
-    if (!habitInput.trim()) return showDialog("You must enter a habit.");
-    if (!username) return showDialog("Failed to find user.");
+    if (!habitInput.trim()) {
+      setDialogMessage("You must enter a habit.");
+      setShowDialog(true);
+      return;
+    }
+    if (!userName) {
+      setDialogMessage("Failed to find user.");
+      setShowDialog(true);
+      return;
+    }
 
     try {
+      // Fetch existing habits
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}`,
+        `http://192.168.1.174:8000/habit/${userName}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch existing habits.");
+
+      const data = await response.json();
+      const existingHabit = data.habits.length > 0 ? data.habits[0] : null;
+
+      if (existingHabit) {
+        console.log("Existing Habit:", existingHabit.habit);
+        console.log("Completed Status:", existingHabit.completed);
+        console.log("Habit Id: ", existingHabit._id);
+        const habitId = existingHabit._id;
+        console.log("Set Habit Id:", habitId);
+
+        if (existingHabit.habit === habitInput) {
+          console.log("Habit is unchanged. No need to update.");
+          setDialogMessage("No changes detected.");
+          setShowDialog(true);
+          return;
+        }
+
+        if (!existingHabit.completed) {
+          console.log("Updating existing habit...");
+
+          const updateResponse = await fetch(
+            `http://192.168.1.174:8000/habit/${userName}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                habit: habitInput,
+              }),
+            }
+          );
+
+          if (!updateResponse.ok)
+            throw new Error("Failed to update the habit.");
+
+          const updatedData = await updateResponse.json();
+          console.log("Updated Habit:", updatedData);
+
+          setDialogMessage("Habit updated successfully!");
+          setShowDialog(true);
+          setHabitInput("");
+          navigation.navigate("HabitDescriptionScreen");
+        }
+      }
+
+      // If no habit exists or the existing habit was completed, create a new one
+      console.log("Creating a new habit...");
+
+      const createResponse = await fetch(
+        `http://192.168.1.174:8000/habit/${userName}`,
         {
           method: "POST",
           headers: {
@@ -172,34 +245,20 @@ export default function CreateHabitScreen() {
         }
       );
 
-      const data = await response.json();
-      console.log("Data: ", data);
-      if (!response.ok)
-        throw new Error(data.message || "Failed to save the habit.");
+      if (!createResponse.ok) throw new Error("Failed to create a new habit.");
 
-      // await AsyncStorage.setItem("habitId", data.habitId);
-      // await AsyncStorage.setItem("userId", data.userId);
-      // console.log("Storing Habit Id:", data.habitId);
-      // console.log("Storing User Id:", data.userId);
-
-      setUserContext((prev) => ({
-        ...prev,
-        habitId: data.habitId,
-        // userId: data.userId ?? prev.userId,
-      }));
+      const newData = await createResponse.json();
+      console.log("New Habit Created:", newData);
 
       setDialogMessage("Habit created successfully!");
       setShowDialog(true);
       setHabitInput("");
 
-      navigation.navigate("HabitDescriptionScreen", {
-        username,
-        habitId: data.habitId,
-        userId: data.userId,
-      });
+      navigation.navigate("HabitDescriptionScreen");
     } catch (error) {
       console.error("Error saving habit:", error);
-      showDialog("Could not save habit.");
+      setDialogMessage("Could not save habit.");
+      setShowDialog(true);
     }
   };
 
@@ -207,8 +266,8 @@ export default function CreateHabitScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
         <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
           <Dialog.Content>
@@ -216,7 +275,7 @@ export default function CreateHabitScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setDialogVisible(false)}
+              onPress={() => setShowDialog(false)}
               labelStyle={styles.dialogButton}>
               OK
             </Button>
@@ -243,11 +302,11 @@ export default function CreateHabitScreen() {
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.navigate("WelcomeScreen")}>
-            <Text style={styles.buttonText}>◀ Back</Text>
+            onPress={() => navigation.navigate("HabitDescriptionScreen")}>
+            <Text style={styles.buttonText}>Keep Habit ▶</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.saveButton} onPress={saveHabit}>
-            <Text style={styles.buttonText}>Save ▶</Text>
+            <Text style={styles.buttonText}>Save Changes ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -256,6 +315,18 @@ export default function CreateHabitScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -297,21 +368,11 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
-    width: "100%",
-    gap: 15,
-    marginTop: 20,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
     alignItems: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 14,
-    textAlign: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    gap: 15,
+    marginTop: 50,
   },
   backButton: {
     backgroundColor: "#D3D3D3",
@@ -319,30 +380,30 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
   },
   backButtonText: {
     color: "black",
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
-  },
-  profilePicMain: {
-    borderWidth: 2,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
     fontWeight: "bold",
   },
-  dialogButton: {
-    color: "green",
+  saveButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  saveButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
     fontWeight: "bold",
-    fontSize: 18,
   },
 });

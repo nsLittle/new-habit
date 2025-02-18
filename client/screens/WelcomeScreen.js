@@ -8,8 +8,8 @@ import {
   Linking,
 } from "react-native";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Image,
   Linking,
@@ -10,8 +10,8 @@ import {
   View,
 } from "react-native";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
@@ -20,8 +20,18 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstname, token } =
-    userContext || {};
+  const {
+    userName,
+    userId,
+    habitId,
+    teammemberId,
+    firstName,
+    lastName,
+    email,
+    profilePic,
+    token,
+  } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
@@ -29,26 +39,16 @@ export default function ProfileScreen() {
       console.log("User Id: ", userId);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstname);
+      console.log("First Name: ", firstName);
+      console.log("Last Name: ", lastName);
+      console.log("Email: ", email);
+      console.log("Profile Pic: ", profilePic);
       console.log("Token: ", token);
     }
   }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
-
-  const [userData, setUserData] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const [profileData, setProfileData] = useState({
-    firstName: "",
-    lastName: "",
-    profilePic: "",
-    email: "",
-    habits: [],
-    teammembers: [],
-  });
 
   const isValidUrl = (url) => {
     try {
@@ -59,125 +59,62 @@ export default function ProfileScreen() {
     }
   };
 
-  useEffect(() => {
-    const retrieveProfile = async () => {
+  const fetchUserData = async () => {
+    try {
       if (!token) {
-        console.error("No token available, authentication required.");
-        setLoading(false);
+        console.warn("Authentication token is missing. Skipping API calls.");
         return;
       }
 
-      console.log("Sending Request with Token:", token);
+      const [userResponse, habitsResponse, teamMemberResponse] =
+        await Promise.all([
+          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-      try {
-        const response = await fetch(
-          `http://192.168.1.174:8000/user/${userName}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
+      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
+      if (!teamMemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          setDialogMessage(errorData.error || "We can't find you.");
-          setShowDialog(true);
-          console.log(`We can't find you.`);
-          setLoading(false);
-          return;
-        }
+      const userData = await userResponse.json();
+      const habitData = await habitsResponse.json();
+      const teamMemberData = await teamMemberResponse.json();
 
-        const data = await response.json();
-        console.log("Retrieved Data:", data);
-        setUserData(data);
-      } catch (error) {
-        setDialogMessage("An error occurred while retrieving your data.");
-        setShowDialog(true);
-        console.error("Data Retrieval Error:", error);
-      }
-      setLoading(false);
-    };
-    retrieveProfile();
+      console.log("User Data: ", userData);
+      console.log("Habit Data: ", habitData);
+      // console.log("Habit Id: ", habitData.habits[0]._id);
+      console.log("Team Member Data: ", teamMemberData);
+
+      setUserContext((prev) => ({
+        ...prev,
+        username: userData.username,
+        userId: userData._id,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        profilePic: userData.profilePic,
+        habits: habitData.habit || [],
+        // habitId: habitData.habits[0]._id,
+        teammembers: teamMemberData.teamMembers || [],
+      }));
+    } catch (error) {
+      console.error("Error with data retrieval:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userName) {
+      fetchUserData();
+    }
   }, []);
-
-  // const fetchUserData = async () => {
-  //   try {
-  //     if (!token) throw new Error("Authentication token is missing.");
-
-  //     const [userResponse, habitsResponse, teamMemberResponse] =
-  //       await Promise.all([
-  //         fetch(`http://192.168.1.174:8000/user/${username}`, {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         }),
-  //         fetch(`http://192.168.1.174:8000/habit/${username}`, {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         }),
-  //         fetch(`http://192.168.1.174:8000/teammember/${username}`, {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         }),
-  //       ]);
-
-  //     if (!userResponse.ok) throw new Error("Failed to fetch user data.");
-  //     if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
-  //     if (!teamMemberResponse.ok)
-  //       throw new Error("Failed to fetch team member data.");
-
-  //     const userData = await userResponse.json();
-  //     const habitData = await habitsResponse.json();
-  //     const teamMemberData = await teamMemberResponse.json();
-
-  //     console.log("User Data: ", userData);
-  //     console.log("Habit Data: ", habitData);
-  //     console.log("Team Member Data: ", teamMemberData);
-
-  //     setProfileData((prev) => ({
-  //       ...prev,
-  //       firstName: userData?.firstName || "",
-  //       lastName: userData?.lastName || "",
-  //       profilePic: userData?.profilePic || "",
-  //       email: userData?.email || "",
-  //       habits: habitData?.habits || [],
-  //       teammembers: [...teamMemberData?.teamMembers] || [],
-  //     }));
-
-  //     console.log("Profile Data: ", profileData);
-  //     console.log("User First Name; ", profileData.firstName);
-  //     console.log("Teammembers: ", profileData.teammembers);
-  //   } catch (error) {
-  //     console.error("Error with data retrieval:", error);
-  //     setError(error.message);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (userName) {
-  //     fetchUserData();
-  //   }
-  // }, [userName]);
-
-  // if (loading) {
-  //   return (
-  //     <View style={styles.body}>
-  //       <Text>Loading...</Text>
-  //     </View>
-  //   );
-  // }
-
-  if (error) {
-    return (
-      <View style={styles.body}>
-        <Text>Error: {error}</Text>
-      </View>
-    );
-  }
-
-  const { firstName, lastName, profilePic, email, habits, teammembers } =
-    profileData;
-
-  console.log("ProfilePic: ", profilePic);
 
   const profilePicUrl = isValidUrl(profilePic)
     ? profilePic
@@ -229,9 +166,9 @@ export default function ProfileScreen() {
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={styles.backButton}
+            style={styles.editButton}
             onPress={() => navigation.navigate("EditAccountScreen")}>
-            <Text style={styles.backButtonText}>◀ Edit Account</Text>
+            <Text style={styles.editButtonText}>◀ Edit Account</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -367,6 +304,14 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "gray",
   },
+  teamMemberProfilePic: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 40,
+    height: 40,
+    marginBottom: 15,
+    borderRadius: 50,
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -375,6 +320,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 15,
     marginTop: 50,
+  },
+  editButton: {
+    backgroundColor: "#D3D3D3",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  editButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "bold",
   },
   saveButton: {
     backgroundColor: "#FFD700",
@@ -391,29 +352,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
-  },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  teamMemberProfilePic: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 40,
-    height: 40,
-    marginBottom: 15,
-    borderRadius: 50,
   },
 });
