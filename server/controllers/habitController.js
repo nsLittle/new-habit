@@ -106,11 +106,13 @@ exports.editedDetailedHabit = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Ensure only the "description" field is updated
     const updatedHabit = await Habit.findOneAndUpdate(
       { _id: habit_id, user: user._id },
-      req.body,
+      { $set: { description: req.body.description } }, // Only update the description field
       { new: true }
     );
+
     if (!updatedHabit) {
       return res.status(404).json({ message: "Habit not found" });
     }

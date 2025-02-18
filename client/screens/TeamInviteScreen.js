@@ -1,51 +1,57 @@
+import { useContext, useEffect, useState } from "react";
 import {
+  Image,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Linking,
+  View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useContext } from "react";
-import { Image } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Portal, Dialog, Button } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserContext } from "../context/UserContext";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function TeamInviteScreen() {
-  const { userContext, setUserContext } = useContext(UserContext);
-  const { username } = userContext || {};
-  console.log("Username: ", username);
-
   const navigation = useNavigation();
 
-  const [error, setError] = useState(null);
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const {
+    username,
+    userId,
+    habitId,
+    habitinput,
+    teammemberId,
+    firstName,
+    token,
+  } = userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", username);
+      console.log("User Id: ", userId);
+      console.log("Habit Input: ", habitinput);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
 
   const [contactData, setContactData] = useState({ teammembers: [] });
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message, callback = null) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-
-    if (callback) {
-      setTimeout(() => {
-        callback();
-      }, 1000);
-    }
-  };
 
   useEffect(() => {
     const fetchTeamMembersData = async () => {
       try {
-        const token = await AsyncStorage.getItem("token");
         if (!token) throw new Error("Authentication token is missing.");
 
         const { username } = userContext || {};
@@ -86,7 +92,6 @@ export default function TeamInviteScreen() {
         setDialogMessage("Teammember fetched.");
       } catch (err) {
         console.error("Error fetching teammembers.", err);
-        setError(err.message);
         setDialogMessage("Error fetching teammembers.");
       }
     };
@@ -97,17 +102,23 @@ export default function TeamInviteScreen() {
     if (!email) {
       console.error("No email address provided");
       setDialogMessage("No email address provided");
-      setDialogVisible(true);
+      setShowDialog(true);
       return;
     }
 
-    const mailtoURL = `mailto:${email}`;
+    const subject = encodeURIComponent(`Help ${firstName}`);
+    const body = encodeURIComponent(
+      `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.`
+    );
+
+    const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
+    console.log("Mail To: ", mailtoURL);
 
     Linking.openURL(mailtoURL).catch((err) => {
       // Catch errors from openURL
       console.error("Failed to open email client", err);
       setDialogMessage("Failed to open email client.");
-      setDialogVisible(true);
+      setShowDialog(true);
     });
   };
 
@@ -115,8 +126,8 @@ export default function TeamInviteScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
         <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
           <Dialog.Content>
@@ -124,7 +135,7 @@ export default function TeamInviteScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setDialogVisible(false)}
+              onPress={() => setShowDialog(false)}
               labelStyle={styles.dialogButton}>
               OK
             </Button>

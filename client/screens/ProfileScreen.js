@@ -90,7 +90,7 @@ export default function ProfileScreen() {
 
       console.log("User Data: ", userData);
       console.log("Habit Data: ", habitData);
-      // console.log("Habit Id: ", habitData.habits[0]._id);
+      console.log("Habit Id: ", habitData?.habits[0]._id);
       console.log("Team Member Data: ", teamMemberData);
 
       setUserContext((prev) => ({
@@ -102,7 +102,7 @@ export default function ProfileScreen() {
         email: userData.email,
         profilePic: userData.profilePic,
         habits: habitData.habit || [],
-        // habitId: habitData.habits[0]._id,
+        habitId: habitData?.habits[0]._id,
         teammembers: teamMemberData.teamMembers || [],
       }));
     } catch (error) {

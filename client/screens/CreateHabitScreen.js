@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -20,12 +20,12 @@ export default function CreateHabitScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstName, token } =
+  const { username, userId, habitId, teammemberId, firstName, token } =
     userContext || {};
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", userName);
+      console.log("User Name: ", username);
       console.log("User Id: ", userId);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
@@ -37,16 +37,14 @@ export default function CreateHabitScreen() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
-  const [error, setError] = useState(null);
-
   const [habitInput, setHabitInput] = useState("");
   const [habitData, setHabitData] = useState({ habits: [] });
 
   useEffect(() => {
-    if (userName) {
+    if (username) {
       fetchUserData();
     }
-  }, [userName]);
+  }, [username]);
 
   const fetchUserData = async () => {
     try {
@@ -54,13 +52,13 @@ export default function CreateHabitScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+          fetch(`http://192.168.1.174:8000/user/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+          fetch(`http://192.168.1.174:8000/habit/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -74,16 +72,13 @@ export default function CreateHabitScreen() {
       const habitData = await habitsResponse.json();
       const fetchedHabitData = await habitsResponse.json();
       setHabitData(fetchedHabitData);
-      console.log("Set Habit Data: ", setHabitData);
-
       const teamMemberData = await teamMemberResponse.json();
       const habitValue = habitData.habits[0].habit;
       console.log("User Data: ", userData);
       console.log("Habit Data: ", habitData);
-      console.log("Habit Data - Habit: ", habitData.habits[0].habit);
-      console.log("Habit Value: ", habitValue);
-      f;
+      console.log("Set Habit Data: ", setHabitData);
       console.log("Team Member Data: ", teamMemberData);
+      console.log("Habit Value: ", habitValue);
 
       setProfileData((prev) => ({
         ...prev,
@@ -100,7 +95,6 @@ export default function CreateHabitScreen() {
       console.log("Teammembers: ", profileData.teammembers);
     } catch (error) {
       console.error("Error with data retrieval:", error);
-      setError(error.message);
     }
   };
 
@@ -109,7 +103,7 @@ export default function CreateHabitScreen() {
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userName}`,
+        `http://192.168.1.174:8000/habit/${username}`,
         {
           method: "GET",
           headers: {
@@ -120,7 +114,7 @@ export default function CreateHabitScreen() {
       );
 
       if (!response.ok) {
-        console.error("Failed to fetch habits.");
+        console.error("Failed to fetch habit.");
         return false;
       }
 
@@ -159,16 +153,15 @@ export default function CreateHabitScreen() {
       setShowDialog(true);
       return;
     }
-    if (!userName) {
+    if (!username) {
       setDialogMessage("Failed to find user.");
       setShowDialog(true);
       return;
     }
 
     try {
-      // Fetch existing habits
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userName}`,
+        `http://192.168.1.174:8000/habit/${username}`,
         {
           method: "GET",
           headers: {
@@ -201,7 +194,7 @@ export default function CreateHabitScreen() {
           console.log("Updating existing habit...");
 
           const updateResponse = await fetch(
-            `http://192.168.1.174:8000/habit/${userName}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
+            `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
             {
               method: "PATCH",
               headers: {
@@ -227,11 +220,10 @@ export default function CreateHabitScreen() {
         }
       }
 
-      // If no habit exists or the existing habit was completed, create a new one
       console.log("Creating a new habit...");
 
       const createResponse = await fetch(
-        `http://192.168.1.174:8000/habit/${userName}`,
+        `http://192.168.1.174:8000/habit/${username}`,
         {
           method: "POST",
           headers: {
@@ -249,6 +241,11 @@ export default function CreateHabitScreen() {
 
       const newData = await createResponse.json();
       console.log("New Habit Created:", newData);
+
+      setUserContext((prev) => ({
+        ...prev,
+        habits: newData?.habit || "",
+      }));
 
       setDialogMessage("Habit created successfully!");
       setShowDialog(true);

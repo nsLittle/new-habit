@@ -1,3 +1,4 @@
+import { useContext, useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -8,29 +9,34 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState, useContext, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Portal, Dialog, Button } from "react-native-paper";
-import { UserContext } from "../context/UserContext";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function AddTeammemberScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
+  const { userName, userId, habitId, teammemberId, firstName, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
-  const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
-  // const [showDialog, setShowDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
   const [profilePic, setProfilePic] = useState("");
   const [teamMemberFirstName, setTeamMemberFirstName] = useState("");
@@ -59,11 +65,9 @@ export default function AddTeammemberScreen() {
     console.log("New Team Member: ", newTeamMember);
 
     try {
-      const savedToken = await AsyncStorage.getItem("token");
-
-      if (!savedToken) {
+      if (!token) {
         setDialogMessage("No token found. Please log in again.");
-        setDialogVisible(true);
+        // setDialogVisible(true);
         return false;
       }
 
@@ -74,17 +78,17 @@ export default function AddTeammemberScreen() {
         !teamMemberProfilePic
       ) {
         setDialogMessage("All fields are required.");
-        setDialogVisible(true);
+        // setDialogVisible(true);
         return false;
       }
 
       const response = await fetch(
-        `http://192.168.1.174:8000/teammember/${username}`,
+        `http://192.168.1.174:8000/teammember/${userName}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${savedToken}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(newTeamMember),
         }
@@ -97,7 +101,7 @@ export default function AddTeammemberScreen() {
 
       if (data.message === "Person already on your team.") {
         setDialogMessage("Person already on your team.");
-        setDialogVisible(true);
+        // setDialogVisible(true);
         return;
       }
 
@@ -112,13 +116,13 @@ export default function AddTeammemberScreen() {
         setTeamMemberProfilePic("");
 
         setDialogMessage("Team member added successfully!");
-        setDialogVisible(true);
+        // setDialogVisible(true);
         navigation.navigate("TeamInviteScreen");
       }
     } catch (error) {
       console.error("Error saving team member.", error);
       setDialogMessage("Error saving team member.");
-      setDialogVisible(true);
+      // setDialogVisible(true);
       navigation.navigate("TeamInviteScreen");
     }
   };
@@ -136,8 +140,8 @@ export default function AddTeammemberScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
         <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
           <Dialog.Content>
@@ -145,7 +149,7 @@ export default function AddTeammemberScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setDialogVisible(false)}
+              onPress={() => setShowDialog(false)}
               labelStyle={styles.dialogButton}>
               OK
             </Button>

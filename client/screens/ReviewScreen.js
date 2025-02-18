@@ -1,28 +1,26 @@
+import { useContext, useEffect, useState } from "react";
 import {
+  Image,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Linking,
+  View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useContext } from "react";
-import { Image } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserContext } from "../context/UserContext";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function ReviewScreen() {
-  const [userData, setUserData] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigation = useNavigation();
+
+  const [userData, setUserData] = useState("");
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -61,7 +59,6 @@ export default function ReviewScreen() {
     const retrieveProfile = async () => {
       if (!token) {
         console.error("No token available, authentication required.");
-        setLoading(false);
         return;
       }
 
@@ -84,7 +81,6 @@ export default function ReviewScreen() {
           setDialogMessage(errorData.error || "We can't find you.");
           setDialogVisible(true);
           console.log(`We can't find you.`);
-          setLoading(false);
           return;
         }
 
@@ -96,14 +92,12 @@ export default function ReviewScreen() {
         setDialogVisible(true);
         console.error("Data Retrieval Error:", error);
       }
-      setLoading(false);
     };
     retrieveProfile();
   }, []);
 
   const fetchUserData = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Authentication token is missing.");
 
       const [userResponse, habitsResponse, teamMemberResponse] =
@@ -147,7 +141,6 @@ export default function ReviewScreen() {
       console.log("Teammembers: ", profileData.teammembers);
     } catch (error) {
       console.error("Error with data retrieval:", error);
-      setError(error.message);
     }
   };
 
@@ -156,22 +149,6 @@ export default function ReviewScreen() {
       fetchUserData();
     }
   }, [username]);
-
-  if (loading) {
-    return (
-      <View style={styles.body}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.body}>
-        <Text>Error: {error}</Text>
-      </View>
-    );
-  }
 
   const { firstName, lastName, profilePic, email, habits, teammembers } =
     profileData;

@@ -22,13 +22,30 @@ export default function CreateAccountScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstname, token } =
-    userContext || {};
+  const {
+    userName,
+    userId,
+    habitId,
+    habitinput,
+    teammemberId,
+    firstname,
+    token,
+  } = userContext || {};
+
+  useEffect(() => {
+    resetUserContext();
+  }, []);
+
+  const resetUserContext = () => {
+    setUserContext(null); // Or whatever clean slate looks like
+  };
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
       console.log("Username: ", userName);
       console.log("User Id: ", userId);
+      console.log("Habit Input: ", habitinput);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
       console.log("First Name: ", firstname);

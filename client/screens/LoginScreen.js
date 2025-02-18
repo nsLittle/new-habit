@@ -38,7 +38,19 @@ export default function LoginScreen() {
   }, []);
 
   const resetUserContext = () => {
-    setUserContext(null); // Or whatever clean slate looks like
+    console.log("Resetting User Context...");
+    setUserContext({
+      userName: "",
+      userId: "",
+      habitId: "",
+      teammemberId: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      profilePic: "",
+      token: null,
+    });
+    console.log("User Context Reset Complete!");
   };
 
   useEffect(() => {
@@ -101,7 +113,7 @@ export default function LoginScreen() {
       setTimeout(() => {
         console.log("UserContext Updated! Navigating...");
         navigation.navigate("ProfileScreen");
-      }, 100);
+      }, 200);
     } catch (error) {
       setDialogMessage("Something went wrong");
       setShowDialog(true);

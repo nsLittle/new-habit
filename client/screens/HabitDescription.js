@@ -20,12 +20,12 @@ export default function HabitDescriptionScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstName, token } =
+  const { username, userId, habitId, teammemberId, firstName, token } =
     userContext || {};
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", userName);
+      console.log("User Name: ", username);
       console.log("User Id: ", userId);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
@@ -41,10 +41,10 @@ export default function HabitDescriptionScreen() {
   const [habitData, setHabitData] = useState({ habits: [] });
 
   useEffect(() => {
-    if (userName) {
+    if (username) {
       fetchUserData();
     }
-  }, [userName]);
+  }, [username]);
 
   const fetchUserData = async () => {
     try {
@@ -52,13 +52,13 @@ export default function HabitDescriptionScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+          fetch(`http://192.168.1.174:8000/user/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+          fetch(`http://192.168.1.174:8000/habit/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -70,18 +70,15 @@ export default function HabitDescriptionScreen() {
 
       const userData = await userResponse.json();
       const habitData = await habitsResponse.json();
-      // const fetchedHabitData = await habitsResponse.json();
-      // setHabitData(fetchedHabitData);
-      console.log("Set Habit Data: ", setHabitData);
-
+      const fetchedHabitData = await habitsResponse.json();
+      setHabitData(fetchedHabitData);
       const teamMemberData = await teamMemberResponse.json();
       const habitValue = habitData.habits[0].habit;
       console.log("User Data: ", userData);
       console.log("Habit Data: ", habitData);
-      console.log("Habit Data - Habit: ", habitData.habits[0].habit);
-      console.log("Habit Value: ", habitValue);
-      console.log("Habit Descpription Value");
+      console.log("Set Habit Data: ", setHabitData);
       console.log("Team Member Data: ", teamMemberData);
+      console.log("Habit Value: ", habitValue);
 
       setProfileData((prev) => ({
         ...prev,
@@ -98,7 +95,6 @@ export default function HabitDescriptionScreen() {
       console.log("Teammembers: ", profileData.teammembers);
     } catch (error) {
       console.error("Error with data retrieval:", error);
-      // setError(error.message);
     }
   };
 
@@ -107,7 +103,7 @@ export default function HabitDescriptionScreen() {
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userName}`,
+        `http://192.168.1.174:8000/habit/${username}`,
         {
           method: "GET",
           headers: {
@@ -118,21 +114,29 @@ export default function HabitDescriptionScreen() {
       );
 
       if (!response.ok) {
-        console.error("Failed to fetch habits.");
+        console.error("Failed to fetch description.");
         return false;
       }
 
       const data = await response.json();
       console.log("Data: ", data);
-      console.log("Habit: ", data.habits[0]?.description);
-      console.log("WHAT IS MY DESCRIPTION???");
-      setDescriptionInput(data.habits[0].description);
+      console.log("Habit Id: ", data.habits[0]?._id);
+      const habitId = data.habits[0]?._id;
+      console.log("Habit Id: ", habitId);
+
+      console.log("Habit: ", data.habits[0]?.habit);
+      console.log("Description: ", data.habits[0]?.description);
       console.log("Habit Completed?: ", data.habits[0].completed);
+      console.log("WHAT IS MY DESCRIPTION???");
+      setUserContext((prev) => ({
+        ...prev,
+        habitId, // Update UserContext with new habitId
+      }));
+      setDescriptionInput(data.habits[0]?.description);
 
       if (data.habits[0].completed === false) {
         console.log("Description found:", data.habits[0].description);
         setDialogMessage("ARE YOU SURE YOU WANT TO EDIT YOUR DESCRIPTION?");
-        // setShowDialog(true);
       }
     } catch (error) {
       console.error("Error checking description duplication:", error);
@@ -141,38 +145,41 @@ export default function HabitDescriptionScreen() {
   };
 
   useEffect(() => {
-    const checkForExistingHabit = async () => {
+    const checkForexistingDescription = async () => {
       const isDuplicate = await checkDuplication();
       console.log("Checking for pre-existing habit...");
     };
 
-    checkForExistingHabit();
+    checkForexistingDescription();
   }, []);
 
   const saveDescription = async () => {
     console.log(`Attempting to save description.`);
-    console.log("Habit Descrption:", descriptionInput);
+    console.log("Habit Description:", descriptionInput);
 
     if (!descriptionInput.trim()) {
       setDialogMessage("You must enter a description.");
-      // setShowDialog(true);
+      setShowDialog(true);
       return;
     }
-    if (!userName) {
+    if (!username) {
       setDialogMessage("Failed to find user.");
-      // setShowDialog(true);
+      setShowDialog(true);
       return;
     }
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userName}`,
+        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
         {
-          method: "GET",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            description: descriptionInput,
+          }),
         }
       );
 
@@ -181,27 +188,27 @@ export default function HabitDescriptionScreen() {
 
       const data = await response.json();
       console.log("Data: ", data);
-      const existingHabit = data.habits.length > 0 ? data.habits[0] : null;
+      const existingDescription = data.updatedHabit;
 
-      if (existingHabit) {
-        console.log("Existing Description:", existingHabit.habit);
-        console.log("Completed Status:", existingHabit.completed);
-        console.log("Habit Id: ", existingHabit._id);
-        const habitId = existingHabit._id;
+      if (existingDescription) {
+        console.log("Existing Description:", existingDescription);
+        console.log("Completed Status:", existingDescription.completed);
+        console.log("Habit Id: ", existingDescription._id);
+        const habitId = existingDescription._id;
         console.log("Set Habit Id:", habitId);
 
-        if (existingHabit.habit === descriptionInput) {
+        if (existingDescription.habit === descriptionInput) {
           console.log("Habit is unchanged. No need to update.");
           setDialogMessage("No changes detected.");
           // setShowDialog(true);
           return;
         }
 
-        if (!existingHabit.completed) {
+        if (!existingDescription.completed) {
           console.log("Updating existing habit...");
 
           const updateResponse = await fetch(
-            `http://192.168.1.174:8000/habit/${userName}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
+            `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
             {
               method: "PATCH",
               headers: {
@@ -209,7 +216,7 @@ export default function HabitDescriptionScreen() {
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({
-                habit: descriptionInput,
+                description: descriptionInput,
               }),
             }
           );
@@ -230,7 +237,7 @@ export default function HabitDescriptionScreen() {
       console.log("Creating a new description...");
 
       const createResponse = await fetch(
-        `http://192.168.1.174:8000/habit/${userName}`,
+        `http://192.168.1.174:8000/habit/${username}`,
         {
           method: "POST",
           headers: {

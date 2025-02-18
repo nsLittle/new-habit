@@ -49,16 +49,21 @@ export default function EditTeammemberScreen() {
     }
   };
   const [userData, setUserData] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
 
-  console.log("Old First Name: ", firstName);
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { username, userId, habitId, teammemberId, firstname, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", username);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstname);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   useEffect(() => {
     console.log(`I'm here to reset passed team member data...`);
@@ -81,7 +86,6 @@ export default function EditTeammemberScreen() {
       };
       console.log("Updated User Data: ", updates);
 
-      const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Authentication token is missing.");
 
       console.log("Team Member Id: ", teamMember_id);
