@@ -190,10 +190,8 @@ export default function ReviewScreen() {
         <View style={styles.reviewBox}>
           <View style={styles.reviewHabit}>
             {habits.length > 0 ? (
-              habits.map((habit) => (
-                <View
-                  key={habit._id || habit.habit}
-                  style={styles.sectionTitle}>
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.sectionTitle}>
                   <View style={styles.habitBox}>
                     <Text style={styles.habitData}>
                       {habit.habit || "Unnamed Habit"}
@@ -214,8 +212,8 @@ export default function ReviewScreen() {
 
           <View style={styles.reviewCadence}>
             {habits.length > 0 ? (
-              habits.map((habit) => (
-                <View key={habit._id || habit.habit} style={styles.habitBox}>
+              habits.map((habit, index) => (
+                <View key={`habit-${index}`} style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
                     Your Feedback Cadence:
                   </Text>
@@ -231,8 +229,8 @@ export default function ReviewScreen() {
 
           <View style={styles.reviewReminders}>
             {habits.length > 0 ? (
-              habits.map((habit) => (
-                <View key={habit._id || habit.habit} style={styles.habitBox}>
+              habits.map((habit, index) => (
+                <View style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
                     Your Reminder Cadence:
                   </Text>
@@ -266,10 +264,8 @@ export default function ReviewScreen() {
             <View style={styles.teamMemberDataBox}>
               <Text style={styles.sectionTitle}>Your feedback circle:</Text>
 
-              {teammembers.map((teammember) => (
-                <View
-                  key={teammember.teamMember_id || teammember.teamMemberEmail}
-                  style={styles.buttonContainer}>
+              {teammembers.map((teammember, index) => (
+                <View style={styles.buttonContainer} key={index}>
                   <TouchableOpacity style={styles.contactPersonButton}>
                     {teammember.teamMemberProfilePic ? (
                       <Image
@@ -293,7 +289,7 @@ export default function ReviewScreen() {
                         {teammember.teamMemberEmail}
                       </Text>
                     </View>
-                    <View style={styles.iconsColumn}>
+                    {/* <View style={styles.iconsColumn}>
                       <MaterialIcons
                         name="send"
                         size={24}
@@ -327,7 +323,7 @@ export default function ReviewScreen() {
                           );
                         }}
                       />
-                    </View>
+                    </View> */}
                   </TouchableOpacity>
                 </View>
               ))}

@@ -170,7 +170,7 @@ export default function HabitDescriptionScreen() {
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
+        `http://192.168.1.174:8000/habit/${username}/${habitId}/description`,
         {
           method: "PATCH",
           headers: {
@@ -198,17 +198,17 @@ export default function HabitDescriptionScreen() {
         console.log("Set Habit Id:", habitId);
 
         if (existingDescription.habit === descriptionInput) {
-          console.log("Habit is unchanged. No need to update.");
+          console.log("Desription is unchanged. No need to update.");
           setDialogMessage("No changes detected.");
           // setShowDialog(true);
           return;
         }
 
         if (!existingDescription.completed) {
-          console.log("Updating existing habit...");
+          console.log("Updating existing description...");
 
           const updateResponse = await fetch(
-            `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
+            `http://192.168.1.174:8000/habit/${username}/${habitId}/description`,
             {
               method: "PATCH",
               headers: {

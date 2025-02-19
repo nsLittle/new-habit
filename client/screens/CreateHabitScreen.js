@@ -174,7 +174,9 @@ export default function CreateHabitScreen() {
       if (!response.ok) throw new Error("Failed to fetch existing habits.");
 
       const data = await response.json();
-      const existingHabit = data.habits.length > 0 ? data.habits[0] : null;
+      const existingHabit = data.habits.find(
+        (habit_input) => habit_input.completed === false
+      );
 
       if (existingHabit) {
         console.log("Existing Habit:", existingHabit.habit);
@@ -194,7 +196,7 @@ export default function CreateHabitScreen() {
           console.log("Updating existing habit...");
 
           const updateResponse = await fetch(
-            `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`, // Update the specific habit by ID
+            `http://192.168.1.174:8000/habit/${username}/${habitId}/habit`,
             {
               method: "PATCH",
               headers: {

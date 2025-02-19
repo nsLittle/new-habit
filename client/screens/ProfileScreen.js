@@ -174,7 +174,7 @@ export default function ProfileScreen() {
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => navigation.navigate("ReviewScreen")}>
-            <Text style={styles.saveButtonText}>Review & Finish ▶</Text>
+            <Text style={styles.saveButtonText}>Review ▶</Text>
           </TouchableOpacity>
         </View>
       </View>

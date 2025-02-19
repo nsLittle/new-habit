@@ -18,6 +18,7 @@ import CadenceScreen from "./screens/CadenceScreen";
 import ReminderScreen from "./screens/ReminderScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import FeedbackRequestScreen from "./screens/FeedbackRequestScreen";
+import FeedbackRequestTwoScreen from "./screens/FeedbackRequestTwoScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -70,6 +71,10 @@ export default function App() {
             <Stack.Screen
               name="FeedbackRequestScreen"
               component={FeedbackRequestScreen}
+            />
+            <Stack.Screen
+              name="FeedbackRequestTwoScreen"
+              component={FeedbackRequestTwoScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>

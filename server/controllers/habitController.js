@@ -11,7 +11,7 @@ exports.createHabit = async (req, res) => {
     const { username } = req.params;
     console.log("Username:", username);
 
-    const { habit, userId } = req.body;
+    const { habit, userId, completed } = req.body;
     console.log("Habit: ", habit);
     console.log("User Id: ", userId);
 
@@ -30,9 +30,23 @@ exports.createHabit = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (!completed) {
+      const activeHabit = await Habit.findOne({
+        user: user._id,
+        completed: false,
+      });
+
+      if (activeHabit) {
+        return res
+          .status(400)
+          .json({ message: "Only one active habit is allowed at a time." });
+      }
+    }
+
     const newHabit = await Habit.create({
       habit,
       user: user._id,
+      completed, // Defaults to false unless specified otherwise
     });
 
     console.log("New Habit: ", newHabit);
@@ -94,6 +108,40 @@ exports.getDetailedHabit = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.saveHabit = async (req, res) => {
+  try {
+    console.log("Fetching edited habit for:", req.params.username);
+    console.log("Request Body: ", req.body);
+
+    const { username, habit_id } = req.params;
+    console.log("Req Params: ", req.params);
+    console.log("Updating Habit:", habit_id, "for User:", username);
+
+    const user = await User.findOne({ username });
+    console.log("User: ", user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const updatedHabit = await Habit.findOneAndUpdate(
+      { _id: habit_id, user: user._id },
+      { $set: { Habit: req.body.habit } },
+      { new: true }
+    );
+
+    if (!updatedHabit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    res.status(200).json({
+      message: "Detailed habit updated successfully",
+      updatedHabit,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 

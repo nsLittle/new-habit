@@ -3,6 +3,7 @@ const {
   createHabit,
   getUserHabits,
   getDetailedHabit,
+  saveHabit,
   saveDescription,
   saveCadence,
   saveReminder,
@@ -18,6 +19,7 @@ router.get(
   protect,
   getDetailedHabit
 );
+router.patch("/:username/:habit_id/habit", protect, saveHabit);
 router.patch("/:username/:habit_id/description", protect, saveDescription);
 router.patch("/:username/:habit_id/cadence", protect, saveCadence);
 router.patch("/:username/:habit_id/reminder", protect, saveReminder);
