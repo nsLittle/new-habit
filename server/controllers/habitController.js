@@ -179,11 +179,18 @@ exports.saveReminder = async (req, res) => {
       return res.status(404).json({ message: "Habit not found" });
     }
 
+    const { reminderTime, selectedDays, ...otherFields } = req.body;
+
     const requestData = {
-      ...req.body,
-      selectedDays: Array.isArray(req.body.selectedDays)
-        ? req.body.selectedDays
-        : req.body.selectedDays.split(",").map((day) => day.trim()),
+      ...otherFields,
+      selectedDays: Array.isArray(selectedDays)
+        ? selectedDays
+        : selectedDays.split(",").map((day) => day.trim()),
+      selectedTime: {
+        hour: Number(reminderTime.hour) || 0,
+        minute: Number(reminderTime.minute) || 0,
+        second: Number(reminderTime.second) || 0,
+      },
     };
 
     const updatedHabit = await Habit.findByIdAndUpdate(
