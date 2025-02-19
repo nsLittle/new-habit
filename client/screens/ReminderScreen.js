@@ -66,12 +66,6 @@ export default function ReminderScreen() {
 
   const generateOptions = (range) => Array.from({ length: range }, (_, i) => i);
 
-  // const handleScroll = (setter, event) => {
-  //   const itemHeight = 50; // Adjust based on your row height
-  //   const index = Math.round(event.nativeEvent.contentOffset.y / itemHeight);
-  //   setter(index);
-  // };
-
   const saveReminders = async () => {
     console.log(`I'm ready to save reminder cadence!`);
     console.log("Username", username);
@@ -97,7 +91,7 @@ export default function ReminderScreen() {
       const response = await fetch(
         `http://192.168.1.174:8000/habit/${username}/${habitId}/reminder`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -198,7 +192,7 @@ export default function ReminderScreen() {
               label: `${hour}`,
               value: hour,
             }))}
-            placeholder={{ label: "Hour", value: null }}
+            placeholder={{ label: "Hour", value: "0" }}
           />
           <RNPickerSelect
             onValueChange={(value) => setSelectedMinute(value)}
@@ -206,16 +200,16 @@ export default function ReminderScreen() {
               label: `${minute}`,
               value: minute,
             }))}
-            placeholder={{ label: "Minute", value: null }}
+            placeholder={{ label: "Minute", value: "0" }}
           />
-          <RNPickerSelect
+          {/* <RNPickerSelect
             onValueChange={(value) => setSelectedSecond(value)}
             items={generateOptions(60).map((second) => ({
               label: `${second}`,
               value: second,
             }))}
             placeholder={{ label: "Second", value: null }}
-          />
+          /> */}
         </View>
 
         <View style={styles.buttonRow}>

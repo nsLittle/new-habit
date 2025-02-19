@@ -49,6 +49,7 @@ exports.createHabit = async (req, res) => {
 
 exports.getUserHabits = async (req, res) => {
   try {
+    console.log("Incoming request to get habit for:", req.params.username);
     const { username } = req.params;
     console.log("Fetching habits for: ", username);
 
@@ -71,6 +72,11 @@ exports.getUserHabits = async (req, res) => {
 
 exports.getDetailedHabit = async (req, res) => {
   try {
+    console.log(
+      "Incoming request to get description for:",
+      req.params.username
+    );
+    console.log("Incoming request to get description for:", req.params.habitId);
     const { username, habitId } = req.params;
     console.log("Fetching descriptions for: ", username);
 
@@ -151,23 +157,38 @@ exports.completeHabit = async (req, res) => {
 
 exports.saveReminder = async (req, res) => {
   try {
-    const { username, habitId } = req.params;
-    console.log("Saving Reminder for Habit:", habitId, "User:", username);
-    console.log("Received body:", req.body);
+    console.log("Request Params:", req.params);
+    const { username, habit_id } = req.params;
+    console.log(
+      "Saving Reminder for Habit Id:",
+      habit_id,
+      "for username:",
+      username
+    );
+    console.log("Request Body:", req.body);
 
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const habit = await Habit.findOne({ _id: habitId, user: user._id });
+    const habit = await Habit.findOne({ _id: habit_id, user: user._id });
+    console.log("Habit Id: ", habit_id, "for user: ", user._id);
+
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
+    const requestData = {
+      ...req.body,
+      selectedDays: Array.isArray(req.body.selectedDays)
+        ? req.body.selectedDays
+        : req.body.selectedDays.split(",").map((day) => day.trim()),
+    };
+
     const updatedHabit = await Habit.findByIdAndUpdate(
-      habitId,
-      { $set: { reminder: req.body } },
+      habit_id,
+      { $set: { reminders: requestData } },
       { new: true, runValidators: true }
     );
 

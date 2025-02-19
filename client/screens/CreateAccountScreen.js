@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { Dialog, Portal, Button } from "react-native-paper";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -29,6 +29,8 @@ export default function CreateAccountScreen() {
     habitinput,
     teammemberId,
     firstname,
+    Email,
+    ProfilePic,
     token,
   } = userContext || {};
 
@@ -49,6 +51,8 @@ export default function CreateAccountScreen() {
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
       console.log("First Name: ", firstname);
+      console.log("Email: ", Email);
+      console.log("Profile Pic: ", ProfilePic);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -177,6 +181,8 @@ export default function CreateAccountScreen() {
           userId: data.user._id,
           token: data.token,
           firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email,
           profilePic: data.user.profilePic,
         };
 

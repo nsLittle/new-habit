@@ -27,8 +27,6 @@ export default function LoginScreen() {
     habitId,
     teammemberId,
     firstName,
-    lastName,
-    email,
     profilePic,
     token,
   } = userContext || {};
@@ -45,8 +43,6 @@ export default function LoginScreen() {
       habitId: "",
       teammemberId: "",
       firstName: "",
-      lastName: "",
-      email: "",
       profilePic: "",
       token: null,
     });
@@ -59,8 +55,6 @@ export default function LoginScreen() {
       console.log("User Name: ", userName);
       console.log("User Id: ", userId);
       console.log("First Name: ", firstName);
-      console.log("Last Name: ", lastName);
-      console.log("email: ", email);
       console.log("Profile Pic: ", profilePic);
       console.log("Token: ", token);
     }
