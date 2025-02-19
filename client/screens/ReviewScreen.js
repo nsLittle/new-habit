@@ -153,6 +153,7 @@ export default function ReviewScreen() {
   const { firstName, lastName, profilePic, email, habits, teammembers } =
     profileData;
 
+  console.log("Profile Data: ", profileData);
   console.log("ProfilePic: ", profilePic);
 
   const profilePicUrl = isValidUrl(profilePic)
@@ -229,7 +230,7 @@ export default function ReviewScreen() {
           <View style={styles.reviewReminders}>
             {habits.length > 0 ? (
               habits.map((habit, index) => (
-                <View key={`habit-${index}`} style={styles.habitBox}>
+                <View style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
                     Your Reminder Cadence:
                   </Text>

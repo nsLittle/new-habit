@@ -1,141 +1,372 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
   version: 1.0.0
-  title: Product Lister API
-  description: API documentation for the Product Lister application.
-host: localhost:8000
-basePath: /api
+  title: HabitApp API
+  description: API documentation for HabitApp.
+host: api.habitapp.com
+basePath: /
 schemes:
-  - http
+  - https
 paths:
-  /products:
-    get:
-      summary: Get all products
-      description: Retrieves a list of all products with optional filtering, sorting, and pagination.
-      parameters:
-        - in: query
-          name: page
-          type: integer
-          description: Page number for pagination (default is 1).
-        - in: query
-          name: category
-          type: string
-          description: Filter by product category.
-        - in: query
-          name: price
-          type: string
-          enum: [highest, lowest]
-          description: Sort by price (highest or lowest).
-      responses:
-        '200':
-          description: Successfully retrieved the list of products
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Product'
-        '500':
-          description: Server error
-
-  /products/{id}:
-    get:
-      summary: Get product details
-      description: Retrieves details of a specific product by its ID.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Product details retrieved successfully
-          schema:
-            $ref: '#/definitions/Product'
-        '404':
-          description: Product not found
-        '500':
-          description: Server error
-
-  /reviews/{productId}:
-    get:
-      summary: Get reviews for a product
-      description: Retrieves all reviews for a given product.
-      parameters:
-        - in: path
-          name: productId
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Successfully retrieved reviews
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Review'
-        '404':
-          description: Product not found
-        '500':
-          description: Server error
+  /auth/signup:
     post:
-      summary: Add a review to a product
-      description: Submits a new review for a given product.
+      summary: Sign up a new user
+      description: Creates a new user account.
       parameters:
-        - in: path
-          name: productId
-          required: true
-          type: string
         - in: body
           name: body
           required: true
           schema:
             type: object
             properties:
-              reviewer:
+              full_name:
                 type: string
-              reviewText:
+              email:
+                type: string
+              phone:
+                type: string
+              profile_photo:
+                type: string
+                format: binary
+              username:
+                type: string
+              password:
                 type: string
             required:
-              - reviewer
-              - reviewText
+              - full_name
+              - email
+              - password
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Bad request
+  /auth/login:
+    post:
+      summary: User login
+      description: Logs in an existing user.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            required:
+              - email
+              - password
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+  /auth/logout:
+    post:
+      summary: Logout user
+      description: Logs out the user by invalidating the session/token.
+      responses:
+        '200':
+          description: Logged out successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+  /auth/protected-route:
+    get:
+      summary: Protected route for admins
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully authenticated
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Access granted"
+        '401':
+          description: Unauthorized
+  /user:
+    get:
+      summary: Get all users (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of all users retrieved successfully
+  /user/{username}:
+    get:
+      summary: Get user profile (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User profile retrieved successfully
+        '404':
+          description: User not found
+    patch:
+      summary: Update user details
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User updated successfully
+    delete:
+      summary: Deactivate a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User deactivated
+  /habit/{username}:
+    post:
+      summary: Create a new habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
       responses:
         '201':
-          description: Review created successfully
-        '400':
-          description: Invalid request body
-        '500':
-          description: Server error
-
-definitions:
-  Product:
-    type: object
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-      category:
-        type: string
-      price:
-        type: number
-      description:
-        type: string
-      image:
-        type: string
-      createdAt:
-        type: string
-        format: date-time
-
-  Review:
-    type: object
-    properties:
-      _id:
-        type: string
-      reviewer:
-        type: string
-      reviewText:
-        type: string
-      product:
-        type: string
-      createdAt:
-        type: string
-        format: date-time
-
+          description: Habit created successfully
+    get:
+      summary: Get all habits for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of habits retrieved successfully
+  /habit/{username}/{habit_id}/get-detailed-habit:
+    get:
+      summary: Get habit details
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit details retrieved successfully
+  /habit/{username}/{habit_id}/edit-detailed-habit:
+    patch:
+      summary: Edit habit details
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit details updated successfully
+  /habit/{username}/{habit_id}/feedback:
+    patch:
+      summary: Update feedback for a habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit feedback updated successfully
+  /habit/{username}/{habit_id}/reminder:
+    patch:
+      summary: Update habit reminders
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit reminder updated successfully
+  /habit/{username}/{habit_id}/complete:
+    patch:
+      summary: Mark habit as complete
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit marked as complete
+  /teammember/{username}:
+    post:
+      summary: Add a new team member
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Team member added successfully
+    get:
+      summary: Get all team members for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Team members retrieved successfully
+  /teammember/{username}/{teamMember_id}:
+    patch:
+      summary: Update a team member
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: teamMember_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Team member updated successfully
+    delete:
+      summary: Delete a team member
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: teamMember_id
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Team member deleted successfully
+  /feedback/{username}/{habit_id}:
+    get:
+      summary: Get all feedback for a user’s habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Feedback retrieved
+    post:
+      summary: Submit feedback for a habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Feedback submitted
+  /notification/{username}:
+    post:
+      summary: Create a notification
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Notification created
+    get:
+      summary: Get notifications for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Notifications retrieved
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header

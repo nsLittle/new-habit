@@ -17,7 +17,7 @@ const HabitSchema = new mongoose.Schema(
     },
     feedbackCadence: {
       type: String,
-      enum: ["daily", "weekly", "monthly", null],
+      enum: ["Weekly", "Every Other Week", "Monthly", "Quarterly", null],
       default: null,
     },
     completed: { type: Boolean, default: false },

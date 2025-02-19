@@ -91,7 +91,7 @@ exports.getDetailedHabit = async (req, res) => {
   }
 };
 
-exports.editedDetailedHabit = async (req, res) => {
+exports.saveDescription = async (req, res) => {
   try {
     console.log("Fetching edited detailed habit for:", req.params.username);
     console.log("Request Body: ", req.body);
@@ -153,20 +153,18 @@ exports.saveReminder = async (req, res) => {
   try {
     const { username, habitId } = req.params;
     console.log("Saving Reminder for Habit:", habitId, "User:", username);
+    console.log("Received body:", req.body);
 
-    // Find user by username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Find habit by habitId and user
     const habit = await Habit.findOne({ _id: habitId, user: user._id });
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    // Update the habit with the reminder details
     const updatedHabit = await Habit.findByIdAndUpdate(
       habitId,
       { $set: { reminder: req.body } },
@@ -184,5 +182,56 @@ exports.saveReminder = async (req, res) => {
   } catch (error) {
     console.error("Error saving reminder:", error);
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.saveCadence = async (req, res) => {
+  try {
+    const { username, habit_id } = req.params;
+    const { feedbackCadence } = req.body;
+
+    console.log(
+      `Updating feedbackCadence for habit: ${habit_id}, user: ${username}`
+    );
+    console.log("Received cadence:", feedbackCadence);
+
+    // Validate feedbackCadence
+    const validCadences = [
+      "Weekly",
+      "Every Other Week",
+      "Monthly",
+      "Quarterly",
+      null,
+    ];
+    if (!validCadences.includes(feedbackCadence)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid feedback cadence value" });
+    }
+
+    // Find user
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find habit and update feedbackCadence
+    const updatedHabit = await Habit.findOneAndUpdate(
+      { _id: habit_id, user: user._id },
+      { $set: { feedbackCadence } }, // Update only the feedbackCadence field
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedHabit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    res.status(200).json({
+      message: "Feedback cadence updated successfully",
+      updatedHabit,
+    });
+  } catch (error) {
+    console.error("Error updating feedback cadence:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

@@ -1,3 +1,4 @@
+import { useContext, useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -7,32 +8,34 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
-import { useState, useEffect, useContext } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserContext } from "../context/UserContext";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function ReminderScreen() {
   const navigation = useNavigation();
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token, habitId } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
-  console.log("HabitId: ", habitId);
 
-  const [dialogVisible, setDialogVisible] = useState(false);
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { username, userId, habitId, teammemberId, firstName, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", username);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
   const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-  };
+  const [showDialog, setShowDialog] = useState(false);
 
   const [isReminderEnabled, setIsReminderEnabled] = useState(false);
   const [isEmailReminderEnabled, setIsEmailReminderEnabled] = useState(false);
@@ -87,13 +90,14 @@ export default function ReminderScreen() {
     };
 
     console.log("Reminder Data: ", reminderData);
+    console.log("Reminder Data before sending: ", JSON.stringify(reminderData));
 
     try {
       console.log("Ready to fetch data");
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
+        `http://192.168.1.174:8000/habit/${username}/${habitId}/reminder`,
         {
-          method: "PATCH",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -103,16 +107,10 @@ export default function ReminderScreen() {
       );
 
       const data = await response.json();
-      console.log("Reminder Data: ", data);
+      console.log("Fetched Reminder Data: ", data);
 
       if (response.ok) {
-        await AsyncStorage.setItem("habitId", data.habitId);
-        await AsyncStorage.setItem("userId", data.userId);
-        console.log("Storing Habit Id:", data.habitId);
-        console.log("Storing User Id:", data.userId);
-
-        setDialogVisible("Reminder created successfully!");
-        setDialogMessage("");
+        setDialogMessage("Reminder created successfully!");
         console.log("Reminder saved successfully:", data);
         setIsReminderEnabled(false);
         setIsEmailReminderEnabled(false);

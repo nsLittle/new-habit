@@ -1,43 +1,42 @@
+import { useContext, useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Linking,
+  View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useContext } from "react";
-import { Portal, Dialog, Button } from "react-native-paper";
-import { UserContext } from "../context/UserContext";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function CadenceScreen() {
   const navigation = useNavigation();
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message, callback = null) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
 
-    if (callback) {
-      setTimeout(() => {
-        callback();
-      }, 1000);
-    }
-  };
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, habitId, token } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("HabitId: ", habitId);
-  console.log("Token: ", token);
+  const { username, userId, habitId, teammemberId, firstName, token } =
+    userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", username);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const handleSelectOption = (option) => {
     setSelectedOption(option);
@@ -51,7 +50,7 @@ export default function CadenceScreen() {
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/edit-detailed-habit`,
+        `http://192.168.1.174:8000/habit/${username}/${habitId}/cadence`,
         {
           method: "PATCH",
           headers: {
@@ -60,7 +59,7 @@ export default function CadenceScreen() {
           },
           body: JSON.stringify({
             feedbackCadence: selectedOption,
-            userId: userId,
+            // userId: userId,
           }),
         }
       );
@@ -69,12 +68,15 @@ export default function CadenceScreen() {
       }
 
       const data = await response.json();
-      showDialog("Feedback cadence updated successfully.", () => {
-        navigation.navigate("ReminderScreen");
-      });
+      setDialogMessage("Feedback cadence updated successfully.");
+      navigation.navigate("ReminderScreen");
+      //   setDialogMessage("Feedback cadence updated successfully.", () => {
+      //     navigation.navigate("ReminderScreen");
+      //   }
+      // );
     } catch (error) {
       console.error("Error updating feedback cadence:", error);
-      showDialog("Failed to update feedback cadence. Please try again.");
+      setDialogMessage("Failed to update feedback cadence. Please try again.");
     }
   };
 
@@ -82,8 +84,8 @@ export default function CadenceScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
         <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
           <Dialog.Content>
@@ -91,7 +93,7 @@ export default function CadenceScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setDialogVisible(false)}
+              onPress={() => setShowDialog(false)}
               labelStyle={styles.dialogButton}>
               OK
             </Button>

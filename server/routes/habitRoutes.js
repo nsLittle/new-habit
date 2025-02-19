@@ -3,7 +3,8 @@ const {
   createHabit,
   getUserHabits,
   getDetailedHabit,
-  editedDetailedHabit,
+  saveDescription,
+  saveCadence,
   saveReminder,
   completeHabit,
 } = require("../controllers/habitController");
@@ -17,13 +18,9 @@ router.get(
   protect,
   getDetailedHabit
 );
-router.patch(
-  "/:username/:habit_id/edit-detailed-habit",
-  protect,
-  editedDetailedHabit
-);
-
-router.patch("/:username/:habitId/reminder", protect, saveReminder);
+router.patch("/:username/:habit_id/description", protect, saveDescription);
+router.patch("/:username/:habit_id/cadence", protect, saveCadence);
+router.patch("/:username/:habit_id/reminder", protect, saveReminder);
 router.patch("/:username/:habit_id/complete", protect, completeHabit);
 
 module.exports = router;
