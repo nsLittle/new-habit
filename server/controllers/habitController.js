@@ -128,7 +128,7 @@ exports.saveHabit = async (req, res) => {
 
     const updatedHabit = await Habit.findOneAndUpdate(
       { _id: habit_id, user: user._id },
-      { $set: { Habit: req.body.habit } },
+      { $set: { habit: req.body.habit } },
       { new: true }
     );
 
@@ -147,38 +147,78 @@ exports.saveHabit = async (req, res) => {
 
 exports.saveDescription = async (req, res) => {
   try {
-    console.log("Fetching edited detailed habit for:", req.params.username);
-    console.log("Request Body: ", req.body);
-
     const { username, habit_id } = req.params;
-    console.log("Req Params: ", req.params);
-    console.log("Updating Habit:", habit_id, "for User:", username);
+    const { description } = req.body;
+
+    console.log("Fetching habit for:", username, "Habit ID:", habit_id);
+    console.log("Received Description:", description);
+
+    if (!description || description.trim() === "") {
+      return res.status(400).json({ message: "Description cannot be empty." });
+    }
 
     const user = await User.findOne({ username });
-    console.log("User: ", user);
     if (!user) {
+      console.log("User not found:", username);
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Ensure only the "description" field is updated
-    const updatedHabit = await Habit.findOneAndUpdate(
+    const updatedDescription = await Habit.findOneAndUpdate(
       { _id: habit_id, user: user._id },
-      { $set: { description: req.body.description } }, // Only update the description field
+      { $set: { description: description } },
       { new: true }
     );
 
-    if (!updatedHabit) {
+    if (!updatedDescription) {
+      console.log("Habit not found:", habit_id);
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    res.status(200).json({
-      message: "Detailed habit updated successfully",
-      updatedHabit,
+    console.log("Updated Description:", updatedDescription);
+    return res.status(200).json({
+      message: "Description updated successfully",
+      updatedDescription,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error updating description:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// exports.saveDescription = async (req, res) => {
+//   try {
+//     console.log("Fetching edited detailed habit for:", req.params.username);
+//     console.log("Request Body: ", req.body);
+
+//     const { username, habit_id } = req.params;
+//     console.log("Req Params: ", req.params);
+//     console.log("Updating Habit:", habit_id, "for User:", username);
+
+//     const user = await User.findOne({ username });
+//     console.log("User: ", user);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Ensure only the "description" field is updated
+//     const updatedHabit = await Habit.findOneAndUpdate(
+//       { _id: habit_id, user: user._id },
+//       { $set: { description: req.body.description } }, // Only update the description field
+//       { new: true }
+//     );
+
+//     if (!updatedHabit) {
+//       return res.status(404).json({ message: "Habit not found" });
+//     }
+
+//     res.status(200).json({
+//       message: "Detailed description updated successfully",
+//       updatedHabit,
+//     });
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// };
 
 exports.completeHabit = async (req, res) => {
   try {

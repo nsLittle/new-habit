@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
@@ -38,225 +38,129 @@ export default function CreateHabitScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const [habitInput, setHabitInput] = useState("");
-  const [habitData, setHabitData] = useState({ habits: [] });
-
-  useEffect(() => {
-    if (username) {
-      fetchUserData();
-    }
-  }, [username]);
-
-  const fetchUserData = async () => {
-    try {
-      if (!token) throw new Error("Authentication token is missing.");
-
-      const [userResponse, habitsResponse, teamMemberResponse] =
-        await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/habit/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-
-      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
-      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
-      if (!teamMemberResponse.ok)
-        throw new Error("Failed to fetch team member data.");
-
-      const userData = await userResponse.json();
-      const habitData = await habitsResponse.json();
-      const fetchedHabitData = await habitsResponse.json();
-      setHabitData(fetchedHabitData);
-      const teamMemberData = await teamMemberResponse.json();
-      const habitValue = habitData.habits[0].habit;
-      console.log("User Data: ", userData);
-      console.log("Habit Data: ", habitData);
-      console.log("Set Habit Data: ", setHabitData);
-      console.log("Team Member Data: ", teamMemberData);
-      console.log("Habit Value: ", habitValue);
-
-      setProfileData((prev) => ({
-        ...prev,
-        firstName: userData?.firstName || "",
-        lastName: userData?.lastName || "",
-        profilePic: userData?.profilePic || "",
-        email: userData?.email || "",
-        habits: habitData?.habits || [],
-        teammembers: [...teamMemberData?.teamMembers] || [],
-      }));
-
-      console.log("Profile Data: ", profileData);
-      console.log("User First Name; ", profileData.firstName);
-      console.log("Teammembers: ", profileData.teammembers);
-    } catch (error) {
-      console.error("Error with data retrieval:", error);
-    }
-  };
-
-  const checkDuplication = async () => {
-    console.log(`Checking for existing habit...`);
-
-    try {
-      const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        console.error("Failed to fetch habit.");
-        return false;
-      }
-
-      const data = await response.json();
-      console.log("Data: ", data);
-      console.log("Habit: ", data.habits[0].habit);
-      setHabitInput(data.habits[0].habit);
-      console.log("Habit Completed?: ", data.habits[0].completed);
-
-      if (data.habits[0].completed === false) {
-        console.log("Habit found:", data.habits[0].habit);
-        setDialogMessage("ARE YOU SURE YOU WANT TO EDIT YOUR HABIT?");
-        setShowDialog(true);
-      }
-    } catch (error) {
-      console.error("Error checking habit duplication:", error);
-      return false;
-    }
-  };
+  const [existingHabit, setExistingHabit] = useState("");
 
   useEffect(() => {
     const checkForExistingHabit = async () => {
-      const isDuplicate = await checkDuplication();
-      console.log("Checking for pre-existing habit...");
-    };
+      console.log(`Checking for existing habit...`);
 
+      try {
+        const response = await fetch(
+          `http://192.168.1.174:8000/habit/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error("No existing habit found.");
+          setHabitInput("");
+          setExistingHabit("");
+          return false;
+        }
+
+        const data = await response.json();
+        const existingHabit = data.habits[0]?.habit || "";
+
+        if (existingHabit) {
+          console.log("Existing Habit Found:", existingHabit);
+          setHabitInput(existingHabit);
+          setExistingHabit(existingHabit);
+          setDialogMessage(
+            "ARE YOU SURE YOU WANT TO EDIT YOUR HABIT?\n\nPress 'Keep Habit' if you want to retain your current habit."
+          );
+          setShowDialog(true);
+        }
+      } catch (error) {
+        console.error("Error checking existing habit:", error);
+      }
+    };
     checkForExistingHabit();
   }, []);
 
   const saveHabit = async () => {
     console.log(`Attempting to save habit.`);
     console.log("Habit Input:", habitInput);
+    console.log("Existing Habit: ", existingHabit);
+    console.log("User Id:", userId);
+    console.log("Habit Id:", habitId);
+    console.log("Username: ", username);
 
     if (!habitInput.trim()) {
       setDialogMessage("You must enter a habit.");
       setShowDialog(true);
       return;
     }
+
     if (!username) {
       setDialogMessage("Failed to find user.");
       setShowDialog(true);
       return;
     }
 
+    if (habitInput === existingHabit) {
+      setDialogMessage(
+        "No edits were made; are you sure?\n\nTo Keep Habit as is, press 'Keep Habit'."
+      );
+      setShowDialog(true);
+      return;
+    }
+
     try {
-      const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      let response;
+      let url;
+      let method;
 
-      if (!response.ok) throw new Error("Failed to fetch existing habits.");
-
-      const data = await response.json();
-      const existingHabit = data.habits.find(
-        (habit_input) => habit_input.completed === false
-      );
-
-      if (existingHabit) {
-        console.log("Existing Habit:", existingHabit.habit);
-        console.log("Completed Status:", existingHabit.completed);
-        console.log("Habit Id: ", existingHabit._id);
-        const habitId = existingHabit._id;
-        console.log("Set Habit Id:", habitId);
-
-        if (existingHabit.habit === habitInput) {
-          console.log("Habit is unchanged. No need to update.");
-          setDialogMessage("No changes detected.");
-          setShowDialog(true);
-          return;
-        }
-
-        if (!existingHabit.completed) {
-          console.log("Updating existing habit...");
-
-          const updateResponse = await fetch(
-            `http://192.168.1.174:8000/habit/${username}/${habitId}/habit`,
-            {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                habit: habitInput,
-              }),
-            }
-          );
-
-          if (!updateResponse.ok)
-            throw new Error("Failed to update the habit.");
-
-          const updatedData = await updateResponse.json();
-          console.log("Updated Habit:", updatedData);
-
-          setDialogMessage("Habit updated successfully!");
-          setShowDialog(true);
-          setHabitInput("");
-          navigation.navigate("HabitDescriptionScreen");
-        }
+      if (habitId) {
+        url = `http://192.168.1.174:8000/habit/${username}/${habitId}/habit`;
+        method = "PATCH";
+      } else {
+        url = `http://192.168.1.174:8000/habit/${username}`;
+        method = "POST";
       }
 
-      console.log("Creating a new habit...");
+      console.log(`Sending ${method} request to:`, url);
 
-      const createResponse = await fetch(
-        `http://192.168.1.174:8000/habit/${username}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            habit: habitInput,
-            userId: userId,
-          }),
-        }
-      );
+      response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ habit: habitInput, userId: userId }),
+      });
 
-      if (!createResponse.ok) throw new Error("Failed to create a new habit.");
+      if (!response.ok)
+        throw new Error(`Failed to ${habitId ? "update" : "create"} habit.`);
 
-      const newData = await createResponse.json();
-      console.log("New Habit Created:", newData);
+      const responseData = await response.json();
+      console.log("Response Data: ", responseData);
 
-      setUserContext((prev) => ({
-        ...prev,
-        habits: newData?.habit || "",
+      setUserContext((prevContext) => ({
+        ...prevContext,
+        habitId: responseData.habitId || habitId,
+        habitInput: habitInput,
       }));
 
-      setDialogMessage("Habit created successfully!");
-      setShowDialog(true);
       setHabitInput("");
+      setDialogMessage("Habit successfully saved");
+      setShowDialog(true);
 
-      navigation.navigate("HabitDescriptionScreen");
+      setTimeout(() => {
+        setShowDialog(false);
+        navigation.navigate("HabitDescriptionScreen");
+      }, 500);
+
+      // navigation.navigate("HabitDescriptionScreen");
     } catch (error) {
-      console.error("Error saving habit:", error);
-      setDialogMessage("Could not save habit.");
+      console.error(`Error ${habitId ? "updating" : "creating"} habit:`, error);
+      setDialogMessage(
+        `Error ${habitId ? "updating" : "creating"} habit. Please try again.`
+      );
       setShowDialog(true);
     }
   };

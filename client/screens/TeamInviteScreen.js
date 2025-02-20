@@ -180,13 +180,13 @@ export default function TeamInviteScreen() {
                   <Text style={styles.contactEmail}>{teammember.email}</Text>
                 </View>
                 <View style={styles.iconsColumn}>
-                  <MaterialIcons
+                  {/* <MaterialIcons
                     name="send"
                     size={24}
                     color="black"
                     style={styles.iconSend}
                     onPress={() => sendEmail(teammember.email)}
-                  />
+                  /> */}
                   <MaterialIcons
                     name="edit"
                     size={24}
@@ -211,7 +211,7 @@ export default function TeamInviteScreen() {
                       setDialogMessage(
                         "ARE YOU SURE YOU WANT TO DLETE YOUR TEAM MEMBER?"
                       );
-                      // console.log(`Delete contact: ${teammember}`);
+                      console.log(`Delete contact: ${teammember}`);
                     }}
                   />
                 </View>

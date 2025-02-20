@@ -20,9 +20,9 @@ export default function Header() {
   useEffect(() => {
     const fetchUsername = async () => {
       try {
-        const storedUsername = await AsyncStorage.getItem("username");
+        const storedUsername = await AsyncStorage.getItem("userName");
         if (storedUsername) {
-          setUserContext((prev) => ({ ...prev, username: storedUsername }));
+          setUserContext((prev) => ({ ...prev, userName: storedUsername }));
         }
       } catch (error) {
         console.error("Error retrieving username:", error);
@@ -53,7 +53,7 @@ export default function Header() {
     closeMenus();
     navigation.navigate(screenName, {
       ...params,
-      username: userContext.username,
+      userName: userContext.userName,
       habitId,
     });
   };
@@ -92,7 +92,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("CreateHabitScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -101,7 +101,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("HabitDescriptionScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -110,7 +110,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("TeamInviteScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -119,7 +119,7 @@ export default function Header() {
           {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("AddTeammemberScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -128,7 +128,7 @@ export default function Header() {
           {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("EditTeammemberScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -137,7 +137,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("CadenceScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -146,7 +146,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("ReminderScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -155,7 +155,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("ReviewScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
                 habitId: userContext.habitId,
               })
             }>
@@ -173,7 +173,7 @@ export default function Header() {
           {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("WelcomeScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Welcome</Text>
@@ -181,7 +181,7 @@ export default function Header() {
           {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("LoginScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Login</Text>
@@ -189,7 +189,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("EditAccountScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Edit Account</Text>
@@ -197,7 +197,7 @@ export default function Header() {
           {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("CreateAccountScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Create Account</Text>
@@ -205,7 +205,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("ProfileScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Profile</Text>
@@ -213,7 +213,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("SettingsScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Settings</Text>
@@ -221,7 +221,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("ProgressScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Progress</Text>
@@ -229,7 +229,7 @@ export default function Header() {
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("LogoutScreen", {
-                username: userContext.username,
+                userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Logout</Text>

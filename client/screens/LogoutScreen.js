@@ -1,19 +1,19 @@
 import React, { useContext } from "react";
 import {
+  Platform,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Linking,
-  ScrollView,
+  View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserContext } from "../context/UserContext";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function LogoutScreen() {
   const navigation = useNavigation();
@@ -22,10 +22,31 @@ export default function LogoutScreen() {
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem("token");
-      await AsyncStorage.removeItem("username");
-      await AsyncStorage.removeItem("userId");
-      setUserContext(null);
+      await AsyncStorage.clear();
+
+      if (Platform.OS !== "web") {
+        await SecureStore.deleteItemAsync("token");
+      }
+
+      setUserContext({
+        userName: null,
+        userId: null,
+        habitId: null,
+        habitinput: null,
+        teammemberId: null,
+        firstName: null,
+        lastName: null,
+        email: null,
+        profilePic: null,
+        token: null,
+      });
+
+      console.log("UserContext after reset:", userContext);
+      console.log("Logout completed.");
+
+      setTimeout(() => {
+        navigation.navigate("WelcomeScreen");
+      }, 200);
       navigation.navigate("WelcomeScreen");
     } catch (error) {
       console.error("Failed to clear AsyncStorage:", error);

@@ -46,6 +46,7 @@ export default function AddTeammemberScreen() {
   const [teamMembers, setTeamMembers] = useState([]);
 
   const handleSave = async () => {
+    console.log("I'm here to save team members...");
     const { userId } = userContext;
 
     if (!userId) {
@@ -208,7 +209,12 @@ export default function AddTeammemberScreen() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => {
+              console.log("Save button pressed!");
+              handleSave();
+            }}>
             <Text style={styles.saveButtonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
