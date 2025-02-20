@@ -59,7 +59,6 @@ export default function CadenceScreen() {
           },
           body: JSON.stringify({
             feedbackCadence: selectedOption,
-            // userId: userId,
           }),
         }
       );
@@ -70,10 +69,6 @@ export default function CadenceScreen() {
       const data = await response.json();
       setDialogMessage("Feedback cadence updated successfully.");
       navigation.navigate("ReminderScreen");
-      //   setDialogMessage("Feedback cadence updated successfully.", () => {
-      //     navigation.navigate("ReminderScreen");
-      //   }
-      // );
     } catch (error) {
       console.error("Error updating feedback cadence:", error);
       setDialogMessage("Failed to update feedback cadence. Please try again.");
