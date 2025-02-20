@@ -118,10 +118,6 @@ export default function HabitDescriptionScreen() {
       if (habitId) {
         url = `http://192.168.1.174:8000/habit/${username}/${habitId}/description`;
         method = "PATCH";
-      } else {
-        // url = `http://192.168.1.174:8000/habit/${username}`;
-        // method = "POST";
-        // if there is no habitId, we must go back to CreateHabit to create a habit first so that a habitId can be generated
       }
 
       console.log(`Sending ${method} request to:`, url);

@@ -186,14 +186,6 @@ export default function Header() {
             }>
             <Text style={styles.menuItem}>Login</Text>
           </TouchableOpacity> */}
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("EditAccountScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Edit Account</Text>
-          </TouchableOpacity>
           {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("CreateAccountScreen", {
@@ -212,6 +204,14 @@ export default function Header() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
+              navigateToScreen("EditAccountScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Edit Account</Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={() =>
               navigateToScreen("SettingsScreen", {
                 userName: userContext.userName,
               })
@@ -225,7 +225,7 @@ export default function Header() {
               })
             }>
             <Text style={styles.menuItem}>Progress</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("LogoutScreen", {
