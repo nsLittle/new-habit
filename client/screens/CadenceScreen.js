@@ -36,14 +36,57 @@ export default function CadenceScreen() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [cadenceInput, setCadenceInput] = useState(null);
+  const [existingCadence, setExistingCadence] = useState("");
 
   const handleSelectOption = (option) => {
-    setSelectedOption(option);
+    setCadenceInput(option);
   };
 
+  useEffect(() => {
+    const checkForExistingCadence = async () => {
+      console.log(`Checking for existing cadence...`);
+
+      try {
+        const response = await fetch(
+          `http://192.168.1.174:8000/habit/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error("No existing habit found.");
+          setCadenceInput("");
+          setExistingCadence("");
+          return false;
+        }
+
+        const data = await response.json();
+        const existingCadence = data.habits[0]?.cadence || "";
+
+        if (existingCadence) {
+          console.log("Existing Cadence Found:", existingCadence);
+          setCadenceInput(existingCadence);
+          setExistingCadence(existingCadence);
+          setDialogMessage(
+            "ARE YOU SURE YOU WANT TO EDIT YOUR CADENCE?\n\nPress 'Keep Cadence' if you want to retain your current cadence."
+          );
+          setShowDialog(true);
+        }
+      } catch (error) {
+        console.error("Error checking existing cadence:", error);
+      }
+    };
+    checkForExistingCadence();
+  }, []);
+
   const handleSave = async () => {
-    if (!selectedOption) {
+    if (!cadenceInput) {
       showDialog("Please select a feedback cadence.");
       return;
     }
@@ -58,7 +101,7 @@ export default function CadenceScreen() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            feedbackCadence: selectedOption,
+            feedbackCadence: cadenceInput,
           }),
         }
       );
@@ -111,13 +154,13 @@ export default function CadenceScreen() {
                 key={index}
                 style={[
                   styles.optionBubble,
-                  selectedOption === option && styles.optionBubbleSelected,
+                  cadenceInput === option && styles.optionBubbleSelected,
                 ]}
                 onPress={() => handleSelectOption(option)}>
                 <View
                   style={[
                     styles.checkCircle,
-                    selectedOption === option && styles.checkCircleSelected,
+                    cadenceInput === option && styles.checkCircleSelected,
                   ]}
                 />
                 <Text style={styles.optionText}>{option}</Text>
