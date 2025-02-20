@@ -68,9 +68,10 @@ export default function CadenceScreen() {
 
         const data = await response.json();
         const existingCadence = data.habits[0]?.cadence || "";
+        console.log("Data: ", data);
+        console.log("Existing Cadence: ", existingCadence);
 
         if (existingCadence) {
-          console.log("Existing Cadence Found:", existingCadence);
           setCadenceInput(existingCadence);
           setExistingCadence(existingCadence);
           setDialogMessage(
@@ -92,6 +93,7 @@ export default function CadenceScreen() {
     }
 
     try {
+      console.log("Saving cadence...");
       const response = await fetch(
         `http://192.168.1.174:8000/habit/${username}/${habitId}/cadence`,
         {
@@ -101,7 +103,7 @@ export default function CadenceScreen() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            feedbackCadence: cadenceInput,
+            cadence: cadenceInput,
           }),
         }
       );
@@ -110,6 +112,8 @@ export default function CadenceScreen() {
       }
 
       const data = await response.json();
+      console.log("Data: ", data);
+
       setDialogMessage("Feedback cadence updated successfully.");
       navigation.navigate("ReminderScreen");
     } catch (error) {

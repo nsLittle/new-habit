@@ -21,13 +21,21 @@ export default function AddTeammemberScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstName, token } =
-    userContext || {};
+  const {
+    username,
+    userId,
+    habitId,
+    habitinput,
+    teammemberId,
+    firstName,
+    token,
+  } = userContext || {};
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", userName);
+      console.log("User Name: ", username);
       console.log("User Id: ", userId);
+      console.log("Habit Input: ", habitinput);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
       console.log("First Name: ", firstName);

@@ -185,41 +185,6 @@ exports.saveDescription = async (req, res) => {
   }
 };
 
-// exports.saveDescription = async (req, res) => {
-//   try {
-//     console.log("Fetching edited detailed habit for:", req.params.username);
-//     console.log("Request Body: ", req.body);
-
-//     const { username, habit_id } = req.params;
-//     console.log("Req Params: ", req.params);
-//     console.log("Updating Habit:", habit_id, "for User:", username);
-
-//     const user = await User.findOne({ username });
-//     console.log("User: ", user);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     // Ensure only the "description" field is updated
-//     const updatedHabit = await Habit.findOneAndUpdate(
-//       { _id: habit_id, user: user._id },
-//       { $set: { description: req.body.description } }, // Only update the description field
-//       { new: true }
-//     );
-
-//     if (!updatedHabit) {
-//       return res.status(404).json({ message: "Habit not found" });
-//     }
-
-//     res.status(200).json({
-//       message: "Detailed description updated successfully",
-//       updatedHabit,
-//     });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
-
 exports.completeHabit = async (req, res) => {
   try {
     const { habitId } = req.params;
@@ -302,16 +267,15 @@ exports.saveReminder = async (req, res) => {
 };
 
 exports.saveCadence = async (req, res) => {
+  console.log("Saving on the back end with cadence...");
   try {
     const { username, habit_id } = req.params;
-    const { feedbackCadence } = req.body;
+    const { cadence } = req.body;
+    console.log("Request Params:", req.params);
+    console.log("Request Body:", req.body);
+    console.log(`Updating cadence for habit: ${habit_id}, user: ${username}`);
+    console.log("Received cadence:", cadence);
 
-    console.log(
-      `Updating feedbackCadence for habit: ${habit_id}, user: ${username}`
-    );
-    console.log("Received cadence:", feedbackCadence);
-
-    // Validate feedbackCadence
     const validCadences = [
       "Weekly",
       "Every Other Week",
@@ -319,22 +283,20 @@ exports.saveCadence = async (req, res) => {
       "Quarterly",
       null,
     ];
-    if (!validCadences.includes(feedbackCadence)) {
+    if (!validCadences.includes(cadence)) {
       return res
         .status(400)
         .json({ message: "Invalid feedback cadence value" });
     }
 
-    // Find user
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Find habit and update feedbackCadence
     const updatedHabit = await Habit.findOneAndUpdate(
       { _id: habit_id, user: user._id },
-      { $set: { feedbackCadence } }, // Update only the feedbackCadence field
+      { $set: { cadence } },
       { new: true, runValidators: true }
     );
 

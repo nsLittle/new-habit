@@ -154,6 +154,8 @@ export default function ReviewScreen() {
     profileData;
 
   console.log("Profile Data: ", profileData);
+  console.log("Habits: ", habits);
+
   console.log("ProfilePic: ", profilePic);
 
   const profilePicUrl = isValidUrl(profilePic)
@@ -218,7 +220,7 @@ export default function ReviewScreen() {
                     Your Feedback Cadence:
                   </Text>
                   <Text style={styles.habitData}>
-                    {habit.feedbackCadence || "Unnamed Feedback Cadence"}
+                    {habit.cadence || "Unnamed Feedback Cadence"}
                   </Text>
                 </View>
               ))
@@ -289,41 +291,6 @@ export default function ReviewScreen() {
                         {teammember.teamMemberEmail}
                       </Text>
                     </View>
-                    {/* <View style={styles.iconsColumn}>
-                      <MaterialIcons
-                        name="send"
-                        size={24}
-                        color="black"
-                        style={styles.iconSend}
-                        onPress={() => sendEmail(teammember.teamMemberEmail)}
-                      />
-                      <MaterialIcons
-                        name="edit"
-                        size={24}
-                        color="black"
-                        style={styles.iconEdit}
-                        onPress={() =>
-                          navigation.push("EditTeammemberScreen", {
-                            teamMember_id: teammember.teamMember_id,
-                            firstName: teammember.firstName,
-                            lastName: teammember.lastName,
-                            email: teammember.email,
-                            profilePic: teammember.profilePic,
-                          })
-                        }
-                      />
-                      <MaterialIcons
-                        name="delete"
-                        size={24}
-                        color="black"
-                        style={styles.iconDelete}
-                        onPress={() => {
-                          setDialogMessage(
-                            "ARE YOU SURE YOU WANT TO DLETE YOUR TEAM MEMBER?"
-                          );
-                        }}
-                      />
-                    </View> */}
                   </TouchableOpacity>
                 </View>
               ))}
