@@ -92,7 +92,7 @@ export default function AddTeammemberScreen() {
       }
 
       const response = await fetch(
-        `http://192.168.1.174:8000/teammember/${userName}`,
+        `http://192.168.1.174:8000/teammember/${username}`,
         {
           method: "POST",
           headers: {

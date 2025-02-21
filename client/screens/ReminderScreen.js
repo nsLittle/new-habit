@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
+import { Button, Dialog, Portal } from "react-native-paper";
 import RNPickerSelect from "react-native-picker-select";
 import {
   heightPercentageToDP as hp,
@@ -37,57 +38,152 @@ export default function ReminderScreen() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
-  const [isReminderEnabled, setIsReminderEnabled] = useState(false);
-  const [isEmailReminderEnabled, setIsEmailReminderEnabled] = useState(false);
-  const [isTextReminderEnabled, setIsTextReminderEnabled] = useState(false);
+  const [selectedHour, setSelectedHour] = useState("");
+  const [selectedMinute, setSelectedMinute] = useState("");
 
-  const [selectedDays, setSelectedDays] = useState([]);
+  const [reminderProfile, setReminderProfile] = useState({
+    isReminderEnabled: false,
+    isEmailReminderEnabled: false,
+    isTextReminderEnabled: false,
+    selectedDays: [],
+  });
 
-  const [selectedHour, setSelectedHour] = useState(0);
-  const [selectedMinute, setSelectedMinute] = useState(0);
-  const [selectedSecond, setSelectedSecond] = useState(0);
+  const [existingReminderProfile, setExistingReminderProfile] = useState({
+    isReminderEnabled: false,
+    isEmailReminderEnabled: false,
+    isTextReminderEnabled: false,
+    selectedDays: [],
+    selectedHour: "",
+    selectedMinute: "",
+  });
 
-  const toggleReminderSwitch = (value) => setIsReminderEnabled(value);
-  const toggleEmailSwitch = (value) => setIsEmailReminderEnabled(value);
-  const toggleTextSwitch = (value) => setIsTextReminderEnabled(value);
+  const toggleReminderSwitch = (value) => {
+    setReminderProfile((prev) => ({
+      ...prev,
+      isReminderEnabled: value,
+      isEmailReminderEnabled: value ? prev.isEmailReminderEnabled : false,
+      isTextReminderEnabled: value ? prev.isTextReminderEnabled : false,
+      selectedDays: value ? prev.selectedDays : [],
+      selectedHour: value ? prev.selectedHour : "",
+      selectedMinute: value ? prev.selectedMinute : "",
+    }));
+  };
 
-  const days = ["Su", "M", "T", "W", "Th", "F", "Sa"];
+  const toggleEmailSwitch = (value) => {
+    if (reminderProfile.isReminderEnabled) {
+      setReminderProfile((prev) => ({
+        ...prev,
+        isEmailReminderEnabled: value,
+      }));
+    } else {
+      setDialogMessage("Would you like to enable reminders first?");
+      setShowDialog(true);
+    }
+  };
+
+  const toggleTextSwitch = (value) => {
+    if (reminderProfile.isReminderEnabled) {
+      setReminderProfile((prev) => ({
+        ...prev,
+        isTextReminderEnabled: value,
+      }));
+    } else {
+      setDialogMessage("Would you like to enable reminders first?");
+      setShowDialog(true);
+    }
+  };
+
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const toggleDay = (day) => {
-    setSelectedDays((prevSelectedDays) => {
-      if (!prevSelectedDays.includes(day)) {
-        // If the day is not already selected, add it
-        return [...prevSelectedDays, day];
-      }
-      // If the day is already selected, return the previous state unchanged
-      return prevSelectedDays;
-    });
+    setReminderProfile((prev) => ({
+      ...prev,
+      selectedDays: prev.selectedDays.includes(day)
+        ? prev.selectedDays.filter((d) => d !== day) // Remove day
+        : [...prev.selectedDays, day], // Add day
+    }));
   };
 
   const generateOptions = (range) => Array.from({ length: range }, (_, i) => i);
 
-  const saveReminders = async () => {
-    console.log(`I'm ready to save reminder cadence!`);
-    console.log("Username", username);
-    console.log("Habit ID:", habitId);
+  useEffect(() => {
+    const checkForExistingReminder = async () => {
+      console.log(`Checking for existing reminder...`);
 
-    const reminderData = {
-      isReminderEnabled,
-      isEmailReminderEnabled,
-      isTextReminderEnabled,
-      selectedDays: selectedDays.join(", "),
-      reminderTime: {
-        hour: selectedHour,
-        minute: selectedMinute,
-        second: selectedSecond,
-      },
+      try {
+        const response = await fetch(
+          `http://192.168.1.174:8000/habit/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error("No existing reminder found.");
+          return false;
+        }
+
+        const data = await response.json();
+        const existingReminder = data.habits[0]?.reminders || {
+          isReminderEnabled: false,
+          isEmailReminderEnabled: false,
+          isTextReminderEnabled: false,
+          selectedDays: [],
+          selectedHour: "",
+          selectedMinute: "",
+        };
+        console.log("Data: ", data);
+        console.log("Existing Reminders: ", existingReminder);
+
+        setReminderProfile(existingReminder);
+
+        if (existingReminder) {
+          setDialogMessage(
+            "ARE YOU SURE YOU WANT TO EDIT YOUR REMINDER SETTING?\n\nPress 'Keep Setting' if you want to retain your current reminder settings."
+          );
+          setShowDialog(true);
+        }
+      } catch (error) {
+        console.error("Error checking existing reminders:", error);
+      }
     };
+    checkForExistingReminder();
+  }, []);
 
-    console.log("Reminder Data: ", reminderData);
-    console.log("Reminder Data before sending: ", JSON.stringify(reminderData));
+  const handleSave = async () => {
+    console.log("I'm here to save reminders....");
+    if (!reminderProfile.isReminderEnabled) {
+      setDialogMessage("Are you certain you don't want reminders?");
+      setShowDialog(true);
+      return;
+    }
 
     try {
-      console.log("Ready to fetch data");
+      console.log("Saving reminders...");
+      console.log(
+        "Request Body:",
+        JSON.stringify(
+          {
+            reminders: {
+              isReminderEnabled: reminderProfile.isReminderEnabled,
+              isEmailReminderEnabled: reminderProfile.isEmailReminderEnabled,
+              isTextReminderEnabled: reminderProfile.isTextReminderEnabled,
+              selectedDays: reminderProfile.selectedDays,
+              selectedTime: {
+                hour: selectedHour || "",
+                minute: selectedMinute || "",
+              },
+            },
+          },
+          null,
+          2
+        )
+      );
+
       const response = await fetch(
         `http://192.168.1.174:8000/habit/${username}/${habitId}/reminder`,
         {
@@ -96,34 +192,63 @@ export default function ReminderScreen() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(reminderData),
+          body: JSON.stringify({
+            reminders: {
+              isReminderEnabled: reminderProfile.isReminderEnabled,
+              isEmailReminderEnabled: reminderProfile.isEmailReminderEnabled,
+              isTextReminderEnabled: reminderProfile.isTextReminderEnabled,
+              selectedDays: reminderProfile.selectedDays,
+              selectedTime: {
+                hour: selectedHour || "0",
+                minute: selectedMinute || "0",
+              },
+            },
+          }),
         }
       );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
 
       const data = await response.json();
-      console.log("Fetched Reminder Data: ", data);
+      console.log("Data: ", data);
 
-      if (response.ok) {
-        setDialogMessage("Reminder created successfully!");
-        console.log("Reminder saved successfully:", data);
-        setIsReminderEnabled(false);
-        setIsEmailReminderEnabled(false);
-        setIsTextReminderEnabled(false);
-        setSelectedDays([]);
-        setSelectedHour(0);
-        setSelectedMinute(0);
-        setSelectedSecond(0);
-        navigation.navigate("ReviewScreen");
-      } else {
-        console.error("Failed to save reminder:", data.message);
-      }
+      setDialogMessage("Reminder settings updated successfully.");
+      setShowDialog(true);
+      navigation.navigate("ReviewScreen");
     } catch (error) {
-      console.error("Error saving reminder:", error);
+      console.error("Error updating reminder settings:", error);
+      setDialogMessage("Failed to update reminder settings. Please try again.");
     }
+  };
+
+  const resetToExisting = () => {
+    setReminderProfile({ ...existingReminderProfile });
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Portal>
+        <Dialog
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
+          style={{ backgroundColor: "white" }}>
+          <Dialog.Title style={{ color: "red", fontWeight: "bold" }}>
+            Alert
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text>{dialogMessage}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}
+              onPress={() => setShowDialog(false)}>
+              OK
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>SELECT REMINDERS</Text>
@@ -138,10 +263,12 @@ export default function ReminderScreen() {
             <View style={styles.toggleLabelSwitch}>
               <Switch
                 trackColor={{ false: "#D3D3D3", true: "#81b0ff" }}
-                thumbColor={isReminderEnabled ? "#FFD700" : "#f4f3f4"}
+                thumbColor={
+                  reminderProfile.isReminderEnabled ? "#FFD700" : "#f4f3f4"
+                }
                 ios_backgroundColor="#FFD700"
                 onValueChange={toggleReminderSwitch}
-                value={isReminderEnabled}
+                value={reminderProfile.isReminderEnabled}
               />
             </View>
           </View>
@@ -152,10 +279,12 @@ export default function ReminderScreen() {
             <Text style={styles.toggleLabel}>Email</Text>
             <Switch
               trackColor={{ false: "#D3D3D3", true: "#81b0ff" }}
-              thumbColor={isEmailReminderEnabled ? "#FFD700" : "#f4f3f4"}
+              thumbColor={
+                reminderProfile.isEmailReminderEnabled ? "#FFD700" : "#f4f3f4"
+              }
               ios_backgroundColor="#D3D3D3"
               onValueChange={toggleEmailSwitch}
-              value={isEmailReminderEnabled}
+              value={reminderProfile.isEmailReminderEnabled}
             />
           </View>
 
@@ -163,21 +292,24 @@ export default function ReminderScreen() {
             <Text style={styles.toggleLabel}>Text</Text>
             <Switch
               trackColor={{ false: "#D3D3D3", true: "#81b0ff" }}
-              thumbColor={isTextReminderEnabled ? "#FFD700" : "#f4f3f4"}
+              thumbColor={
+                reminderProfile.isTextReminderEnabled ? "#FFD700" : "#f4f3f4"
+              }
               ios_backgroundColor="#D3D3D3"
               onValueChange={toggleTextSwitch}
-              value={isTextReminderEnabled}
+              value={reminderProfile.isTextReminderEnabled}
             />
           </View>
         </View>
 
         <View style={styles.daySelection}>
-          {days.map((day, index) => (
+          {days.map((day) => (
             <TouchableOpacity
-              key={index}
+              key={day}
               style={[
                 styles.daySquare,
-                selectedDays.includes(day) && styles.selectedDay,
+                reminderProfile.selectedDays.includes(day) &&
+                  styles.selectedDay,
               ]}
               onPress={() => toggleDay(day)}>
               <Text style={styles.dayText}>{day}</Text>
@@ -188,7 +320,7 @@ export default function ReminderScreen() {
         <View style={styles.pickerContainer}>
           <RNPickerSelect
             onValueChange={(value) => setSelectedHour(value)}
-            items={generateOptions(10).map((hour) => ({
+            items={generateOptions(24).map((hour) => ({
               label: `${hour}`,
               value: hour,
             }))}
@@ -202,23 +334,15 @@ export default function ReminderScreen() {
             }))}
             placeholder={{ label: "Minute", value: "0" }}
           />
-          {/* <RNPickerSelect
-            onValueChange={(value) => setSelectedSecond(value)}
-            items={generateOptions(60).map((second) => ({
-              label: `${second}`,
-              value: second,
-            }))}
-            placeholder={{ label: "Second", value: null }}
-          /> */}
         </View>
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("WelcomeScreen")}>
-            <Text style={styles.buttonText}>◀ Back</Text>
+            style={styles.resetButton}
+            onPress={resetToExisting}>
+            <Text style={styles.buttonText}>Reset</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.saveButton} onPress={saveReminders}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>

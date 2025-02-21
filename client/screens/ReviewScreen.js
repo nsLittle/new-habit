@@ -23,7 +23,7 @@ export default function ReviewScreen() {
   const [userData, setUserData] = useState("");
 
   const [profileData, setProfileData] = useState({
-    firstName: "",
+    firstname: "",
     lastName: "",
     profilePic: "",
     email: "",
@@ -48,12 +48,27 @@ export default function ReviewScreen() {
   };
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, token, habitId } = userContext || {};
-  console.log("UserContext:", userContext);
-  console.log("Username: ", username);
-  console.log("UserId: ", userId);
-  console.log("Token: ", token);
-  console.log("Habit Id: ", habitId);
+  const {
+    username,
+    userId,
+    habitId,
+    habitinput,
+    teammemberId,
+    firstName,
+    token,
+  } = userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Name: ", username);
+      console.log("User Id: ", userId);
+      console.log("Habit Input: ", habitinput);
+      console.log("Habit Id: ", habitId);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   useEffect(() => {
     const retrieveProfile = async () => {
@@ -128,7 +143,7 @@ export default function ReviewScreen() {
 
       setProfileData((prev) => ({
         ...prev,
-        firstName: userData?.firstName || "",
+        firstname: userData?.firstName || "",
         lastName: userData?.lastName || "",
         profilePic: userData?.profilePic || "",
         email: userData?.email || "",
@@ -137,7 +152,7 @@ export default function ReviewScreen() {
       }));
 
       console.log("Profile Data: ", profileData);
-      console.log("User First Name; ", profileData.firstName);
+      console.log("User First Name; ", profileData.firstname);
       console.log("Teammembers: ", profileData.teammembers);
     } catch (error) {
       console.error("Error with data retrieval:", error);
@@ -150,7 +165,7 @@ export default function ReviewScreen() {
     }
   }, [username]);
 
-  const { firstName, lastName, profilePic, email, habits, teammembers } =
+  const { firstname, lastName, profilePic, email, habits, teammembers } =
     profileData;
 
   console.log("Profile Data: ", profileData);
@@ -192,8 +207,8 @@ export default function ReviewScreen() {
         <View style={styles.reviewBox}>
           <View style={styles.reviewHabit}>
             {habits.length > 0 ? (
-              habits.map((habit, index) => (
-                <View key={`habit-${index}`} style={styles.sectionTitle}>
+              habits.map((habit) => (
+                <View key={habit._id} style={styles.sectionTitle}>
                   <View style={styles.habitBox}>
                     <Text style={styles.habitData}>
                       {habit.habit || "Unnamed Habit"}
@@ -214,8 +229,8 @@ export default function ReviewScreen() {
 
           <View style={styles.reviewCadence}>
             {habits.length > 0 ? (
-              habits.map((habit, index) => (
-                <View key={`habit-${index}`} style={styles.habitBox}>
+              habits.map((habit) => (
+                <View key={habit._id} style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
                     Your Feedback Cadence:
                   </Text>
@@ -231,7 +246,7 @@ export default function ReviewScreen() {
 
           <View style={styles.reviewReminders}>
             {habits.length > 0 ? (
-              habits.map((habit, index) => (
+              habits.map((habit) => (
                 <View style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
                     Your Reminder Cadence:
@@ -266,8 +281,10 @@ export default function ReviewScreen() {
             <View style={styles.teamMemberDataBox}>
               <Text style={styles.sectionTitle}>Your feedback circle:</Text>
 
-              {teammembers.map((teammember, index) => (
-                <View style={styles.buttonContainer} key={index}>
+              {teammembers.map((teammember) => (
+                <View
+                  style={styles.buttonContainer}
+                  key={teammember.teamMemberId}>
                   <TouchableOpacity style={styles.contactPersonButton}>
                     {teammember.teamMemberProfilePic ? (
                       <Image

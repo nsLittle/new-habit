@@ -88,6 +88,14 @@ export default function FeedbackRequestScreen() {
         setContactData({ teammembers });
 
         console.log("Transformed team members:", teammembers);
+        console.log("Team Member ID: ", teammembers[0].teamMember_id);
+        setUserContext((prev) => {
+          if (prev.teamMemberId !== teammembers[0]?.teamMember_id) {
+            console.log("Updating UserContext with new teamMemberId");
+            return { ...prev, teamMemberId: teammembers[0]?.teamMember_id };
+          }
+          return prev; // No update if the value is the same
+        });
 
         setDialogMessage("Teammember fetched.");
       } catch (err) {
@@ -98,28 +106,28 @@ export default function FeedbackRequestScreen() {
     fetchTeamMembersData();
   }, [userContext]);
 
-  const sendEmail = (email) => {
-    if (!email) {
-      console.error("No email address provided");
-      setDialogMessage("No email address provided");
-      setShowDialog(true);
-      return;
-    }
+  // const sendEmail = (email) => {
+  //   if (!email) {
+  //     console.error("No email address provided");
+  //     setDialogMessage("No email address provided");
+  //     setShowDialog(true);
+  //     return;
+  //   }
 
-    const subject = encodeURIComponent(`Help ${firstName}`);
-    const body = encodeURIComponent(
-      `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.`
-    );
+  //   const subject = encodeURIComponent(`Help ${firstName}`);
+  //   const body = encodeURIComponent(
+  //     `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.`
+  //   );
 
-    const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
-    console.log("Mail To: ", mailtoURL);
+  //   const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
+  //   console.log("Mail To: ", mailtoURL);
 
-    Linking.openURL(mailtoURL).catch((err) => {
-      console.error("Failed to open email client", err);
-      setDialogMessage("Failed to open email client.");
-      setShowDialog(true);
-    });
-  };
+  //   Linking.openURL(mailtoURL).catch((err) => {
+  //     console.error("Failed to open email client", err);
+  //     setDialogMessage("Failed to open email client.");
+  //     setShowDialog(true);
+  //   });
+  // };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -148,14 +156,6 @@ export default function FeedbackRequestScreen() {
         </View>
 
         <View style={styles.dataContainer}>
-          {/* <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.addPersonButton}
-              onPress={() => navigation.navigate("AddTeammemberScreen")}>
-              <Text style={styles.addPersonButtonText}>+ Add a person</Text>
-            </TouchableOpacity>
-          </View> */}
-
           {contactData.teammembers.map((teammember, index) => (
             <View style={styles.buttonContainer} key={index}>
               <TouchableOpacity style={styles.contactPersonButton}>
@@ -184,9 +184,23 @@ export default function FeedbackRequestScreen() {
                     size={24}
                     color="black"
                     style={styles.iconSend}
-                    onPress={() =>
-                      navigation.navigate("FeedbackRequestTwoScreen")
-                    }
+                    onPress={() => {
+                      console.log("Navigating with params:", {
+                        teamMember_id: teammember.teamMember_id,
+                        teamMemberFirstName: teammember.firstName,
+                        teamMemberLastName: teammember.lastName,
+                        teamMemberEmail: teammember.email,
+                        teamMemberProfilePic: teammember.profilePic,
+                      });
+
+                      navigation.navigate("FeedbackRequestTwoScreen", {
+                        teamMember_id: teammember.teamMember_id,
+                        teamMemberFirstName: teammember.firstName,
+                        teamMemberLastName: teammember.lastName,
+                        teamMemberEmail: teammember.email,
+                        teamMemberProfilePic: teammember.profilePic,
+                      });
+                    }}
                   />
                   {/* <MaterialIcons
                     name="edit"

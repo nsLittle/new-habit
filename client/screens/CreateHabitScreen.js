@@ -143,7 +143,7 @@ export default function CreateHabitScreen() {
       setUserContext((prevContext) => ({
         ...prevContext,
         habitId: responseData.habitId || habitId,
-        habitInput: habitInput,
+        habitinput: habitInput,
       }));
 
       setHabitInput("");

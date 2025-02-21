@@ -20,13 +20,21 @@ export default function HabitDescriptionScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, habitId, teammemberId, firstName, token } =
-    userContext || {};
+  const {
+    username,
+    userId,
+    habitId,
+    habitinput,
+    teammemberId,
+    firstName,
+    token,
+  } = userContext || {};
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
       console.log("User Name: ", username);
       console.log("User Id: ", userId);
+      console.log("Habit Input: ", habitinput);
       console.log("Habit Id: ", habitId);
       console.log("Teammember Id: ", teammemberId);
       console.log("First Name: ", firstName);
@@ -141,7 +149,7 @@ export default function HabitDescriptionScreen() {
       setUserContext((prevContext) => ({
         ...prevContext,
         habitId: responseData.habitId || habitId,
-        descriptionInput: descriptionInput,
+        descriptioninput: descriptionInput,
       }));
 
       console.log("Updated UserContext:", userContext); // Debugging

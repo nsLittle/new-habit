@@ -212,6 +212,7 @@ exports.saveReminder = async (req, res) => {
   try {
     console.log("Request Params:", req.params);
     const { username, habit_id } = req.params;
+
     console.log(
       "Saving Reminder for Habit Id:",
       habit_id,
@@ -219,6 +220,7 @@ exports.saveReminder = async (req, res) => {
       username
     );
     console.log("Request Body:", req.body);
+    console.log("Extracted reminders object:", req.body.reminders);
 
     const user = await User.findOne({ username });
     if (!user) {
@@ -226,29 +228,48 @@ exports.saveReminder = async (req, res) => {
     }
 
     const habit = await Habit.findOne({ _id: habit_id, user: user._id });
-    console.log("Habit Id: ", habit_id, "for user: ", user._id);
-
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    const { reminderTime, selectedDays, ...otherFields } = req.body;
+    // Ensure reminders exist in request body
+    if (!req.body.reminders) {
+      return res.status(400).json({ message: "Reminders data is missing" });
+    }
 
-    const requestData = {
-      ...otherFields,
-      selectedDays: Array.isArray(selectedDays)
-        ? selectedDays
-        : selectedDays.split(",").map((day) => day.trim()),
-      selectedTime: {
-        hour: Number(reminderTime.hour) || 0,
-        minute: Number(reminderTime.minute) || 0,
-        second: Number(reminderTime.second) || 0,
-      },
+    const { reminders } = req.body;
+
+    // Normalize selectedDays array
+    let selectedDays = reminders.selectedDays;
+    if (typeof selectedDays === "string") {
+      selectedDays = selectedDays.split(",").map((day) => day.trim());
+    } else if (!Array.isArray(selectedDays)) {
+      selectedDays = [];
+    }
+
+    // Normalize selectedTime
+    const selectedTime = {
+      hour: Number(reminders.selectedTime?.hour) || 0,
+      minute: Number(reminders.selectedTime?.minute) || 0,
+      second: Number(reminders.selectedTime?.second) || 0,
     };
+
+    console.log("Final selectedDays:", selectedDays);
+    console.log("Final selectedTime:", selectedTime);
 
     const updatedHabit = await Habit.findByIdAndUpdate(
       habit_id,
-      { $set: { reminders: requestData } },
+      {
+        $set: {
+          "reminders.selectedDays": selectedDays,
+          "reminders.selectedTime": selectedTime,
+          "reminders.isReminderEnabled": reminders.isReminderEnabled ?? false,
+          "reminders.isEmailReminderEnabled":
+            reminders.isEmailReminderEnabled ?? false,
+          "reminders.isTextReminderEnabled":
+            reminders.isTextReminderEnabled ?? false,
+        },
+      },
       { new: true, runValidators: true }
     );
 

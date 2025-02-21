@@ -1,4 +1,6 @@
+import { useContext, useEffect, useState } from "react";
 import {
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
@@ -7,14 +9,126 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestTwoScreen() {
   const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const {
+    userName,
+    userId,
+    habitId,
+    habitinput,
+    teammemberId,
+    firstName,
+    lastName,
+    email,
+    profilePic,
+    token,
+  } = userContext || {};
+
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("Username: ", userName);
+      console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Habit Input: ", habitinput);
+      console.log("Teammember Id: ", teammemberId);
+      console.log("First Name: ", firstName);
+      console.log("Last Name: ", lastName);
+      console.log("Email: ", email);
+      console.log("Profile Pic: ", profilePic);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+
+  const route = useRoute();
+  const {
+    teamMember_id,
+    teamMemberFirstName,
+    teamMemberLastName,
+    teamMemberEmail,
+    teamMemberProfilePic,
+  } = route.params || {};
+
+  console.log("Received in FeedbackRequestTwoScreen:", route.params);
+  console.log("Team Member First Name: ", teamMemberFirstName);
+  console.log("Team Member Profile Pic: ", teamMemberProfilePic);
+
+  const fetchUserData = async () => {
+    try {
+      if (!token) {
+        console.warn("Authentication token is missing. Skipping API calls.");
+        return;
+      }
+
+      const [userResponse, habitsResponse, teamMemberResponse] =
+        await Promise.all([
+          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
+      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
+      if (!teamMemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
+
+      const userData = await userResponse.json();
+      const habitData = await habitsResponse.json();
+      const teamMemberData = await teamMemberResponse.json();
+
+      console.log("User Data: ", userData);
+      console.log("Profile Pic: ", userData?.profilePic);
+      const profilePic = userData?.profilePic;
+      console.log("Habit Data: ", habitData);
+      console.log("Habit Id: ", habitData?.habits[0]._id);
+      console.log("Habit: ", habitData?.habits[0].habit);
+      console.log("Reminders: ", habitData?.habits[0].description);
+      console.log("Team Member Data: ", teamMemberData);
+
+      setUserContext((prev) => ({
+        ...prev,
+        username: userData.username,
+        userId: userData._id,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        profilePic: userData.profilePic,
+        habits: habitData.habit || [],
+        habitId: habitData?.habits[0]._id,
+        teammembers: teamMemberData.teamMembers || [],
+      }));
+    } catch (error) {
+      console.error("Error with data retrieval:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userName) {
+      fetchUserData();
+    }
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -24,8 +138,27 @@ export default function FeedbackRequestTwoScreen() {
         </View>
 
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>Stuff and stuff</Text>
-
+          <Text style={styles.bodyIntroText}>
+            {firstName} is working to {habitinput}
+          </Text>
+          <View>
+            <Image
+              source={{ uri: profilePic }}
+              style={styles.profileImage}
+              onError={(error) =>
+                console.error("Image Load Error:", error?.nativeEvent)
+              }
+            />
+          </View>
+          {/* <View>
+            <Image
+              source={{ uri: teamMemberProfilePic }}
+              style={styles.profileImage}
+              onError={(error) =>
+                console.error("Image Load Error:", error?.nativeEvent)
+              }
+            />
+          </View> */}
           <View style={styles.buttonRow}></View>
         </View>
       </View>
@@ -62,6 +195,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingBottom: 15,
     width: 225,
+  },
+  profileImage: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 100,
+    height: 100,
+    marginBottom: 15,
+    borderRadius: 50,
   },
 
   buttonRow: {
