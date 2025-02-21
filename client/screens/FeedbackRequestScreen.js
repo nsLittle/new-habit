@@ -94,7 +94,7 @@ export default function FeedbackRequestScreen() {
             console.log("Updating UserContext with new teamMemberId");
             return { ...prev, teamMemberId: teammembers[0]?.teamMember_id };
           }
-          return prev; // No update if the value is the same
+          return prev;
         });
 
         setDialogMessage("Teammember fetched.");
@@ -105,29 +105,6 @@ export default function FeedbackRequestScreen() {
     };
     fetchTeamMembersData();
   }, [userContext]);
-
-  // const sendEmail = (email) => {
-  //   if (!email) {
-  //     console.error("No email address provided");
-  //     setDialogMessage("No email address provided");
-  //     setShowDialog(true);
-  //     return;
-  //   }
-
-  //   const subject = encodeURIComponent(`Help ${firstName}`);
-  //   const body = encodeURIComponent(
-  //     `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.`
-  //   );
-
-  //   const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
-  //   console.log("Mail To: ", mailtoURL);
-
-  //   Linking.openURL(mailtoURL).catch((err) => {
-  //     console.error("Failed to open email client", err);
-  //     setDialogMessage("Failed to open email client.");
-  //     setShowDialog(true);
-  //   });
-  // };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -157,28 +134,27 @@ export default function FeedbackRequestScreen() {
 
         <View style={styles.dataContainer}>
           {contactData.teammembers.map((teammember, index) => (
-            <View style={styles.buttonContainer} key={index}>
+            <View style={styles.contactPersonButtonContainer} key={index}>
               <TouchableOpacity style={styles.contactPersonButton}>
-                {teammember.profilePic ? (
-                  <Image
-                    source={{ uri: teammember.profilePic }}
-                    style={styles.profileImage}
-                    onError={(error) =>
-                      console.error("Image Load Error:", error?.nativeEvent)
-                    }
-                  />
-                ) : (
-                  <Text style={styles.profileData}>
-                    No profile picture available.
-                  </Text>
-                )}
                 <View style={styles.contactPersonNameColumn}>
+                  {teammember.profilePic ? (
+                    <Image
+                      source={{ uri: teammember.profilePic }}
+                      style={styles.profileImage}
+                      onError={(error) =>
+                        console.error("Image Load Error:", error?.nativeEvent)
+                      }
+                    />
+                  ) : (
+                    <Text style={styles.profileData}>
+                      No profile picture available.
+                    </Text>
+                  )}
                   <Text style={styles.contactName}>
                     {teammember.firstName} {teammember.lastName} {teammember.id}
                   </Text>
-                  <Text style={styles.contactEmail}>{teammember.email}</Text>
-                </View>
-                <View style={styles.iconsColumn}>
+                  <Text style={styles.contactName}>{teammember.email}</Text>
+                  {/* <View style={styles.iconsColumn}> */}
                   <MaterialIcons
                     name="send"
                     size={24}
@@ -202,33 +178,7 @@ export default function FeedbackRequestScreen() {
                       });
                     }}
                   />
-                  {/* <MaterialIcons
-                    name="edit"
-                    size={24}
-                    color="black"
-                    style={styles.iconEdit}
-                    onPress={() =>
-                      navigation.push("EditTeammemberScreen", {
-                        teamMember_id: teammember.teamMember_id,
-                        firstName: teammember.firstName,
-                        lastName: teammember.lastName,
-                        email: teammember.email,
-                        profilePic: teammember.profilePic,
-                      })
-                    }
-                  /> */}
-                  {/* <MaterialIcons
-                    name="delete"
-                    size={24}
-                    color="black"
-                    style={styles.iconDelete}
-                    onPress={() => {
-                      setDialogMessage(
-                        "ARE YOU SURE YOU WANT TO DLETE YOUR TEAM MEMBER?"
-                      );
-                      // console.log(`Delete contact: ${teammember}`);
-                    }}
-                  /> */}
+                  {/* </View> */}
                 </View>
               </TouchableOpacity>
             </View>

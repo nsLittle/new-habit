@@ -283,7 +283,7 @@ export default function ReviewScreen() {
 
               {teammembers.map((teammember) => (
                 <View
-                  style={styles.buttonContainer}
+                  style={styles.teamMemberContainer}
                   key={teammember.teamMemberId}>
                   <TouchableOpacity style={styles.contactPersonButton}>
                     {teammember.teamMemberProfilePic ? (
@@ -338,6 +338,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "white",
     paddingHorizontal: wp("5%"),
+    overflow: "auto",
   },
   body: {
     flexGrow: 1,
@@ -369,47 +370,46 @@ const styles = StyleSheet.create({
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
   reviewCadence: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
   reviewReminders: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
   reviewTeams: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
-
   profileData: {
     textAlign: "center",
     alignSelf: "center",
     fontSize: 16,
   },
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
+  // profilePicMain: {
+  //   borderWidth: 5,
+  //   borderColor: "#FFD700",
+  //   width: 100,
+  //   height: 100,
+  //   marginBottom: 10,
+  //   borderRadius: 50,
+  // },
   teammemberProfilePicMain: {
     borderWidth: 5,
     borderColor: "#FFD700",
     width: 50,
     height: 50,
     marginTop: 15,
-    marginBottom: 15,
+    marginBottom: 10,
     borderRadius: 50,
   },
   habitDataBox: {
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   habitBox: {
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 10,
   },
   teamMemberBox: {
     justifyContent: "center",
@@ -436,11 +436,8 @@ const styles = StyleSheet.create({
     width: 80,
   },
   contactPersonButton: {
-    // backgroundColor: "#F8F8F8",
-    // borderColor: "#D3D3D3",
-    // borderWidth: 1,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 5,
     borderRadius: 25,
     marginTop: 15,
     marginBottom: 5,

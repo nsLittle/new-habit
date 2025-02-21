@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
-    "@react-native-async-storage/async-storage": "^2.1.1",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/cli": "latest",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
-    "expo": "~52.0.32",
+    "expo": "~52.0.36",
     "expo-secure-store": "~14.0.1",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",

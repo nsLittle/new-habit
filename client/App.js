@@ -19,6 +19,8 @@ import ReminderScreen from "./screens/ReminderScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import FeedbackRequestScreen from "./screens/FeedbackRequestScreen";
 import FeedbackRequestTwoScreen from "./screens/FeedbackRequestTwoScreen";
+import FeedbackRequestThreeScreen from "./screens/FeedbackRequestThreeScreen";
+import FeedbackRequestFourScreen from "./screens/FeedbackRequestFourScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -76,9 +78,18 @@ export default function App() {
               name="FeedbackRequestTwoScreen"
               component={FeedbackRequestTwoScreen}
             />
+            <Stack.Screen
+              name="FeedbackRequestThreeScreen"
+              component={FeedbackRequestThreeScreen}
+            />
+            <Stack.Screen
+              name="FeedbackRequestFourScreen"
+              component={FeedbackRequestFourScreen}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>
     </PaperProvider>
   );
+  w;
 }

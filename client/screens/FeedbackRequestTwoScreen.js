@@ -133,33 +133,34 @@ export default function FeedbackRequestTwoScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        <View style={styles.bodyTitleContainer}>
+        {/* <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>Team Member Profile Pic</Text>
+        </View> */}
+        <View>
+          <Image
+            source={{ uri: profilePic }}
+            style={styles.profileImage}
+            onError={(error) =>
+              console.error("Image Load Error:", error?.nativeEvent)
+            }
+          />
         </View>
-
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>
+          <Text style={styles.bodyTitleText}>
             {firstName} is working to {habitinput}
           </Text>
-          <View>
-            <Image
-              source={{ uri: profilePic }}
-              style={styles.profileImage}
-              onError={(error) =>
-                console.error("Image Load Error:", error?.nativeEvent)
-              }
-            />
+          <Text>
+            They are requesting your feedback. This will only take 2-3 minutes.
+          </Text>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.feedbackButton}
+              onPress={() => navigation.navigate("FeedbackRequestThreeScreen")}>
+              <Text style={styles.feedbackButtonText} title="Give Feedback">
+                Give Feedback
+              </Text>
+            </TouchableOpacity>
           </View>
-          {/* <View>
-            <Image
-              source={{ uri: teamMemberProfilePic }}
-              style={styles.profileImage}
-              onError={(error) =>
-                console.error("Image Load Error:", error?.nativeEvent)
-              }
-            />
-          </View> */}
-          <View style={styles.buttonRow}></View>
         </View>
       </View>
     </ScrollView>
@@ -213,5 +214,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 15,
     marginTop: 50,
+  },
+  feedbackButton: {
+    backgroundColor: "#D3D3D3",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  feedbackButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });

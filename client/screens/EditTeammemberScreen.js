@@ -1,23 +1,21 @@
+import { useState, useEffect, useContext } from "react";
 import {
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
-  Linking,
-  Image,
+  View,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { useState, useEffect, useContext } from "react";
-import { Portal, Dialog, Button } from "react-native-paper";
-import { UserContext } from "../context/UserContext";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function EditTeammemberScreen() {
   const navigation = useNavigation();
