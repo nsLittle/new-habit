@@ -49,7 +49,7 @@ export default function FeedbackRequestThreeScreen() {
 
   const route = useRoute();
   const {
-    teamMember_id,
+    teamMemberId,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -57,7 +57,7 @@ export default function FeedbackRequestThreeScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestTwoScreen:", route.params);
-  console.log("Team Member Id: ", teamMember_id);
+  console.log("Team Member Id: ", teamMemberId);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -138,7 +138,7 @@ export default function FeedbackRequestThreeScreen() {
         "and Habit Id: ",
         habitId,
         "from Team Member Id: ",
-        teamMember_id
+        teamMemberId
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
@@ -153,7 +153,7 @@ export default function FeedbackRequestThreeScreen() {
           },
           body: JSON.stringify({
             habitId: habitId,
-            teamMemberId: teamMember_id,
+            teamMemberId: teamMemberId,
             feedbackRating: feedbackRating,
           }),
         }
@@ -242,10 +242,13 @@ export default function FeedbackRequestThreeScreen() {
               ◀ Back
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText} title="Save">
-              Save
-            </Text>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => {
+              console.log("Save button pressed");
+              handleSave();
+            }}>
+            <Text style={styles.saveButtonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   backButton: {
-    backgroundColor: "#FFD700",
+    backgroundColor: "#D3D3D3",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
@@ -357,7 +360,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   saveButton: {
-    backgroundColor: "#D3D3D3",
+    backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
