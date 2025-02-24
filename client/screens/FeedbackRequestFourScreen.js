@@ -38,7 +38,7 @@ export default function FeedbackRequestFourScreen() {
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>
-            Did {firstame} requesting feedback thank you and ask for more
+            Did {firstName} requesting feedback thank you and ask for more
             suggestions?
           </Text>
         </View>

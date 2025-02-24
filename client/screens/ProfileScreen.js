@@ -24,6 +24,8 @@ export default function ProfileScreen() {
     userName,
     userId,
     habitId,
+    habitinput,
+    descriptioninput,
     teammemberId,
     firstName,
     lastName,
@@ -38,6 +40,8 @@ export default function ProfileScreen() {
       console.log("Username: ", userName);
       console.log("User Id: ", userId);
       console.log("Habit Id: ", habitId);
+      console.log("Habit Input: ", habitinput);
+      console.log("Description Input: ", descriptioninput);
       console.log("Teammember Id: ", teammemberId);
       console.log("First Name: ", firstName);
       console.log("Last Name: ", lastName);
@@ -103,6 +107,8 @@ export default function ProfileScreen() {
         profilePic: userData.profilePic,
         habits: habitData.habit || [],
         habitId: habitData?.habits[0]._id,
+        habitinput: habitData?.habits[0].habit,
+        descriptioninput: habitData?.habits[0].description,
         teammembers: teamMemberData.teamMembers || [],
       }));
     } catch (error) {

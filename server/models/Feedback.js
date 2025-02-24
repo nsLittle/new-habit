@@ -1,14 +1,22 @@
-const FeedbackSchema = new mongoose.Schema({
-  habit: { type: mongoose.Schema.Types.ObjectId, ref: "Habit", required: true },
-  teamMember: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "TeamMember",
-    required: true,
+const mongoose = require("mongoose");
+
+const FeedbackSchema = new mongoose.Schema(
+  {
+    habitId: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    teamMemberId: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    feedbackRating: { type: Number, required: true, min: 1, max: 8 },
+    feedbackText: { type: String, required: false, trim: true },
   },
-  feedbackRating: { type: Number, required: true },
-  feedbackText: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-});
+  { timestamps: true }
+);
 
 const Feedback = mongoose.model("Feedback", FeedbackSchema);
 module.exports = Feedback;

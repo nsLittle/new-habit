@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
     habitId: null,
     habitinput: null,
     descriptioninput: null,
-    teammemberId: null,
+    teamMemberId: null,
     firstName: null,
     lastName: null,
     email: null,
@@ -24,14 +24,16 @@ export const UserProvider = ({ children }) => {
         const storedData = await AsyncStorage.multiGet([
           "userName",
           "userId",
-          "habitId",
-          "habitinput",
-          "descriptioninput",
-          "teammemberId",
           "firstName",
           "lastName",
           "email",
           "profilePic",
+          "habitId",
+          "habitinput",
+          "descriptioninput",
+          "teamMemberId",
+          "teammemberFirstName",
+          "teammmeberProfliePic",
         ]);
 
         const userInfo = Object.fromEntries(storedData);
@@ -66,7 +68,9 @@ export const UserProvider = ({ children }) => {
           ["userName", userContext.userName || ""],
           ["habitId", userContext.habitId || ""],
           ["habitinput", userContext.habitinput || ""],
-          ["teammemberId", userContext.teammemberId || ""],
+          ["teamMemberId", userContext.teamMemberId || ""],
+          ["teammemberFirstName", userContext.teammemberFirstName || ""],
+          ["teammemberProfilePic", userContext.teammemberProfilePic || ""],
           ["firstName", userContext.firstName || ""],
           ["lastName", userContext.lastName || ""],
           ["email", userContext.email || ""],
@@ -79,7 +83,7 @@ export const UserProvider = ({ children }) => {
           if (userContext.token) {
             await SecureStore.setItemAsync("token", userContext.token);
           } else {
-            await SecureStore.deleteItemAsync("token"); // Ensure token is cleared on logout
+            await SecureStore.deleteItemAsync("token");
           }
         }
       } catch (error) {

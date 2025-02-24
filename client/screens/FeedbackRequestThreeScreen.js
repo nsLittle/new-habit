@@ -15,10 +15,10 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
-export default function FeedbackRequestScreen() {
+export default function FeedbackRequestThreeScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
@@ -38,7 +38,7 @@ export default function FeedbackRequestScreen() {
       console.log("User Id: ", userId);
       console.log("Habit Input: ", habitinput);
       console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
+      console.log("Team Member Id: ", teammemberId);
       console.log("First Name: ", firstName);
       console.log("Token: ", token);
     }
@@ -47,7 +47,25 @@ export default function FeedbackRequestScreen() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
-  const [selectedRating, setSelectedRating] = useState(null);
+  const route = useRoute();
+  const {
+    teamMember_id,
+    teamMemberFirstName,
+    teamMemberLastName,
+    teamMemberEmail,
+    teamMemberProfilePic,
+  } = route.params || {};
+
+  console.log("Received from FeedbackRequestTwoScreen:", route.params);
+  console.log("Team Member Id: ", teamMember_id);
+  console.log("Team Member First Name: ", teamMemberFirstName);
+  console.log("Team Member Last Name: ", teamMemberLastName);
+  console.log("Team Memeber Email: ", teamMemberEmail);
+  console.log("Team Member Profile Pic: ", teamMemberProfilePic);
+
+  const [ratingValue, setRatingValue] = useState("");
+  const [existingRating, setExistingRating] = useState("");
+  console.log("Rating Value: ", ratingValue);
 
   const ratings = [
     { value: 1, label: "Significantly Improved", color: "#006400" }, // Dark Green
@@ -60,15 +78,13 @@ export default function FeedbackRequestScreen() {
     { value: 8, label: "Did not Observe", color: "#A9A9A9" }, // Gray
   ];
 
-  const [ratingValue, setRatingValue] = useState("");
-
   useEffect(() => {
     const checkForExistingRating = async () => {
       console.log(`Checking for existing rating...`);
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/feedback/${username}/:habit_id`,
+          `http://192.168.1.174:8000/feedback/${username}/${habitId}`,
           {
             method: "GET",
             headers: {
@@ -79,20 +95,20 @@ export default function FeedbackRequestScreen() {
         );
 
         if (!response.ok) {
-          console.error("No existing habit found.");
-          setCadenceInput("");
-          setExistingCadence("");
+          console.error("No existing rating found.");
+          setRatingValue("");
+          setExistingRating("");
           return false;
         }
 
         const data = await response.json();
-        const existingCadence = data.habits[0]?.cadence || "";
+        const existingRating = data.habits[0]?.rating || "";
         console.log("Data: ", data);
-        console.log("Existing Cadence: ", existingCadence);
+        console.log("Existing Rating: ", existingRating);
 
-        if (existingCadence) {
-          setCadenceInput(existingCadence);
-          setExistingCadence(existingCadence);
+        if (existingRating) {
+          setRatingValue(existingRating);
+          setExistingRating(existingRating);
           setDialogMessage(
             "ARE YOU SURE YOU WANT TO EDIT YOUR RATING?\n\nPress 'Keep Rating' if you want to retain your current rating."
           );
@@ -106,23 +122,39 @@ export default function FeedbackRequestScreen() {
   }, []);
 
   const handleSave = async () => {
+    console.log("I'm here saving...");
+
     if (!ratingValue) {
-      showDialog("Please select a feedback rating.");
+      setDialogMessage("Please select a feedback rating.");
+      setShowDialog(true);
       return;
     }
 
     try {
-      console.log("Saving cadence...");
+      console.log("Saving rating...");
+      console.log(
+        "Username: ",
+        username,
+        "and Habit Id: ",
+        habitId,
+        "from Team Member Id: ",
+        teamMember_id
+      );
+      const feedbackRating = ratingValue;
+      console.log("Feedback Rating :", feedbackRating);
+
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/cadence`,
+        `http://192.168.1.174:8000/feedback/${username}`,
         {
-          method: "PATCH",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            cadence: cadenceInput,
+            habitId: habitId,
+            teamMemberId: teamMember_id,
+            feedbackRating: feedbackRating,
           }),
         }
       );
@@ -133,11 +165,12 @@ export default function FeedbackRequestScreen() {
       const data = await response.json();
       console.log("Data: ", data);
 
-      setDialogMessage("Feedback cadence updated successfully.");
-      navigation.navigate("ReminderScreen");
+      setDialogMessage("Feedback reting updated successfully.");
+      setShowDialog(true);
+      navigation.navigate("FeedbackRequestFourScreen");
     } catch (error) {
-      console.error("Error updating feedback cadence:", error);
-      setDialogMessage("Failed to update feedback cadence. Please try again.");
+      setDialogMessage("Failed to update rating. Please try again.");
+      setShowDialog(true);
     }
   };
 
@@ -175,16 +208,18 @@ export default function FeedbackRequestScreen() {
               key={rating.value}
               style={[
                 styles.ratingButton,
-                selectedRating === rating.value && {
+                ratingValue === rating.value && {
                   borderColor: rating.color,
                   backgroundColor: "#F0F0F0",
                 },
               ]}
-              onPress={() => setRatingValue(rating.value)}>
+              onPress={() => {
+                setRatingValue(rating.value);
+              }}>
               <View
                 style={[
                   styles.circle,
-                  selectedRating === rating.value && {
+                  ratingValue === rating.value && {
                     backgroundColor: rating.color,
                     borderColor: rating.color,
                   },
@@ -207,7 +242,7 @@ export default function FeedbackRequestScreen() {
               ◀ Back
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.backButton} onPress={handleSave}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText} title="Save">
               Save
             </Text>
@@ -305,7 +340,7 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  nextButton: {
+  backButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
@@ -315,7 +350,7 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: "center",
   },
-  nextButtonText: {
+  backButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

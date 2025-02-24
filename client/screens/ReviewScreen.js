@@ -201,7 +201,7 @@ export default function ReviewScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Review and Finish</Text>
+          <Text style={styles.bodyTitleText}>Review and Start</Text>
         </View>
 
         <View style={styles.reviewBox}>
@@ -325,7 +325,7 @@ export default function ReviewScreen() {
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-            <Text style={styles.saveButtonText}>FINISH ▶</Text>
+            <Text style={styles.saveButtonText}>START ▶</Text>
           </TouchableOpacity>
         </View>
       </View>

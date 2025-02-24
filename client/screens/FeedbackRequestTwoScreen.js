@@ -14,10 +14,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestTwoScreen() {
@@ -30,6 +27,8 @@ export default function FeedbackRequestTwoScreen() {
     habitId,
     habitinput,
     teammemberId,
+    teammemberFirstName,
+    teammemberProfilePic,
     firstName,
     lastName,
     email,
@@ -44,7 +43,9 @@ export default function FeedbackRequestTwoScreen() {
       console.log("User Id: ", userId);
       console.log("Habit Id: ", habitId);
       console.log("Habit Input: ", habitinput);
-      console.log("Teammember Id: ", teammemberId);
+      console.log("Team Member Id: ", teammemberId);
+      console.log("Team Member First Name: ", teammemberFirstName);
+      console.log("Team member Profile Pic: ", teammemberProfilePic);
       console.log("First Name: ", firstName);
       console.log("Last Name: ", lastName);
       console.log("Email: ", email);
@@ -66,7 +67,10 @@ export default function FeedbackRequestTwoScreen() {
   } = route.params || {};
 
   console.log("Received in FeedbackRequestTwoScreen:", route.params);
+  console.log("Team Member Id: ", teamMember_id);
   console.log("Team Member First Name: ", teamMemberFirstName);
+  console.log("Team Member Last Name: ", teamMemberLastName);
+  console.log("Team Memeber Email: ", teamMemberEmail);
   console.log("Team Member Profile Pic: ", teamMemberProfilePic);
 
   const fetchUserData = async () => {
@@ -100,7 +104,7 @@ export default function FeedbackRequestTwoScreen() {
 
       console.log("User Data: ", userData);
       console.log("Profile Pic: ", userData?.profilePic);
-      const profilePic = userData?.profilePic;
+      // const profilePic = userData?.profilePic;
       console.log("Habit Data: ", habitData);
       console.log("Habit Id: ", habitData?.habits[0]._id);
       console.log("Habit: ", habitData?.habits[0].habit);
@@ -133,9 +137,6 @@ export default function FeedbackRequestTwoScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        {/* <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Team Member Profile Pic</Text>
-        </View> */}
         <View>
           <Image
             source={{ uri: profilePic }}
@@ -146,6 +147,7 @@ export default function FeedbackRequestTwoScreen() {
           />
         </View>
         <View style={styles.bodyIntroContainer}>
+          <Text style={styles.bodyTitleText}>Hi {teamMemberFirstName}</Text>
           <Text style={styles.bodyTitleText}>
             {firstName} is working to {habitinput}
           </Text>
@@ -155,7 +157,23 @@ export default function FeedbackRequestTwoScreen() {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.feedbackButton}
-              onPress={() => navigation.navigate("FeedbackRequestThreeScreen")}>
+              onPress={() => {
+                console.log("Navigating with params:", {
+                  teamMember_id,
+                  teamMemberFirstName,
+                  teamMemberLastName,
+                  teamMemberEmail,
+                  teamMemberProfilePic,
+                });
+
+                navigation.navigate("FeedbackRequestThreeScreen", {
+                  teamMember_id,
+                  teamMemberFirstName,
+                  teamMemberLastName,
+                  teamMemberEmail,
+                  teamMemberProfilePic,
+                });
+              }}>
               <Text style={styles.feedbackButtonText} title="Give Feedback">
                 Give Feedback
               </Text>

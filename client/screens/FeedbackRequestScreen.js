@@ -27,7 +27,7 @@ export default function FeedbackRequestScreen() {
     userId,
     habitId,
     habitinput,
-    teammemberId,
+    teamMemberId,
     firstName,
     token,
   } = userContext || {};
@@ -38,7 +38,7 @@ export default function FeedbackRequestScreen() {
       console.log("User Id: ", userId);
       console.log("Habit Input: ", habitinput);
       console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
+      console.log("Teammember Id: ", teamMemberId);
       console.log("First Name: ", firstName);
       console.log("Token: ", token);
     }
@@ -89,13 +89,6 @@ export default function FeedbackRequestScreen() {
 
         console.log("Transformed team members:", teammembers);
         console.log("Team Member ID: ", teammembers[0].teamMember_id);
-        setUserContext((prev) => {
-          if (prev.teamMemberId !== teammembers[0]?.teamMember_id) {
-            console.log("Updating UserContext with new teamMemberId");
-            return { ...prev, teamMemberId: teammembers[0]?.teamMember_id };
-          }
-          return prev;
-        });
 
         setDialogMessage("Teammember fetched.");
       } catch (err) {
@@ -130,12 +123,36 @@ export default function FeedbackRequestScreen() {
       <View style={styles.body}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Team Feedback Request</Text>
+          <Text>Send Feedback Requests to Team Members</Text>
         </View>
 
         <View style={styles.dataContainer}>
           {contactData.teammembers.map((teammember, index) => (
             <View style={styles.contactPersonButtonContainer} key={index}>
-              <TouchableOpacity style={styles.contactPersonButton}>
+              <TouchableOpacity
+                style={styles.contactPersonButton}
+                onPress={() => {
+                  console.log("Navigating with params:", {
+                    teamMemberId: teammember.teamMember_id,
+                    teamMemberFirstName: teammember.firstName,
+                    teamMemberLastName: teammember.lastName,
+                    teamMemberEmail: teammember.email,
+                    teamMemberProfilePic: teammember.profilePic,
+                  });
+
+                  setUserContext((prev) => ({
+                    ...prev,
+                    teamMemberId: teammember.teamMember_id,
+                  }));
+
+                  navigation.navigate("FeedbackRequestTwoScreen", {
+                    teamMemberId: teammember.teamMember_id,
+                    teamMemberFirstName: teammember.firstName,
+                    teamMemberLastName: teammember.lastName,
+                    teamMemberEmail: teammember.email,
+                    teamMemberProfilePic: teammember.profilePic,
+                  });
+                }}>
                 <View style={styles.contactPersonNameColumn}>
                   {teammember.profilePic ? (
                     <Image
@@ -154,7 +171,6 @@ export default function FeedbackRequestScreen() {
                     {teammember.firstName} {teammember.lastName} {teammember.id}
                   </Text>
                   <Text style={styles.contactName}>{teammember.email}</Text>
-                  {/* <View style={styles.iconsColumn}> */}
                   <MaterialIcons
                     name="send"
                     size={24}
@@ -178,7 +194,6 @@ export default function FeedbackRequestScreen() {
                       });
                     }}
                   />
-                  {/* </View> */}
                 </View>
               </TouchableOpacity>
             </View>
@@ -192,14 +207,6 @@ export default function FeedbackRequestScreen() {
                 ◀ Back
               </Text>
             </TouchableOpacity>
-            {/* 
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={() => navigation.navigate("FeedbackRequestTwoScreen")}>
-              <Text style={styles.nextButtonText} title="Next">
-                Next ▶
-              </Text>
-            </TouchableOpacity> */}
           </View>
         </View>
       </View>

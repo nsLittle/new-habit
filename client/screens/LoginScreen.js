@@ -25,6 +25,8 @@ export default function LoginScreen() {
     userName,
     userId,
     habitId,
+    habitinput,
+    descriptioninput,
     teammemberId,
     firstName,
     profilePic,
@@ -41,6 +43,8 @@ export default function LoginScreen() {
       userName: "",
       userId: "",
       habitId: "",
+      habitinput: "",
+      descriptioninput: "",
       teammemberId: "",
       firstName: "",
       profilePic: "",
@@ -54,6 +58,9 @@ export default function LoginScreen() {
       console.log("UserContext:", userContext);
       console.log("User Name: ", userName);
       console.log("User Id: ", userId);
+      console.log("Habit Id: ", habitId);
+      console.log("Habit Description: ", descriptioninput);
+      console.log("Team Member Id: ", teammemberId);
       console.log("First Name: ", firstName);
       console.log("Profile Pic: ", profilePic);
       console.log("Token: ", token);
@@ -85,6 +92,7 @@ export default function LoginScreen() {
       });
 
       const data = await response.json();
+      console.log("Data: ", data);
 
       if (!response.ok) {
         setDialogMessage("Invalid username or password.");
