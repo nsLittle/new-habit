@@ -17,7 +17,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
-export default function FeedbackRequestTwoScreen() {
+export default function FeedbackRequestWelcomeScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
@@ -59,7 +59,7 @@ export default function FeedbackRequestTwoScreen() {
 
   const route = useRoute();
   const {
-    teamMember_id: teamMemberId,
+    teamMember_id,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -67,7 +67,7 @@ export default function FeedbackRequestTwoScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberId);
+  console.log("Team Member Id: ", teamMember_id);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -104,7 +104,6 @@ export default function FeedbackRequestTwoScreen() {
 
       console.log("User Data: ", userData);
       console.log("Profile Pic: ", userData?.profilePic);
-      // const profilePic = userData?.profilePic;
       console.log("Habit Data: ", habitData);
       console.log("Habit Id: ", habitData?.habits[0]._id);
       console.log("Habit: ", habitData?.habits[0].habit);
@@ -159,15 +158,15 @@ export default function FeedbackRequestTwoScreen() {
               style={styles.feedbackButton}
               onPress={() => {
                 console.log("Navigating with params:", {
-                  teamMemberId,
+                  teamMember_id,
                   teamMemberFirstName,
                   teamMemberLastName,
                   teamMemberEmail,
                   teamMemberProfilePic,
                 });
 
-                navigation.navigate("FeedbackRequestThreeScreen", {
-                  teamMemberId,
+                navigation.navigate("FeedbackRequestRatingScreen", {
+                  teamMember_id,
                   teamMemberFirstName,
                   teamMemberLastName,
                   teamMemberEmail,

@@ -18,9 +18,9 @@ import CadenceScreen from "./screens/CadenceScreen";
 import ReminderScreen from "./screens/ReminderScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import FeedbackRequestScreen from "./screens/FeedbackRequestScreen";
-import FeedbackRequestTwoScreen from "./screens/FeedbackRequestTwoScreen";
-import FeedbackRequestThreeScreen from "./screens/FeedbackRequestThreeScreen";
-import FeedbackRequestFourScreen from "./screens/FeedbackRequestFourScreen";
+import FeedbackRequestWelcomeScreen from "./screens/FeedbackRequestWelcomeScreen";
+import FeedbackRequestRatingScreen from "./screens/FeedbackRequestRatingScreen";
+import FeedbackRequestThanksRatingScreen from "./screens/FeedbackRequestThanksRatingScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -75,16 +75,16 @@ export default function App() {
               component={FeedbackRequestScreen}
             />
             <Stack.Screen
-              name="FeedbackRequestTwoScreen"
-              component={FeedbackRequestTwoScreen}
+              name="FeedbackRequestWelcomeScreen"
+              component={FeedbackRequestWelcomeScreen}
             />
             <Stack.Screen
-              name="FeedbackRequestThreeScreen"
-              component={FeedbackRequestThreeScreen}
+              name="FeedbackRequestRatingScreen"
+              component={FeedbackRequestRatingScreen}
             />
             <Stack.Screen
-              name="FeedbackRequestFourScreen"
-              component={FeedbackRequestFourScreen}
+              name="FeedbackRequestThanksRatingScreen"
+              component={FeedbackRequestThanksRatingScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>

@@ -108,7 +108,9 @@ export default function TeamInviteScreen() {
 
     const subject = encodeURIComponent(`Help ${firstName}`);
     const body = encodeURIComponent(
-      `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.`
+      `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.  Please go to ${navigation.navigate(
+        "FeedbackRequestWelcomeScreen"
+      )}`
     );
 
     const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
@@ -180,13 +182,13 @@ export default function TeamInviteScreen() {
                   <Text style={styles.contactEmail}>{teammember.email}</Text>
                 </View>
                 <View style={styles.iconsColumn}>
-                  {/* <MaterialIcons
+                  <MaterialIcons
                     name="send"
                     size={24}
                     color="black"
                     style={styles.iconSend}
                     onPress={() => sendEmail(teammember.email)}
-                  /> */}
+                  />
                   <MaterialIcons
                     name="edit"
                     size={24}

@@ -96,15 +96,21 @@ export default function ReminderScreen() {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const toggleDay = (day) => {
-    setReminderProfile((prev) => ({
-      ...prev,
-      selectedDays: prev.selectedDays.includes(day)
-        ? prev.selectedDays.filter((d) => d !== day) // Remove day
-        : [...prev.selectedDays, day], // Add day
-    }));
+    if (reminderProfile.isReminderEnabled) {
+      setReminderProfile((prev) => ({
+        ...prev,
+        selectedDays: prev.selectedDays.includes(day)
+          ? prev.selectedDays.filter((d) => d !== day) // Remove day
+          : [...prev.selectedDays, day], // Add day
+      }));
+    } else {
+      setDialogMessage("Would you like to enable reminders first?");
+      setShowDialog(true);
+    }
   };
 
-  const generateOptions = (range) => Array.from({ length: range }, (_, i) => i);
+  const generateOptions = (hours) =>
+    Array.from({ length: hours }, (_, i) => i + 1);
 
   useEffect(() => {
     const checkForExistingReminder = async () => {
@@ -137,11 +143,11 @@ export default function ReminderScreen() {
           selectedMinute: "",
         };
         console.log("Data: ", data);
-        console.log("Existing Reminders: ", existingReminder);
+        console.log("Existing Reminders: ", existingReminder.isReminderEnabled);
 
         setReminderProfile(existingReminder);
 
-        if (existingReminder) {
+        if (existingReminder.isReminderEnabled === true) {
           setDialogMessage(
             "ARE YOU SURE YOU WANT TO EDIT YOUR REMINDER SETTING?\n\nPress 'Keep Setting' if you want to retain your current reminder settings."
           );
@@ -319,28 +325,63 @@ export default function ReminderScreen() {
 
         <View style={styles.pickerContainer}>
           <RNPickerSelect
-            onValueChange={(value) => setSelectedHour(value)}
+            onValueChange={(value) => {
+              if (reminderProfile.isReminderEnabled) {
+                setSelectedHour(value);
+              } else {
+                setDialogMessage("Would you like to enable reminders first?");
+                setShowDialog(true);
+              }
+            }}
             items={generateOptions(24).map((hour) => ({
               label: `${hour}`,
               value: hour,
             }))}
             placeholder={{ label: "Hour", value: "0" }}
           />
+
           <RNPickerSelect
-            onValueChange={(value) => setSelectedMinute(value)}
-            items={generateOptions(60).map((minute) => ({
-              label: `${minute}`,
-              value: minute,
-            }))}
-            placeholder={{ label: "Minute", value: "0" }}
+            onValueChange={(value) => {
+              if (reminderProfile.isReminderEnabled) {
+                setSelectedMinute(value);
+              } else {
+                setDialogMessage("Would you like to enable reminders first?");
+                setShowDialog(true);
+              }
+            }}
+            items={[
+              { label: "0 minutes", value: 0 },
+              { label: "15 minutes", value: 15 },
+              { label: "30 minutes", value: 30 },
+              { label: "45 minutes", value: 45 },
+            ]}
+            placeholder={{ label: "Select Minutes", value: null }}
+          />
+
+          <RNPickerSelect
+            onValueChange={(value) => {
+              if (reminderProfile.isReminderEnabled) {
+                setSelectedPeriod(value);
+              } else {
+                setDialogMessage("Would you like to enable reminders first?");
+                setShowDialog(true);
+              }
+            }}
+            items={[
+              { label: "AM", value: "AM" },
+              { label: "PM", value: "PM" },
+            ]}
+            placeholder={{ label: "AM/PM", value: null }}
           />
         </View>
 
+        <TouchableOpacity style={styles.resetButton} onPress={resetToExisting}>
+          <Text style={styles.resetText}>Reset</Text>
+        </TouchableOpacity>
+
         <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.resetButton}
-            onPress={resetToExisting}>
-            <Text style={styles.buttonText}>Reset</Text>
+          <TouchableOpacity style={styles.keepButton}>
+            <Text style={styles.buttonText}>Keep</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.buttonText}>Save ▶</Text>
@@ -477,12 +518,22 @@ const styles = StyleSheet.create({
     color: "#4a4a4a",
   },
 
+  resetText: {
+    fontSize: 12,
+    paddingTop: 15,
+    color: "#6A8CAF",
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+  },
+
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     width: "100%",
+    paddingHorizontal: 20,
     gap: 15,
-    marginTop: 20,
+    marginTop: 50,
   },
   saveButton: {
     backgroundColor: "#FFD700",
@@ -490,22 +541,30 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
   },
   saveButtonText: {
     color: "black",
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
+    fontWeight: "bold",
   },
-  backButton: {
+  keepButton: {
     backgroundColor: "#D3D3D3",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
   },
-  backButtonText: {
+  keepButtonText: {
     color: "black",
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
+    fontWeight: "bold",
   },
 });

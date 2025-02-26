@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useNavigationState } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "../context/UserContext";
 
@@ -16,6 +16,11 @@ export default function Header() {
   const { userContext, setUserContext, habitId } = useContext(UserContext);
 
   const navigation = useNavigation();
+
+  const currentRoute = useNavigationState((state) => {
+    const route = state.routes[state.index];
+    return route.name;
+  });
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -61,29 +66,42 @@ export default function Header() {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onLayout={(event) => {
-            const { x, y, width, height } = event.nativeEvent.layout;
-            setMenuPosition({ left: x, top: y });
-          }}
-          onPress={toggleMenu}
-          onPressOut={closeMenus}>
-          <Ionicons name="menu" size={32} style={[styles.menuIcon]}></Ionicons>
-        </TouchableOpacity>
+        {currentRoute !== "WelcomeScreen" &&
+          currentRoute !== "LoginScreen" &&
+          currentRoute !== "LogoutScreen" &&
+          currentRoute !== "CreateAccountScreen" && (
+            <TouchableOpacity
+              onLayout={(event) => {
+                const { x, y, width, height } = event.nativeEvent.layout;
+                setMenuPosition({ left: x, top: y });
+              }}
+              onPress={toggleMenu}
+              onPressOut={closeMenus}>
+              <Ionicons
+                name="menu"
+                size={32}
+                style={[styles.menuIcon]}></Ionicons>
+            </TouchableOpacity>
+          )}
 
         <Text style={styles.headerText}>HabitApp</Text>
-        <TouchableOpacity
-          onLayout={(event) => {
-            const { x, y, width, height } = event.nativeEvent.layout;
-            setMenuPosition({ left: x + width, top: y + height });
-          }}
-          onPress={toggleProfileMenu}
-          onPressOut={closeMenus}>
-          <Ionicons
-            name="person"
-            size={32}
-            style={styles.profileIcon}></Ionicons>
-        </TouchableOpacity>
+        {currentRoute !== "WelcomeScreen" &&
+          currentRoute !== "LoginScreen" &&
+          currentRoute !== "LogoutScreen" &&
+          currentRoute !== "CreateAccountScreen" && (
+            <TouchableOpacity
+              onLayout={(event) => {
+                const { x, y, width, height } = event.nativeEvent.layout;
+                setMenuPosition({ left: x + width, top: y + height });
+              }}
+              onPress={toggleProfileMenu}
+              onPressOut={closeMenus}>
+              <Ionicons
+                name="person"
+                size={32}
+                style={styles.profileIcon}></Ionicons>
+            </TouchableOpacity>
+          )}
       </View>
 
       {menuVisible && (
@@ -116,24 +134,6 @@ export default function Header() {
             }>
             <Text style={styles.menuItem}>Team Invite</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("AddTeammemberScreen", {
-                userName: userContext.userName,
-                habitId: userContext.habitId,
-              })
-            }>
-            <Text style={styles.subMenuItem}>Add Team Member</Text>
-          </TouchableOpacity> */}
-          {/* <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("EditTeammemberScreen", {
-                userName: userContext.userName,
-                habitId: userContext.habitId,
-              })
-            }>
-            <Text style={styles.subMenuItem}>Edit Team Member</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("CadenceScreen", {
@@ -170,30 +170,6 @@ export default function Header() {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
-          {/* <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("WelcomeScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Welcome</Text>
-          </TouchableOpacity> */}
-          {/* <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("LoginScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Login</Text>
-          </TouchableOpacity> */}
-          {/* <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("CreateAccountScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Create Account</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("ProfileScreen", {
@@ -210,22 +186,6 @@ export default function Header() {
             }>
             <Text style={styles.menuItem}>Edit Account</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("SettingsScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("ProgressScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Progress</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("LogoutScreen", {
@@ -260,8 +220,9 @@ const styles = StyleSheet.create({
     paddingTop: 70,
   },
   headerText: {
+    textAlign: "center",
+    flex: 1,
     fontSize: 30,
-    margin: 0,
   },
   menuIcon: {
     color: "#000",

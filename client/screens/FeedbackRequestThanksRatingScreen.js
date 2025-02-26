@@ -78,20 +78,27 @@ export default function FeedbackRequestFourScreen() {
       return;
     }
 
+    const requestBody = {
+      teamMemberId: teamMember_id,
+      feedbackThanksRating: ratingValue,
+    };
+
+    console.log(
+      "PATCH Request:",
+      `http://192.168.1.174:8000/feedback/${username}/${habitId}`
+    );
+    console.log("Request Body:", JSON.stringify(requestBody));
+
     try {
       const response = await fetch(
-        `http://your-api-endpoint/feedback/${username}`,
+        `http://192.168.1.174:8000/feedback/${username}/${habitId}`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            habitId: habitId,
-            teamMemberId: teamMember_id,
-            feedbackRating: ratingValue,
-          }),
+          body: JSON.stringify(requestBody),
         }
       );
 
@@ -151,13 +158,6 @@ export default function FeedbackRequestFourScreen() {
           </View>
 
           <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.navigate("FeedbackRequestTwoScreen")}>
-              <Text style={styles.backButtonText} title="Back">
-                ◀ Back
-              </Text>
-            </TouchableOpacity>
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
@@ -248,22 +248,22 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  backButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  // backButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
   saveButton: {
     backgroundColor: "#D3D3D3",
     borderRadius: 25,

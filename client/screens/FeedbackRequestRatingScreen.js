@@ -18,7 +18,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
-export default function FeedbackRequestThreeScreen() {
+export default function FeedbackRequestRatingScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
@@ -49,7 +49,7 @@ export default function FeedbackRequestThreeScreen() {
 
   const route = useRoute();
   const {
-    teamMemberId,
+    teamMember_id,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -57,7 +57,7 @@ export default function FeedbackRequestThreeScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestTwoScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberId);
+  console.log("Team Member Id: ", teamMember_id);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -138,7 +138,7 @@ export default function FeedbackRequestThreeScreen() {
         "and Habit Id: ",
         habitId,
         "from Team Member Id: ",
-        teamMemberId
+        teamMember_id
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
@@ -153,8 +153,10 @@ export default function FeedbackRequestThreeScreen() {
           },
           body: JSON.stringify({
             habitId: habitId,
-            teamMemberId: teamMemberId,
+            teamMember_id: teamMember_id,
             feedbackRating: feedbackRating,
+            cadenceStart,
+            cadenceEnd,
           }),
         }
       );
@@ -165,9 +167,22 @@ export default function FeedbackRequestThreeScreen() {
       const data = await response.json();
       console.log("Data: ", data);
 
-      setDialogMessage("Feedback reting updated successfully.");
+      setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
-      navigation.navigate("FeedbackRequestFourScreen");
+      console.log("Navigating with params:", {
+        teamMember_id,
+        teamMemberFirstName,
+        teamMemberLastName,
+        teamMemberEmail,
+        teamMemberProfilePic,
+      });
+      navigation.navigate("FeedbackRequestThanksRatingScreen", {
+        teamMember_id,
+        teamMemberFirstName,
+        teamMemberLastName,
+        teamMemberEmail,
+        teamMemberProfilePic,
+      });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
       setShowDialog(true);
@@ -235,13 +250,6 @@ export default function FeedbackRequestThreeScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("FeedbackRequestTwoScreen")}>
-            <Text style={styles.backButtonText} title="Back">
-              ◀ Back
-            </Text>
-          </TouchableOpacity>
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => {
@@ -343,22 +351,22 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
   saveButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,

@@ -88,7 +88,6 @@ export default function FeedbackRequestScreen() {
         setContactData({ teammembers });
 
         console.log("Transformed team members:", teammembers);
-        console.log("Team Member ID: ", teammembers[0].teamMember_id);
 
         setDialogMessage("Teammember fetched.");
       } catch (err) {
@@ -145,7 +144,7 @@ export default function FeedbackRequestScreen() {
                     teamMemberId: teammember.teamMember_id,
                   }));
 
-                  navigation.navigate("FeedbackRequestTwoScreen", {
+                  navigation.navigate("FeedbackRequestWelcomeScreen", {
                     teamMemberId: teammember.teamMember_id,
                     teamMemberFirstName: teammember.firstName,
                     teamMemberLastName: teammember.lastName,
@@ -185,7 +184,7 @@ export default function FeedbackRequestScreen() {
                         teamMemberProfilePic: teammember.profilePic,
                       });
 
-                      navigation.navigate("FeedbackRequestTwoScreen", {
+                      navigation.navigate("FeedbackRequestWelcomeScreen", {
                         teamMember_id: teammember.teamMember_id,
                         teamMemberFirstName: teammember.firstName,
                         teamMemberLastName: teammember.lastName,

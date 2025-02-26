@@ -253,8 +253,7 @@ export default function ReviewScreen() {
                   </Text>
                   <Text style={styles.habitData}>
                     {habit.reminders
-                      ? `Time: ${habit.reminders.selectedTime.hour}:${habit.reminders.selectedTime.minute}:${habit.reminders.selectedTime.second}\n` +
-                        `Reminder Enabled: ${
+                      ? `Reminder Enabled: ${
                           habit.reminders.isReminderEnabled ? "Yes" : "No"
                         }\n` +
                         `Email Reminder: ${
@@ -263,6 +262,7 @@ export default function ReviewScreen() {
                         `Text Reminder: ${
                           habit.reminders.isTextReminderEnabled ? "Yes" : "No"
                         }\n` +
+                        `Time: ${habit.reminders.selectedTime.hour}:${habit.reminders.selectedTime.minute}:${habit.reminders.selectedTime.second}\n` +
                         `Days: ${
                           habit.reminders.selectedDays.length > 0
                             ? habit.reminders.selectedDays.join(", ")
@@ -375,19 +375,19 @@ const styles = StyleSheet.create({
   reviewCadence: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 10,
   },
   reviewReminders: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 10,
   },
   reviewTeams: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 10,
   },
   profileData: {
@@ -395,67 +395,45 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 16,
   },
-  // profilePicMain: {
-  //   borderWidth: 5,
-  //   borderColor: "#FFD700",
-  //   width: 100,
-  //   height: 100,
-  //   marginBottom: 10,
-  //   borderRadius: 50,
-  // },
   teammemberProfilePicMain: {
-    borderWidth: 5,
+    borderWidth: 0.5,
     borderColor: "#FFD700",
-    width: 50,
-    height: 50,
-    marginTop: 15,
-    marginBottom: 10,
+    width: 15,
+    height: 15,
+    marginTop: 3,
+    marginBottom: 3,
+    marginLeft: 100,
     borderRadius: 50,
   },
-  habitDataBox: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   habitBox: {
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
   },
-  teamMemberBox: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  teamMemberDetails: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconsColumn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: 80,
-  },
+
   contactPersonButton: {
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 5,
     borderRadius: 25,
-    marginTop: 15,
+    marginTop: 5,
     marginBottom: 5,
-    width: 350,
-    height: 50,
+    width: 300,
+    height: 30,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   contactPersonNameColumn: {
     flexDirection: "row",
-    alignItem: "center",
-    justifyContent: "space-around",
+    alignItem: "left",
+    justifyContent: "left",
   },
   contactEmail: {
-    fontSize: 10,
-    color: "gray",
+    fontSize: 16,
+    alignItems: "right",
   },
+
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -497,6 +475,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
+
   teamMemberProfilePic: {
     borderWidth: 5,
     borderColor: "#FFD700",
