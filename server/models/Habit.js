@@ -20,6 +20,7 @@ const HabitSchema = new mongoose.Schema(
       enum: ["Weekly", "Every Other Week", "Monthly", "Quarterly", null],
       default: null,
     },
+    cadenceLength: { type: Number, required: true, default: 7 },
     completed: { type: Boolean, default: false },
     startDate: { type: Date, default: Date.now },
     reviewDate: { type: Date },

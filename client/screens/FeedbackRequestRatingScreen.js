@@ -49,7 +49,7 @@ export default function FeedbackRequestRatingScreen() {
 
   const route = useRoute();
   const {
-    teamMember_id,
+    teamMemberId,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -57,7 +57,7 @@ export default function FeedbackRequestRatingScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestTwoScreen:", route.params);
-  console.log("Team Member Id: ", teamMember_id);
+  console.log("Team Member Id: ", teamMemberId);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -138,7 +138,7 @@ export default function FeedbackRequestRatingScreen() {
         "and Habit Id: ",
         habitId,
         "from Team Member Id: ",
-        teamMember_id
+        teamMemberId
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
@@ -153,10 +153,8 @@ export default function FeedbackRequestRatingScreen() {
           },
           body: JSON.stringify({
             habitId: habitId,
-            teamMember_id: teamMember_id,
+            teamMemberId: teamMemberId,
             feedbackRating: feedbackRating,
-            cadenceStart,
-            cadenceEnd,
           }),
         }
       );
@@ -170,14 +168,14 @@ export default function FeedbackRequestRatingScreen() {
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMember_id,
+        teamMemberId,
         teamMemberFirstName,
         teamMemberLastName,
         teamMemberEmail,
         teamMemberProfilePic,
       });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
-        teamMember_id,
+        teamMemberId,
         teamMemberFirstName,
         teamMemberLastName,
         teamMemberEmail,

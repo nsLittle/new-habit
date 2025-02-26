@@ -107,10 +107,9 @@ export default function TeamInviteScreen() {
     }
 
     const subject = encodeURIComponent(`Help ${firstName}`);
+    const requestUrl = "habit-app://feedback"; // For local testing, use Linking.createURL('/feedback')
     const body = encodeURIComponent(
-      `Hello,\n\nThis is ${firstName}.  I am working to ${habitinput}.  I'd love your help by getting your feedback.  Please go to ${navigation.navigate(
-        "FeedbackRequestWelcomeScreen"
-      )}`
+      `Hello,\n\nThis is ${firstName}. I am working to ${habitinput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
     );
 
     const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
@@ -245,6 +244,18 @@ export default function TeamInviteScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -303,7 +314,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "gray",
   },
-
   profileImage: {
     width: 40,
     height: 40,
@@ -315,7 +325,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: 80,
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -356,17 +365,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
-  },
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
   },
 });

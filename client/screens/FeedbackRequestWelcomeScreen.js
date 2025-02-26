@@ -59,7 +59,7 @@ export default function FeedbackRequestWelcomeScreen() {
 
   const route = useRoute();
   const {
-    teamMember_id,
+    teamMember_id: teamMemberId,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -67,7 +67,7 @@ export default function FeedbackRequestWelcomeScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", teamMember_id);
+  console.log("Team Member Id: ", teamMemberId);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -158,7 +158,7 @@ export default function FeedbackRequestWelcomeScreen() {
               style={styles.feedbackButton}
               onPress={() => {
                 console.log("Navigating with params:", {
-                  teamMember_id,
+                  teamMemberId,
                   teamMemberFirstName,
                   teamMemberLastName,
                   teamMemberEmail,
@@ -166,7 +166,7 @@ export default function FeedbackRequestWelcomeScreen() {
                 });
 
                 navigation.navigate("FeedbackRequestRatingScreen", {
-                  teamMember_id,
+                  teamMemberId,
                   teamMemberFirstName,
                   teamMemberLastName,
                   teamMemberEmail,

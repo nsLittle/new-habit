@@ -1,21 +1,37 @@
 const mongoose = require("mongoose");
+const { Habit } = require("../models/Habit");
+console.log("Habit Model:", Habit);
+
 const Feedback = require("../models/Feedback");
 
 exports.submitFeedback = async (req, res) => {
   console.log("I'm here to submit feedback...");
   try {
-    const { habitId, teamMember_id, feedbackRating } = req.body;
+    const { habitId, teamMemberId, feedbackRating } = req.body;
 
     console.log("Request Body:", req.body);
 
-    if (!habitId || !teamMember_id || !feedbackRating) {
+    if (!habitId || !teamMemberId || !feedbackRating) {
       return res.status(400).json({ error: "All fields are required." });
     }
 
+    const habit = await Habit.findById(habitId);
+
+    if (!habit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
+
+    const cadenceLength = habit.cadenceLength || 7;
+    const cadenceStart = new Date();
+    const cadenceEnd = new Date();
+    cadenceEnd.setDate(cadenceStart.getDate() + cadenceLength);
+
     const newFeedback = new Feedback({
       habitId,
-      teamMemberId: teamMember_id,
+      teamMemberId,
       feedbackRating,
+      cadenceStart,
+      cadenceEnd,
     });
 
     await newFeedback.save();
@@ -38,7 +54,8 @@ exports.editFeedback = async (req, res) => {
 
   try {
     const { username, habit_id } = req.params;
-    const { teamMemberId, feedbackThanksRating } = req.body;
+    const { teamMemberId, feedbackThanksRating, feedbackRating, feedbackText } =
+      req.body;
 
     console.log("Received PATCH request:", req.params, req.body);
 
@@ -46,9 +63,15 @@ exports.editFeedback = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    const updateFields = {};
+    if (feedbackRating !== undefined)
+      updateFields.feedbackRating = feedbackRating;
+    if (feedbackThanksRating !== undefined)
+      updateFields.feedbackThanksRating = feedbackThanksRating;
+
     const feedback = await Feedback.findOneAndUpdate(
-      { habitId: habit_id, teamMemberId },
-      { feedbackThanksRating },
+      { habitId: new mongoose.Types.ObjectId(habit_id), teamMemberId },
+      updateFields,
       { new: true }
     );
 
@@ -101,43 +124,6 @@ exports.getFeedback = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve feedback" });
   }
 };
-
-// exports.editFeedback = async (req, res) => {
-//   console.log("I'm here to edit feedback...");
-
-//   try {
-//     const { username, habit_id } = req.params;
-//     const { teamMemberId, feedbackThanksRating } = req.body;
-
-//     console.log("Received PATCH request:", req.params, req.body);
-
-//     if (!teamMemberId || feedbackThanksRating === undefined) {
-//       return res.status(400).json({ error: "Missing required fields" });
-//     }
-
-//     const feedback = await Feedback.findOneAndUpdate(
-//       { username, habitId: habit_id, teamMemberId },
-//       { feedbackThanksRating },
-//       { new: true } // Return the updated document
-//     );
-
-//     if (!feedback) {
-//       return res.status(404).json({ message: "Feedback not found" });
-//     }
-
-//     console.log("Updated Feedback:", feedback);
-
-//     return res.status(200).json({
-//       message: "Feedback updated successfully",
-//       feedbackId: feedback._id,
-//       updatedFeedback: feedback,
-//     });
-//   } catch (error) {
-//     console.error("Error updating feedback:", error);
-
-//     return res.status(500).json({ error: "Failed to update feedback" });
-//   }
-// };
 
 exports.deleteFeedback = async (req, res) => {
   try {

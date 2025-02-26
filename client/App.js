@@ -21,6 +21,8 @@ import FeedbackRequestScreen from "./screens/FeedbackRequestScreen";
 import FeedbackRequestWelcomeScreen from "./screens/FeedbackRequestWelcomeScreen";
 import FeedbackRequestRatingScreen from "./screens/FeedbackRequestRatingScreen";
 import FeedbackRequestThanksRatingScreen from "./screens/FeedbackRequestThanksRatingScreen";
+import FeedbackRequestQualitativeScreen from "./screens/FeedbackRequestQualitativeScreen";
+import UnknownScreen from "./screens/UnknownScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -86,6 +88,11 @@ export default function App() {
               name="FeedbackRequestThanksRatingScreen"
               component={FeedbackRequestThanksRatingScreen}
             />
+            <Stack.Screen
+              name="FeedbackRequestQualitativeScreen"
+              component={FeedbackRequestQualitativeScreen}
+            />
+            <Stack.Screen name="UnknownScreen" component={UnknownScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>
