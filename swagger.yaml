@@ -1,0 +1,372 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: HabitApp API
+  description: API documentation for HabitApp.
+host: api.habitapp.com
+basePath: /
+schemes:
+  - https
+paths:
+  /auth/signup:
+    post:
+      summary: Sign up a new user
+      description: Creates a new user account.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              full_name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+              profile_photo:
+                type: string
+                format: binary
+              username:
+                type: string
+              password:
+                type: string
+            required:
+              - full_name
+              - email
+              - password
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Bad request
+  /auth/login:
+    post:
+      summary: User login
+      description: Logs in an existing user.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            required:
+              - email
+              - password
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+  /auth/logout:
+    post:
+      summary: Logout user
+      description: Logs out the user by invalidating the session/token.
+      responses:
+        '200':
+          description: Logged out successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+  /auth/protected-route:
+    get:
+      summary: Protected route for admins
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully authenticated
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Access granted"
+        '401':
+          description: Unauthorized
+  /user:
+    get:
+      summary: Get all users (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of all users retrieved successfully
+  /user/{username}:
+    get:
+      summary: Get user profile (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User profile retrieved successfully
+        '404':
+          description: User not found
+    patch:
+      summary: Update user details
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User updated successfully
+    delete:
+      summary: Deactivate a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User deactivated
+  /habit/{username}:
+    post:
+      summary: Create a new habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Habit created successfully
+    get:
+      summary: Get all habits for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of habits retrieved successfully
+  /habit/{username}/{habit_id}/get-detailed-habit:
+    get:
+      summary: Get habit details
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit details retrieved successfully
+  /habit/{username}/{habit_id}/edit-detailed-habit:
+    patch:
+      summary: Edit habit details
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit details updated successfully
+  /habit/{username}/{habit_id}/feedback:
+    patch:
+      summary: Update feedback for a habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit feedback updated successfully
+  /habit/{username}/{habit_id}/reminder:
+    patch:
+      summary: Update habit reminders
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit reminder updated successfully
+  /habit/{username}/{habit_id}/complete:
+    patch:
+      summary: Mark habit as complete
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Habit marked as complete
+  /teammember/{username}:
+    post:
+      summary: Add a new team member
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Team member added successfully
+    get:
+      summary: Get all team members for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Team members retrieved successfully
+  /teammember/{username}/{teamMember_id}:
+    patch:
+      summary: Update a team member
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: teamMember_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Team member updated successfully
+    delete:
+      summary: Delete a team member
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: teamMember_id
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Team member deleted successfully
+  /feedback/{username}/{habit_id}:
+    get:
+      summary: Get all feedback for a user’s habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Feedback retrieved
+    post:
+      summary: Submit feedback for a habit
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: habit_id
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Feedback submitted
+  /notification/{username}:
+    post:
+      summary: Create a notification
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Notification created
+    get:
+      summary: Get notifications for a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Notifications retrieved
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header

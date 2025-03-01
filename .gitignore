@@ -1,0 +1,12 @@
+# Node & Express
+server/node_modules/
+server/.env
+
+# React Native (Expo)
+client/node_modules/
+client/.expo/
+client/.env
+
+# macOS
+.DS_Store
+node_modules
