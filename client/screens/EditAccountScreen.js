@@ -22,33 +22,37 @@ export default function EditAccountScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { userName, userId, habitId, teammemberId, firstname, token } =
-    userContext || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("UserName: ", userName);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
-      console.log("Last Name: ", lastName);
-      console.log("Email: ", email);
-      console.log("Profile Pic: ", profilePic);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
 
-  const [habits, setHabits] = useState([]);
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    password: "",
-    profilePic: "",
-    email: "",
-  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -62,73 +66,72 @@ export default function EditAccountScreen() {
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [profilePic, setProfilePic] = useState(userData.profilePic || "");
+  const [userName, setUserName] = useState("");
+  const [profilePic, setProfilePic] = useState("");
   const [email, setEmail] = useState("");
 
-  useEffect(() => {
-    console.log(`I'm here to retrieve your profile....`);
-    const retrieveProfile = async () => {
-      if (!token) {
-        console.error("No token available, authentication required.");
-        setLoading(false);
-        return;
-      }
+  // useEffect(() => {
+  //   console.log(`I'm here to retrieve your profile....`);
+  //   const retrieveProfile = async () => {
+  //     if (!token) {
+  //       console.error("No token available, authentication required.");
+  //       setLoading(false);
+  //       return;
+  //     }
 
-      console.log("Sending Request with Token:", token);
+  //     console.log("Sending Request with Token:", token);
 
-      try {
-        const response = await fetch(
-          `http://192.168.1.174:8000/user/${userName}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  //     try {
+  //       const response = await fetch(
+  //         `http://192.168.1.174:8000/user/${userNameContext}`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          setDialogMessage(errorData.error || "We can't find you.");
-          setShowDialog(true);
-          console.log(`We can't find you.`);
-          setLoading(false);
-          return;
-        }
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         setDialogMessage(errorData.error || "We can't find you.");
+  //         setShowDialog(true);
+  //         console.log(`We can't find you.`);
+  //         setLoading(false);
+  //         return;
+  //       }
 
-        const data = await response.json();
-        console.log("Retrieved Data:", data);
-        setUserData(data);
-
-        console.log("ProfilePic URL:", data.profilePic);
-      } catch (error) {
-        setDialogMessage("An error occurred while retrieving your data.");
-        setShowDialog(true);
-        console.error("Data Retrieval Error:", error);
-      }
-      setLoading(false);
-    };
-    retrieveProfile();
-  }, []);
+  //       const data = await response.json();
+  //       console.log("Retrieved Data:", data);
+  //       setUserContext(data);
+  //     } catch (error) {
+  //       setDialogMessage("An error occurred while retrieving your data.");
+  //       setShowDialog(true);
+  //       console.error("Data Retrieval Error:", error);
+  //     }
+  //     setLoading(false);
+  //   };
+  //   retrieveProfile();
+  // }, []);
 
   const handleSave = async () => {
     console.log(`I'm here to save your edits...`);
     try {
       const updates = {
-        firstName,
-        lastName,
-        email,
-        profilePic,
-        password,
+        userNameContext: userName,
+        firstNameContext: firstName,
+        lastNameContext: lastName,
+        emailContext: email,
+        profilePicContext: profilePic,
+        passwordContext: password,
       };
       console.log("Updated User Data: ", updates);
 
-      // const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Authentication token is missing.");
 
       const response = await fetch(
-        `http://192.168.1.174:8000/user/${userName}`,
+        `http://192.168.1.174:8000/user/${userNameContext}`,
         {
           method: "PATCH",
           headers: {
@@ -141,24 +144,24 @@ export default function EditAccountScreen() {
 
       const data = await response.json();
       console.log("Edit Response:", data);
-      setUserData(data.user);
+      setUserContext((prev) => ({ ...prev, ...updates }));
 
       if (!response.ok) throw new Error("Failed to update user data");
 
       setDialogMessage("Success", "Account updated successfully!");
-      navigation.navigate("ProfileScreen", { userName });
+      navigation.navigate("ProfileScreen", { userNameContext });
     } catch (err) {
       console.log("Error", err.message);
     }
   };
 
   useEffect(() => {
-    setFirstName(userData?.firstName || "");
-    setLastName(userData?.lastName || "");
-    setEmail(userData?.email || "");
-    setProfilePic(userData?.profilePic || "");
-    setPassword(userData?.password || "");
-  }, [userData]);
+    setFirstName(firstNameContext || "");
+    setLastName(lastNameContext || "");
+    setEmail(emailContext || "");
+    setProfilePic(profilePicContext || "");
+    setPassword(password || "");
+  }, [userContext]);
 
   const handleBlur = (field, value) => {
     setFilledFields((prev) => ({ ...prev, [field]: value.trim() !== "" }));
@@ -208,7 +211,7 @@ export default function EditAccountScreen() {
           <TextInput
             style={[styles.input, filledFields.lastName && styles.filledInput]}
             placeholder="Last Name"
-            value={lastName}
+            value={lastNameContext}
             onChangeText={setLastName}
             placeholderTextColor="gray"
             onBlur={() => handleBlur("lastName", lastName)}
@@ -216,7 +219,7 @@ export default function EditAccountScreen() {
           <TextInput
             style={[styles.input, filledFields.email && styles.filledInput]}
             placeholder="Email"
-            value={email}
+            value={emailContext}
             onChangeText={setEmail}
             placeholderTextColor="gray"
             onBlur={() => handleBlur("email", email)}
@@ -229,7 +232,7 @@ export default function EditAccountScreen() {
                 filledFields.profilePic && styles.filledInput,
               ]}
               placeholder="Profile Picture"
-              value={profilePic}
+              value={profilePicContext}
               onChangeText={setProfilePic}
               placeholderTextColor="gray"
               onBlur={() => handleBlur("profilePic", profilePic)}
@@ -248,7 +251,7 @@ export default function EditAccountScreen() {
                 filledFields.password && styles.filledInput,
               ]}
               placeholder="Username"
-              value={userData.username}
+              value={userNameContext}
               placeholderTextColor="gray"
               editable={false}
             />
@@ -266,7 +269,7 @@ export default function EditAccountScreen() {
                 filledFields.password && styles.filledInput,
               ]}
               placeholder="Password"
-              value={userData.password}
+              value={password}
               placeholderTextColor="gray"
               secureTextEntry={!showPassword}
               onChangeText={setPassword}

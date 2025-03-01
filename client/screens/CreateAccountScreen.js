@@ -23,14 +23,15 @@ export default function CreateAccountScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userName,
-    userId,
-    habitId,
-    habitinput,
-    teammemberId,
-    firstname,
-    Email,
-    ProfilePic,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
 
@@ -39,20 +40,21 @@ export default function CreateAccountScreen() {
   }, []);
 
   const resetUserContext = () => {
-    setUserContext(null); // Or whatever clean slate looks like
+    setUserContext(null);
   };
 
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("Username: ", userName);
-      console.log("User Id: ", userId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstname);
-      console.log("Email: ", Email);
-      console.log("Profile Pic: ", ProfilePic);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);

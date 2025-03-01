@@ -22,47 +22,52 @@ export default function LoginScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userName,
-    userId,
-    habitId,
-    habitinput,
-    descriptioninput,
-    teammemberId,
-    firstName,
-    profilePic,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
 
   useEffect(() => {
-    resetUserContext();
+    if (userContext && Object.keys(userContext).length !== 0) {
+      resetUserContext();
+    }
   }, []);
 
   const resetUserContext = () => {
-    console.log("Resetting User Context...");
     setUserContext({
-      userName: "",
-      userId: "",
-      habitId: "",
-      habitinput: "",
-      descriptioninput: "",
-      teammemberId: "",
-      firstName: "",
-      profilePic: "",
+      userIdContext: "",
+      userNameContext: "",
+      firstNameContext: null,
+      lastNameContext: null,
+      emailContext: null,
+      profilePicContext: null,
+      habitContextId: "",
+      habitContextInput: "",
+      descriptionContextInput: "",
+      teamMemberContextId: "",
       token: null,
     });
-    console.log("User Context Reset Complete!");
   };
 
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", userName);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Habit Description: ", descriptioninput);
-      console.log("Team Member Id: ", teammemberId);
-      console.log("First Name: ", firstName);
-      console.log("Profile Pic: ", profilePic);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -103,12 +108,16 @@ export default function LoginScreen() {
 
       setUserContext((prev) => ({
         ...prev,
-        userName: data.username,
-        userId: data.userId,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        profilePic: data.profilePic,
+        userIdContext: data.userId,
+        userNameContext: data.username,
+        firstNameContext: data.firstName,
+        lastNameContext: data.lastName,
+        emailContext: data.email,
+        profilePicContext: data.profilePic,
+        habitContextId: data.habitId,
+        habitContextInput: data.habitinput,
+        descriptionContextInput: data.descriptioninput,
+        teamMemberContextId: data.teamMemberId,
         token: data.token,
       }));
 

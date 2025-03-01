@@ -1,83 +1,74 @@
 import * as SecureStore from "expo-secure-store";
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export const UserContext = createContext();
+
+const defaultUserState = {
+  userIdContext: null,
+  userNameContext: null,
+  firstNameContext: null,
+  lastNameContext: null,
+  emailContext: null,
+  profilePicContext: null,
+  habitContextId: null,
+  habitContextInput: null,
+  descriptionContextInput: null,
+  teamMemberContextId: null,
+  teamMemberContextFirstName: null,
+  teamMemberContextProfilePic: null,
+  token: null,
+};
+
 export const UserProvider = ({ children }) => {
-  const [userContext, setUserContext] = useState({
-    userName: null,
-    userId: null,
-    habitId: null,
-    habitinput: null,
-    descriptioninput: null,
-    teamMemberId: null,
-    firstName: null,
-    lastName: null,
-    email: null,
-    profilePic: null,
-    token: null,
-  });
+  const [userContext, setUserContext] = useState(defaultUserState);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadUserInfo = async () => {
-      try {
-        const storedData = await AsyncStorage.multiGet([
-          "userName",
-          "userId",
-          "firstName",
-          "lastName",
-          "email",
-          "profilePic",
-          "habitId",
-          "habitinput",
-          "descriptioninput",
-          "teamMemberId",
-          "teammemberFirstName",
-          "teammmeberProfliePic",
-        ]);
+  /**
+   * Loads user data from AsyncStorage & SecureStore on mount
+   */
+  const loadUserInfo = useCallback(async () => {
+    try {
+      const storedData = await AsyncStorage.multiGet(
+        Object.keys(defaultUserState)
+      );
+      const userInfo = Object.fromEntries(
+        storedData.map(([key, value]) => [
+          key,
+          value ? JSON.parse(value) : null,
+        ])
+      );
 
-        const userInfo = Object.fromEntries(storedData);
+      let storedToken =
+        Platform.OS !== "web" ? await SecureStore.getItemAsync("token") : null;
 
-        let storedToken = null;
-        if (Platform.OS !== "web") {
-          storedToken = await SecureStore.getItemAsync("token");
-        }
-
-        console.log("Loaded Token:", storedToken);
-
-        setUserContext((prev) => ({
-          ...prev,
-          ...userInfo,
-          token: storedToken || prev.token,
-        }));
-      } catch (error) {
-        console.error("Error retrieving user context: ", error);
-      }
-    };
-
-    loadUserInfo();
+      setUserContext({
+        ...defaultUserState,
+        ...userInfo,
+        token: storedToken || null,
+      });
+    } catch (error) {
+      console.error("Error retrieving user context:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  /**
+   * Saves user data to AsyncStorage & SecureStore
+   */
   useEffect(() => {
     const saveUserInfo = async () => {
+      if (!userContext.userIdContext) return; // Skip saving empty user data
+
       try {
-        if (!userContext.userId) return;
-
-        const userStorageData = [
-          ["userId", userContext.userId || ""],
-          ["userName", userContext.userName || ""],
-          ["habitId", userContext.habitId || ""],
-          ["habitinput", userContext.habitinput || ""],
-          ["teamMemberId", userContext.teamMemberId || ""],
-          ["teammemberFirstName", userContext.teammemberFirstName || ""],
-          ["teammemberProfilePic", userContext.teammemberProfilePic || ""],
-          ["firstName", userContext.firstName || ""],
-          ["lastName", userContext.lastName || ""],
-          ["email", userContext.email || ""],
-          ["profilePic", userContext.profilePic || ""],
-        ];
-
-        await AsyncStorage.multiSet(userStorageData);
+        await AsyncStorage.multiSet(
+          Object.entries(userContext).map(([key, value]) => [
+            key,
+            JSON.stringify(value ?? ""),
+          ])
+        );
 
         if (Platform.OS !== "web") {
           if (userContext.token) {
@@ -87,18 +78,37 @@ export const UserProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error("Error saving user context: ", error);
+        console.error("Error saving user context:", error);
       }
     };
 
-    saveUserInfo();
-  }, [userContext]);
+    if (!loading) saveUserInfo();
+  }, [userContext, loading]);
+
+  /**
+   * Resets user context and clears storage
+   */
+  const resetUserContext = useCallback(async () => {
+    try {
+      await AsyncStorage.clear();
+      if (Platform.OS !== "web") await SecureStore.deleteItemAsync("token");
+      setUserContext(defaultUserState);
+    } catch (error) {
+      console.error("Error resetting user context:", error);
+    }
+  }, []);
+
+  /**
+   * Load user info once on mount
+   */
+  useEffect(() => {
+    loadUserInfo();
+  }, [loadUserInfo]);
 
   return (
-    <UserContext.Provider value={{ userContext, setUserContext }}>
-      {children}
+    <UserContext.Provider
+      value={{ userContext, setUserContext, resetUserContext }}>
+      {!loading && children}
     </UserContext.Provider>
   );
 };
-
-export const UserContext = createContext();

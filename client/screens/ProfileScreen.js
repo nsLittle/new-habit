@@ -21,32 +21,32 @@ export default function ProfileScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userName,
-    userId,
-    habitId,
-    habitinput,
-    descriptioninput,
-    teammemberId,
-    firstName,
-    lastName,
-    email,
-    profilePic,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
 
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("Username: ", userName);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Description Input: ", descriptioninput);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
-      console.log("Last Name: ", lastName);
-      console.log("Email: ", email);
-      console.log("Profile Pic: ", profilePic);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -72,13 +72,13 @@ export default function ProfileScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -94,21 +94,17 @@ export default function ProfileScreen() {
 
       console.log("User Data: ", userData);
       console.log("Habit Data: ", habitData);
-      console.log("Habit Id: ", habitData?.habits[0]._id);
       console.log("Team Member Data: ", teamMemberData);
 
       setUserContext((prev) => ({
         ...prev,
-        username: userData.username,
-        userId: userData._id,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        profilePic: userData.profilePic,
+        userNameContext: userData.username,
+        userIdContext: userData._id,
+        firstNameContext: userData.firstName,
+        lastNameContext: userData.lastName,
+        emailContext: userData.email,
+        profilePicContext: userData.profilePic,
         habits: habitData.habit || [],
-        habitId: habitData?.habits[0]._id,
-        habitinput: habitData?.habits[0].habit,
-        descriptioninput: habitData?.habits[0].description,
         teammembers: teamMemberData.teamMembers || [],
       }));
     } catch (error) {
@@ -117,21 +113,21 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
-    if (userName) {
+    if (userNameContext) {
       fetchUserData();
     }
   }, []);
 
-  const profilePicUrl = isValidUrl(profilePic)
-    ? profilePic
-    : profilePic
-    ? `http://192.168.1.174:8000/data/${profilePic.trim()}`
+  const profilePicUrl = isValidUrl(profilePicContext)
+    ? profilePicContext
+    : profilePicContext
+    ? `http://192.168.1.174:8000/data/${profilePicContext.trim()}`
     : "default-image-url-here";
 
   const testImage =
     "https://media.wired.com/photos/5cdefc28b2569892c06b2ae4/master/w_2560%2Cc_limit/Culture-Grumpy-Cat-487386121-2.jpg";
 
-  const sendEmail = (email) => {
+  const sendEmail = (emailContext) => {
     if (email) {
       const mailtoURL = `mailto:${email}`;
       Linking.openURL(mailtoURL).catch((err) =>
@@ -154,29 +150,26 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.profileDataBox}>
-          {profilePic ? (
-            <Image source={{ uri: profilePic }} style={styles.profilePicMain} />
+          {profilePicContext ? (
+            <Image
+              source={{ uri: profilePicContext }}
+              style={styles.profilePicMain}
+            />
           ) : null}
 
-          <Text style={styles.bodyTitleTextSub}>{userName}</Text>
+          <Text style={styles.bodyTitleTextSub}>{userNameContext}</Text>
 
           <View style={styles.profileDetails}>
             <View style={styles.profileMain}>
               <Text style={styles.profileData}>
-                {firstName} {lastName}
+                {firstNameContext} {lastNameContext}
               </Text>
-              <Text style={styles.profileData}>{email}</Text>
+              <Text style={styles.profileData}>{emailContext}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.buttonRow}>
-          {/* <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => navigation.navigate("EditAccountScreen")}>
-            <Text style={styles.editButtonText}>◀ Edit Account</Text>
-          </TouchableOpacity> */}
-
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => navigation.navigate("ReviewScreen")}>

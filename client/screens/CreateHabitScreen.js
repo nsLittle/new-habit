@@ -20,16 +20,33 @@ export default function CreateHabitScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, habitId, teammemberId, firstName, token } =
-    userContext || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -86,9 +103,9 @@ export default function CreateHabitScreen() {
     console.log(`Attempting to save habit.`);
     console.log("Habit Input:", habitInput);
     console.log("Existing Habit: ", existingHabit);
-    console.log("User Id:", userId);
-    console.log("Habit Id:", habitId);
-    console.log("Username: ", username);
+    console.log("User Id:", userIdContext);
+    console.log("Habit Id:", habitContextId);
+    console.log("Username: ", userNameContext);
 
     if (!habitInput.trim()) {
       setDialogMessage("You must enter a habit.");
@@ -96,7 +113,7 @@ export default function CreateHabitScreen() {
       return;
     }
 
-    if (!username) {
+    if (!userNameContext) {
       setDialogMessage("Failed to find user.");
       setShowDialog(true);
       return;
@@ -115,11 +132,11 @@ export default function CreateHabitScreen() {
       let url;
       let method;
 
-      if (habitId) {
-        url = `http://192.168.1.174:8000/habit/${username}/${habitId}/habit`;
+      if (habitContextId) {
+        url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/habit`;
         method = "PATCH";
       } else {
-        url = `http://192.168.1.174:8000/habit/${username}`;
+        url = `http://192.168.1.174:8000/habit/${userNameContext}`;
         method = "POST";
       }
 
@@ -131,19 +148,23 @@ export default function CreateHabitScreen() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ habit: habitInput, userId: userId }),
+        body: JSON.stringify({ habit: habitInput, userId: userIdContext }),
       });
 
       if (!response.ok)
-        throw new Error(`Failed to ${habitId ? "update" : "create"} habit.`);
+        throw new Error(
+          `Failed to ${habitContextId ? "update" : "create"} habit.`
+        );
 
       const responseData = await response.json();
       console.log("Response Data: ", responseData);
+      console.log("Habit Input: ", responseData.habit);
+      console.log("Habit Id: ", responseData.habitId);
 
       setUserContext((prevContext) => ({
         ...prevContext,
-        habitId: responseData.habitId || habitId,
-        habitinput: habitInput,
+        habitContextId: responseData.habitId,
+        habitContextInput: responseData.habit,
       }));
 
       setHabitInput("");
@@ -157,9 +178,14 @@ export default function CreateHabitScreen() {
 
       // navigation.navigate("HabitDescriptionScreen");
     } catch (error) {
-      console.error(`Error ${habitId ? "updating" : "creating"} habit:`, error);
+      console.error(
+        `Error ${habitContextId ? "updating" : "creating"} habit:`,
+        error
+      );
       setDialogMessage(
-        `Error ${habitId ? "updating" : "creating"} habit. Please try again.`
+        `Error ${
+          habitContextId ? "updating" : "creating"
+        } habit. Please try again.`
       );
       setShowDialog(true);
     }

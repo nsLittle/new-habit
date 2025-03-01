@@ -45,7 +45,7 @@ export default function FeedbackRequestThanksRatingScreen() {
 
   const route = useRoute();
   const {
-    teamMemberId,
+    teamMember_id,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -53,7 +53,7 @@ export default function FeedbackRequestThanksRatingScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestThreeScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberId);
+  console.log("Team Member Id: ", teamMember_id);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -104,6 +104,7 @@ export default function FeedbackRequestThanksRatingScreen() {
   }, []);
 
   const handleSave = async () => {
+    console.log("I'm here to handle save...");
     if (!ratingValue) {
       setDialogMessage("Please select a feedback rating.");
       setShowDialog(true);
@@ -111,7 +112,7 @@ export default function FeedbackRequestThanksRatingScreen() {
     }
 
     const requestBody = {
-      teamMemberId: teamMemberId,
+      teamMemberId: teamMember_id,
       feedbackThanksRating: ratingValue,
     };
 
@@ -141,7 +142,20 @@ export default function FeedbackRequestThanksRatingScreen() {
       const data = await response.json();
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
-      navigation.navigate("FeedbackRequestQualitativeScreen");
+      console.log("Navigating with params:", {
+        teamMember_id,
+        teamMemberFirstName,
+        teamMemberLastName,
+        teamMemberEmail,
+        teamMemberProfilePic,
+      });
+      navigation.navigate("FeedbackRequestQualitativeScreen", {
+        teamMember_id,
+        teamMemberFirstName,
+        teamMemberLastName,
+        teamMemberEmail,
+        teamMemberProfilePic,
+      });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
       setShowDialog(true);
@@ -196,27 +210,7 @@ export default function FeedbackRequestThanksRatingScreen() {
                 console.log("Save button pressed");
                 handleSave();
               }}>
-              <Text
-                style={styles.saveButtonText}
-                onPress={() => {
-                  console.log("Navigating with params:", {
-                    teamMemberId,
-                    teamMemberFirstName,
-                    teamMemberLastName,
-                    teamMemberEmail,
-                    teamMemberProfilePic,
-                  });
-
-                  navigation.navigate("FeedbackRequestQualitativeScreen", {
-                    teamMemberId,
-                    teamMemberFirstName,
-                    teamMemberLastName,
-                    teamMemberEmail,
-                    teamMemberProfilePic,
-                  });
-                }}>
-                Save
-              </Text>
+              <Text>Save</Text>
             </TouchableOpacity>
           </View>
         </View>

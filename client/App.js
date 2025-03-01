@@ -10,7 +10,7 @@ import LogoutScreen from "./screens/LogoutScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import EditAccountScreen from "./screens/EditAccountScreen";
 import CreateHabitScreen from "./screens/CreateHabitScreen";
-import HabitDescriptionScreen from "./screens/HabitDescription";
+import HabitDescriptionScreen from "./screens/HabitDescriptionScreen";
 import TeamInviteScreen from "./screens/TeamInviteScreen";
 import AddTeammemberScreen from "./screens/AddTeammemberScreen";
 import EditTeammemberScreen from "./screens/EditTeammemberScreen";
@@ -98,5 +98,4 @@ export default function App() {
       </UserProvider>
     </PaperProvider>
   );
-  w;
 }

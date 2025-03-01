@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Image,
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -49,7 +47,7 @@ export default function FeedbackRequestRatingScreen() {
 
   const route = useRoute();
   const {
-    teamMemberId,
+    teamMember_id,
     teamMemberFirstName,
     teamMemberLastName,
     teamMemberEmail,
@@ -57,7 +55,7 @@ export default function FeedbackRequestRatingScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestTwoScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberId);
+  console.log("Team Member Id: ", teamMember_id);
   console.log("Team Member First Name: ", teamMemberFirstName);
   console.log("Team Member Last Name: ", teamMemberLastName);
   console.log("Team Memeber Email: ", teamMemberEmail);
@@ -138,7 +136,7 @@ export default function FeedbackRequestRatingScreen() {
         "and Habit Id: ",
         habitId,
         "from Team Member Id: ",
-        teamMemberId
+        teamMember_id
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
@@ -153,7 +151,7 @@ export default function FeedbackRequestRatingScreen() {
           },
           body: JSON.stringify({
             habitId: habitId,
-            teamMemberId: teamMemberId,
+            teamMemberId: teamMember_id,
             feedbackRating: feedbackRating,
           }),
         }
@@ -168,14 +166,14 @@ export default function FeedbackRequestRatingScreen() {
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMemberId,
+        teamMember_id,
         teamMemberFirstName,
         teamMemberLastName,
         teamMemberEmail,
         teamMemberProfilePic,
       });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
-        teamMemberId,
+        teamMember_id,
         teamMemberFirstName,
         teamMemberLastName,
         teamMemberEmail,

@@ -22,6 +22,8 @@ export default function LogoutScreen() {
 
   const logout = async () => {
     try {
+      console.log("Logging out...");
+
       await AsyncStorage.clear();
 
       if (Platform.OS !== "web") {
@@ -29,15 +31,18 @@ export default function LogoutScreen() {
       }
 
       setUserContext({
-        userName: null,
-        userId: null,
-        habitId: null,
-        habitinput: null,
-        teammemberId: null,
-        firstName: null,
-        lastName: null,
-        email: null,
-        profilePic: null,
+        userIdContext: null,
+        userNameContext: null,
+        firstNameContext: null,
+        lastNameContext: null,
+        emailContext: null,
+        profilePicContext: null,
+        habitContextId: null,
+        habitContextInput: null,
+        descriptionContextInput: null,
+        teamMemberContextId: null,
+        teamMemberContextFirstName: null,
+        teamMemberContextProfilePic: null,
         token: null,
       });
 
@@ -46,7 +51,7 @@ export default function LogoutScreen() {
 
       setTimeout(() => {
         navigation.navigate("WelcomeScreen");
-      }, 200);
+      }, 500);
       navigation.navigate("WelcomeScreen");
     } catch (error) {
       console.error("Failed to clear AsyncStorage:", error);

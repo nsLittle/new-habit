@@ -73,7 +73,13 @@ exports.getUserHabits = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const habits = await Habit.find({ user: user._id });
+    const habits = await Habit.find({ userId: user._id });
+
+    console.log("User ID from User Model:", user._id);
+    console.log(
+      "User ID stored in Habit:",
+      habits.map((h) => h.userId)
+    );
 
     res.status(200).json({
       message: "Habits retrieved successfully",
