@@ -126,13 +126,13 @@ export default function ReviewScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${username}`, {
+          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${username}`, {
+          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${username}`, {
+          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -147,18 +147,29 @@ export default function ReviewScreen() {
       const teamMemberData = await teamMemberResponse.json();
 
       console.log("User Data: ", userData);
+      console.log("User Data - First Name: ", userData.firstName);
+      console.log("User Data - Id: ", userData._id);
       console.log("Habit Data: ", habitData);
       console.log("Team Member Data: ", teamMemberData);
 
+      const teamMembersArray = Array.isArray(teamMemberData.teamMembers)
+        ? teamMemberData.teamMembers
+        : [];
+
       setProfileData((prev) => ({
         ...prev,
-        firstname: userData?.firstName || "",
-        lastName: userData?.lastName || "",
-        profilePic: userData?.profilePic || "",
-        email: userData?.email || "",
-        habits: habitData?.habits || [],
-        teammembers: [...teamMemberData?.teamMembers] || [],
+        firstname: userData.firstName,
+        lastName: userData.lastName,
+        profilePic: userData.profilePic,
+        email: userData.email,
+        habits: habitData.habits,
+        teammembers: teamMembersArray,
       }));
+
+      setTimeout(() => {
+        console.log("Updated Profile Data: ", profileData);
+        console.log("Updated Team Members: ", profileData.teammembers);
+      }, 500);
 
       console.log("Profile Data: ", profileData);
       console.log("User First Name; ", profileData.firstname);
@@ -220,13 +231,13 @@ export default function ReviewScreen() {
                 <View key={habit._id} style={styles.sectionTitle}>
                   <View style={styles.habitBox}>
                     <Text style={styles.habitData}>
-                      {habit.habit || "Unnamed Habit"}
+                      {habit.habit || "No Habit Available"}
                     </Text>
                     <Text style={styles.bold}>
                       If you were doing this well, what would that look like?
                     </Text>
                     <Text style={styles.habitData}>
-                      {habit.description || "Unnamed Habit Description"}
+                      {habit.description || "No Habit Description Available"}
                     </Text>
                   </View>
                 </View>
@@ -244,7 +255,7 @@ export default function ReviewScreen() {
                     Your Feedback Cadence:
                   </Text>
                   <Text style={styles.habitData}>
-                    {habit.cadence || "Unnamed Feedback Cadence"}
+                    {habit.cadence || "No Feedback Cadence Available"}
                   </Text>
                 </View>
               ))
@@ -277,40 +288,19 @@ export default function ReviewScreen() {
                         ).padStart(2, "0")} ${
                           habit.reminders.selectedTime.period
                         }.`
-                      : "Unnamed Reminder Cadence"}
+                      : "No Reminder Cadence Available"}
                   </Text>
-                  {/* <Text style={styles.habitData}>
-                    {habit.reminders
-                      ? `Reminder Enabled: ${
-                          habit.reminders.isReminderEnabled ? "Yes" : "No"
-                        }\n` +
-                        `Email Reminder: ${
-                          habit.reminders.isEmailReminderEnabled ? "Yes" : "No"
-                        }\n` +
-                        `Text Reminder: ${
-                          habit.reminders.isTextReminderEnabled ? "Yes" : "No"
-                        }\n` +
-                        `Time: ${habit.reminders.selectedTime.hour}:${habit.reminders.selectedTime.minute}\n` +
-                        `Days: ${
-                          habit.reminders.selectedDays.length > 0
-                            ? habit.reminders.selectedDays.join(", ")
-                            : "No days selected"
-                        }\n` +
-                        `Period: ${habit.reminders.selectedTime.period}\n`
-                      : "Unnamed Reminder Cadence"}
-                  </Text> */}
                 </View>
               ))
             ) : (
               <Text style={styles.noProfileData}>No habits available.</Text>
             )}
           </View>
+          <View style={styles.teamMemberDataBox}>
+            <Text style={styles.sectionTitle}>Your feedback circle:</Text>
 
-          <View style={styles.reviewTeams}>
-            <View style={styles.teamMemberDataBox}>
-              <Text style={styles.sectionTitle}>Your feedback circle:</Text>
-
-              {teammembers.map((teammember) => (
+            {Array.isArray(teammembers) && teammembers.length > 0 ? (
+              teammembers.map((teammember) => (
                 <View
                   key={teammember.teamMemberId}
                   style={styles.teamMemberContainer}>
@@ -330,31 +320,29 @@ export default function ReviewScreen() {
                     )}
                     <View style={styles.contactPersonNameColumn}>
                       <Text style={styles.contactName}>
-                        {teammember.teamMemberFirstName}{" "}
-                        {teammember.teamMemberLastName}
+                        {teammember.teamMemberFirstName || "No First Name"}{" "}
+                        {teammember.teamMemberLastName || "No Last Name"}
                       </Text>
                       <Text style={styles.contactEmail}>
-                        {teammember.teamMemberEmail}
+                        {teammember.teamMemberEmail || "No Email"}
                       </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
-              ))}
-            </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>
+                No team members available.
+              </Text>
+            )}
           </View>
         </View>
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("LogoutScreen")}>
-            <Text style={styles.backButtonText}>◀ Logout</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.saveButton}
+            style={styles.startButton}
             onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-            <Text style={styles.saveButtonText}>START ▶</Text>
+            <Text style={styles.startButtonText}>Start Habit Formation ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -395,10 +383,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
+  teamMemberProfilePic: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 40,
+    height: 40,
+    marginBottom: 15,
+    borderRadius: 50,
+  },
   reviewHabit: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  teamMemberDataBox: {
+    borderColor: "#D3D3D3",
+    borderWidth: 1,
+    paddingVertical: 5,
     paddingHorizontal: 10,
   },
   reviewCadence: {
@@ -472,45 +474,36 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  saveButton: {
+  startButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 300,
     height: 45,
     justifyContent: "center",
   },
-  saveButtonText: {
+  startButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-
-  teamMemberProfilePic: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 40,
-    height: 40,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
 });

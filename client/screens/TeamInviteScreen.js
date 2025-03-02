@@ -23,23 +23,30 @@ export default function TeamInviteScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    username,
-    userId,
-    habitId,
-    habitinput,
-    teammemberId,
-    firstName,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -54,11 +61,11 @@ export default function TeamInviteScreen() {
       try {
         if (!token) throw new Error("Authentication token is missing.");
 
-        const { username } = userContext || {};
-        if (!username) throw new Error("Username is missing.");
+        const { userNameContext } = userContext || {};
+        if (!userNameContext) throw new Error("Username is missing.");
 
         const response = await fetch(
-          `http://192.168.1.174:8000/teammember/${username}`,
+          `http://192.168.1.174:8000/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,
@@ -106,17 +113,16 @@ export default function TeamInviteScreen() {
       return;
     }
 
-    const subject = encodeURIComponent(`Help ${firstName}`);
-    const requestUrl = "habit-app://feedback"; // For local testing, use Linking.createURL('/feedback')
+    const subject = encodeURIComponent(`Help ${firstNameContext}`);
+    const requestUrl = "habit-app://feedback";
     const body = encodeURIComponent(
-      `Hello,\n\nThis is ${firstName}. I am working to ${habitinput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
+      `Hello,\n\nThis is ${firstNameContext}. I am working to ${habitinput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
     );
 
-    const mailtoURL = `mailto:${email}?subject=${subject}&body=${body}`;
+    const mailtoURL = `mailto:${emailContext}?subject=${subject}&body=${body}`;
     console.log("Mail To: ", mailtoURL);
 
     Linking.openURL(mailtoURL).catch((err) => {
-      // Catch errors from openURL
       console.error("Failed to open email client", err);
       setDialogMessage("Failed to open email client.");
       setShowDialog(true);
@@ -152,8 +158,20 @@ export default function TeamInviteScreen() {
         <View style={styles.dataContainer}>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.addPersonButton}
-              onPress={() => navigation.navigate("AddTeammemberScreen")}>
+              style={[
+                styles.addPersonButton,
+                contactData.teammembers.length >= 10
+                  ? { backgroundColor: "#D3D3D3" }
+                  : {},
+              ]}
+              onPress={() =>
+                contactData.teammembers.length < 10
+                  ? navigation.navigate("AddTeammemberScreen")
+                  : setDialogMessage(
+                      "You cannot have more than 10 team members."
+                    ) || setShowDialog(true)
+              }
+              disabled={contactData.teammembers.length >= 10}>
               <Text style={styles.addPersonButtonText}>+ Add a person</Text>
             </TouchableOpacity>
           </View>
@@ -210,7 +228,7 @@ export default function TeamInviteScreen() {
                     style={styles.iconDelete}
                     onPress={() => {
                       setDialogMessage(
-                        "ARE YOU SURE YOU WANT TO DLETE YOUR TEAM MEMBER?"
+                        "ARE YOU SURE YOU WANT TO DELETE YOUR TEAM MEMBER?"
                       );
                       console.log(`Delete contact: ${teammember}`);
                     }}
@@ -230,10 +248,25 @@ export default function TeamInviteScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.nextButton}
-              onPress={() => navigation.navigate("CadenceScreen")}>
+              style={[
+                styles.nextButton,
+                contactData.teammembers.length < 3
+                  ? { backgroundColor: "#D3D3D3" }
+                  : {},
+              ]}
+              onPress={() => {
+                if (contactData.teammembers.length < 3) {
+                  setDialogMessage(
+                    "You must have at least 3 team members to proceed with habit formation."
+                  );
+                  setShowDialog(true);
+                  return;
+                }
+                navigation.navigate("CadenceScreen");
+              }}
+              disabled={contactData.teammembers.length < 3}>
               <Text style={styles.nextButtonText} title="Next">
-                Next ▶
+                Save ▶
               </Text>
             </TouchableOpacity>
           </View>

@@ -34,6 +34,7 @@ exports.addTeamMember = async (req, res) => {
       teamMemberEmail,
       teamMemberProfilePic,
       user: user._id,
+      teamMemberId: new mongoose.Types.ObjectId().toString(),
     });
 
     console.log("Team Member Created:", newTeamMember);

@@ -22,23 +22,30 @@ export default function AddTeammemberScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    username,
-    userId,
-    habitId,
-    habitinput,
-    teammemberId,
-    firstName,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -55,9 +62,9 @@ export default function AddTeammemberScreen() {
 
   const handleSave = async () => {
     console.log("I'm here to save team members...");
-    const { userId } = userContext;
+    const { userIdContext } = userContext;
 
-    if (!userId) {
+    if (!userIdContext) {
       setDialogMessage("Failed to fetch user information. Please try again.");
       setDialogVisible(true);
       return;
@@ -68,7 +75,7 @@ export default function AddTeammemberScreen() {
       teamMemberLastName,
       teamMemberEmail,
       teamMemberProfilePic,
-      user: userId,
+      user: userIdContext,
     };
 
     console.log("New Team Member: ", newTeamMember);
@@ -76,7 +83,7 @@ export default function AddTeammemberScreen() {
     try {
       if (!token) {
         setDialogMessage("No token found. Please log in again.");
-        // setDialogVisible(true);
+        setShowDialog(true);
         return false;
       }
 
@@ -87,12 +94,12 @@ export default function AddTeammemberScreen() {
         !teamMemberProfilePic
       ) {
         setDialogMessage("All fields are required.");
-        // setDialogVisible(true);
+        setShowDialog(true);
         return false;
       }
 
       const response = await fetch(
-        `http://192.168.1.174:8000/teammember/${username}`,
+        `http://192.168.1.174:8000/teammember/${userNameContext}`,
         {
           method: "POST",
           headers: {

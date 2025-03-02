@@ -179,13 +179,13 @@ export default function CreateAccountScreen() {
       setUserContext((prevContext) => {
         const updatedContext = {
           ...prevContext,
-          username: data.user.username,
-          userId: data.user._id,
+          userNameContext: data.user.username,
+          userIdContext: data.user._id,
           token: data.token,
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
-          email: data.user.email,
-          profilePic: data.user.profilePic,
+          firstNameContext: data.user.firstName,
+          lastNameContext: data.user.lastName,
+          emailContext: data.user.email,
+          profilePicContext: data.user.profilePic,
         };
 
         console.log("Saved User Context: ", updatedContext);

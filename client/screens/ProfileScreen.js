@@ -94,7 +94,13 @@ export default function ProfileScreen() {
 
       console.log("User Data: ", userData);
       console.log("Habit Data: ", habitData);
+      console.log("Habit Data - Habit: ", habitData.habits[0].habit);
+      console.log("Habit Data - Habit Id: ", habitData.habits[0]._id);
       console.log("Team Member Data: ", teamMemberData);
+
+      const incompleteHabits = habitData.habits.filter(
+        (habit) => !habit.completed
+      );
 
       setUserContext((prev) => ({
         ...prev,
@@ -104,7 +110,8 @@ export default function ProfileScreen() {
         lastNameContext: userData.lastName,
         emailContext: userData.email,
         profilePicContext: userData.profilePic,
-        habits: habitData.habit || [],
+        habitContextInput: incompleteHabits.map((habit) => habit.habit), // Array of habit names
+        habitContextId: incompleteHabits.map((habit) => habit._id), // Array of habit IDs
         teammembers: teamMemberData.teamMembers || [],
       }));
     } catch (error) {
@@ -320,22 +327,6 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  // editButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // editButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
   saveButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,

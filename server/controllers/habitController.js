@@ -25,6 +25,7 @@ exports.createHabit = async (req, res) => {
     } else {
       user = await User.findOne({ username });
     }
+    console.log("User: ", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -32,7 +33,7 @@ exports.createHabit = async (req, res) => {
 
     if (!completed) {
       const activeHabit = await Habit.findOne({
-        user: user._id,
+        user: userId,
         completed: false,
       });
 
@@ -44,9 +45,9 @@ exports.createHabit = async (req, res) => {
     }
 
     const newHabit = await Habit.create({
+      userId: userId,
       habit,
-      user: user._id,
-      completed, // Defaults to false unless specified otherwise
+      completed: completed ?? false,
     });
 
     console.log("New Habit: ", newHabit);
@@ -119,12 +120,12 @@ exports.getDetailedHabit = async (req, res) => {
 
 exports.saveHabit = async (req, res) => {
   try {
-    console.log("Fetching edited habit for:", req.params.username);
+    console.log("Fetching saved habit for:", req.params.username);
     console.log("Request Body: ", req.body);
 
     const { username, habit_id } = req.params;
     console.log("Req Params: ", req.params);
-    console.log("Updating Habit:", habit_id, "for User:", username);
+    console.log("Saving Habit:", habit_id, "for User:", username);
 
     const user = await User.findOne({ username });
     console.log("User: ", user);
@@ -132,15 +133,22 @@ exports.saveHabit = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log("User ID Type:", typeof user._id);
+    console.log("User ID:", user._id);
+
     const updatedHabit = await Habit.findOneAndUpdate(
-      { _id: habit_id, user: user._id },
+      { _id: habit_id },
       { $set: { habit: req.body.habit } },
       { new: true }
     );
 
+    console.log("Updated Habit: ", updatedHabit);
+
     if (!updatedHabit) {
       return res.status(404).json({ message: "Habit not found" });
     }
+
+    console.log("Habit updated successfully.");
 
     res.status(200).json({
       message: "Detailed habit updated successfully",
@@ -170,7 +178,7 @@ exports.saveDescription = async (req, res) => {
     }
 
     const updatedDescription = await Habit.findOneAndUpdate(
-      { _id: habit_id, user: user._id },
+      { _id: habit_id },
       { $set: { description: description } },
       { new: true }
     );
@@ -317,6 +325,8 @@ exports.saveCadence = async (req, res) => {
     }
 
     const user = await User.findOne({ username });
+    console.log("User: ", user);
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -326,6 +336,8 @@ exports.saveCadence = async (req, res) => {
       { $set: { cadence } },
       { new: true, runValidators: true }
     );
+
+    console.log("Updated Habit: ", updatedHabit);
 
     if (!updatedHabit) {
       return res.status(404).json({ message: "Habit not found" });

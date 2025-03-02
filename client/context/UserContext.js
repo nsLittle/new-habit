@@ -25,9 +25,6 @@ export const UserProvider = ({ children }) => {
   const [userContext, setUserContext] = useState(defaultUserState);
   const [loading, setLoading] = useState(true);
 
-  /**
-   * Loads user data from AsyncStorage & SecureStore on mount
-   */
   const loadUserInfo = useCallback(async () => {
     try {
       const storedData = await AsyncStorage.multiGet(
@@ -85,9 +82,6 @@ export const UserProvider = ({ children }) => {
     if (!loading) saveUserInfo();
   }, [userContext, loading]);
 
-  /**
-   * Resets user context and clears storage
-   */
   const resetUserContext = useCallback(async () => {
     try {
       await AsyncStorage.clear();
@@ -98,9 +92,6 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Load user info once on mount
-   */
   useEffect(() => {
     loadUserInfo();
   }, [loadUserInfo]);

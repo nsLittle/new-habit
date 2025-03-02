@@ -23,23 +23,32 @@ export default function FeedbackRequestScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    username,
-    userId,
-    habitId,
-    habitinput,
-    teamMemberId,
-    firstName,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teamMemberId);
-      console.log("First Name: ", firstName);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -54,11 +63,10 @@ export default function FeedbackRequestScreen() {
       try {
         if (!token) throw new Error("Authentication token is missing.");
 
-        const { username } = userContext || {};
-        if (!username) throw new Error("Username is missing.");
+        if (!userNameContext) throw new Error("Username is missing.");
 
         const response = await fetch(
-          `http://192.168.1.174:8000/teammember/${username}`,
+          `http://192.168.1.174:8000/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,

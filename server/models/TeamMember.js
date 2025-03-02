@@ -28,7 +28,6 @@ const TeamMemberSchema = new mongoose.Schema(
     habit: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Habit",
-      required: true,
     },
     role: {
       type: String,

@@ -21,16 +21,33 @@ export default function ReminderScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, habitId, teammemberId, firstName, token } =
-    userContext || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -232,9 +249,9 @@ export default function ReminderScreen() {
               isTextReminderEnabled: reminderProfile.isTextReminderEnabled,
               selectedDays: reminderProfile.selectedDays,
               selectedTime: {
-                hour: selectedHour || "",
-                minute: selectedMinute || "",
-                period: selectedPeriod || "",
+                hour: selectedHour || "00",
+                minute: selectedMinute || "00",
+                period: selectedPeriod || "00",
               },
             },
           },

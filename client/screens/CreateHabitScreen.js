@@ -63,7 +63,7 @@ export default function CreateHabitScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/habit/${username}`,
+          `http://192.168.1.174:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -81,15 +81,25 @@ export default function CreateHabitScreen() {
         }
 
         const data = await response.json();
-        const existingHabit = data.habits[0]?.habit || "";
+        console.log("Data: ", data);
+        const incompleteHabit = data.habits.find((habit) => !habit.completed);
 
-        if (existingHabit) {
-          console.log("Existing Habit Found:", existingHabit);
-          setHabitInput(existingHabit);
-          setExistingHabit(existingHabit);
-          setDialogMessage(
-            "ARE YOU SURE YOU WANT TO EDIT YOUR HABIT?\n\nPress 'Keep Habit' if you want to retain your current habit."
+        if (incompleteHabit) {
+          console.log(
+            "Existing Incomplete Habit Found:",
+            incompleteHabit.habit
           );
+          console.log("Existing Habit ID Found:", incompleteHabit._id);
+          setHabitInput(incompleteHabit.habit);
+          setExistingHabit(incompleteHabit.habit);
+          setDialogMessage("Do you want to edit your existing habit?");
+
+          setUserContext((prevContext) => ({
+            ...prevContext,
+            habitContextId: incompleteHabit._id,
+            habitContextInput: incompleteHabit.habit,
+          }));
+
           setShowDialog(true);
         }
       } catch (error) {
@@ -115,14 +125,6 @@ export default function CreateHabitScreen() {
 
     if (!userNameContext) {
       setDialogMessage("Failed to find user.");
-      setShowDialog(true);
-      return;
-    }
-
-    if (habitInput === existingHabit) {
-      setDialogMessage(
-        "No edits were made; are you sure?\n\nTo Keep Habit as is, press 'Keep Habit'."
-      );
       setShowDialog(true);
       return;
     }
@@ -158,14 +160,18 @@ export default function CreateHabitScreen() {
 
       const responseData = await response.json();
       console.log("Response Data: ", responseData);
-      console.log("Habit Input: ", responseData.habit);
-      console.log("Habit Id: ", responseData.habitId);
+      console.log("Habit Input: ", responseData.updatedHabit.habit);
+      console.log("Habit Id: ", responseData.updatedHabit._id);
 
-      setUserContext((prevContext) => ({
-        ...prevContext,
-        habitContextId: responseData.habitId,
-        habitContextInput: responseData.habit,
-      }));
+      setUserContext((prevContext) => {
+        const updatedContext = {
+          ...prevContext,
+          habitContextId: responseData.updatedHabit._id,
+          habitContextInput: responseData.updatedHabit.habit,
+        };
+        console.log("Updated UserContext: ", updatedContext);
+        return updatedContext;
+      });
 
       setHabitInput("");
       setDialogMessage("Habit successfully saved");
@@ -175,8 +181,6 @@ export default function CreateHabitScreen() {
         setShowDialog(false);
         navigation.navigate("HabitDescriptionScreen");
       }, 500);
-
-      // navigation.navigate("HabitDescriptionScreen");
     } catch (error) {
       console.error(
         `Error ${habitContextId ? "updating" : "creating"} habit:`,
@@ -221,7 +225,7 @@ export default function CreateHabitScreen() {
           <TextInput
             style={styles.input}
             placeholder={habitInput ? habitInput : "I want to become a..."}
-            maxLength={50}
+            maxLength={100}
             value={habitInput}
             onChangeText={setHabitInput}
           />
@@ -229,11 +233,11 @@ export default function CreateHabitScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.navigate("HabitDescriptionScreen")}>
             <Text style={styles.buttonText}>Keep Habit ▶</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.saveButton} onPress={saveHabit}>
             <Text style={styles.buttonText}>Save Changes ▶</Text>
           </TouchableOpacity>

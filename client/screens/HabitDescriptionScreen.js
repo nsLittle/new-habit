@@ -53,6 +53,7 @@ export default function HabitDescriptionScreen() {
 
   const [descriptionInput, setDescriptionInput] = useState("");
   const [existingDescription, setExistingDescription] = useState("");
+  const [incompleteHabit, setIncompleteHabit] = useState(null);
 
   useEffect(() => {
     const checkForExistingDescription = async () => {
@@ -68,7 +69,7 @@ export default function HabitDescriptionScreen() {
           {
             method: "GET",
             headers: {
-              // "Content-Type": "application/json",
+              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
@@ -78,40 +79,36 @@ export default function HabitDescriptionScreen() {
           console.error("No existing habit found.");
           setDescriptionInput("");
           setExistingDescription("");
+          setIncompleteHabit(null);
           return false;
         }
 
         const data = await response.json();
-        console.log("Data from exisiting ...", data);
+        console.log("Existing habit data ...", data);
+        console.log("Eixisting habit id: ", data.habits._id);
+        const incompleteHabit = data.habits.find((habit) => !habit.completed);
 
-        if (!data.habits) {
-          console.log("No habits found for user.");
-          setDescriptionInput("");
-          setExistingDescription("");
-          return;
-        }
-
-        const existingHabit = data.habits;
-        console.log("Existing habit found:", existingHabit);
-        setUserContext((prevContext) => ({
-          ...prevContext,
-          habitContextId: existingHabit._id,
-          descriptionContextInput: existingDescription,
-        }));
-
-        console.log("Existing habit found:", existingHabit);
-
-        const existingDescription = data.habits[0]?.description || "";
-        console.log("Existing Data: ", existingDescription);
-
-        if (existingDescription) {
-          console.log("Existing Description Found:", existingDescription);
-          setDescriptionInput(existingDescription);
-          setExistingDescription(existingDescription);
-          setDialogMessage(
-            "ARE YOU SURE YOU WANT TO EDIT YOUR DESCRIPTION?\n\nPress 'Keep Description' if you want to retain your current habit."
+        if (incompleteHabit && incompleteHabit.description?.trim()) {
+          console.log(
+            "Existing Incomplete Habit Found:",
+            incompleteHabit.habit
           );
-          setShowDialog(true);
+          console.log("Existing Habit ID Found:", incompleteHabit._id);
+
+          setDescriptionInput(incompleteHabit.description);
+          setExistingDescription(incompleteHabit.description);
+          setIncompleteHabit(incompleteHabit);
+
+          setUserContext((prevContext) => ({
+            ...prevContext,
+            habitContextId: incompleteHabit._id,
+            habitContextInput: incompleteHabit.habit,
+          }));
+
+          if (incompleteHabit.description.trim().length > 0) {
+            setDialogMessage("Do you want to edit your existing description?");
+            setShowDialog(true);
+          }
         }
       } catch (error) {
         console.error("Error checking existing description:", error);
@@ -150,7 +147,7 @@ export default function HabitDescriptionScreen() {
 
     try {
       let response;
-      let url = "";
+      let url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/description`;
       let method = "PATCH";
 
       if (habitContextId) {

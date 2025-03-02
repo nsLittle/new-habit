@@ -23,32 +23,32 @@ export default function FeedbackRequestQualitativeScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userName,
-    userId,
-    habitId,
-    habitinput,
-    descriptioninput,
-    teammemberId,
-    firstName,
-    lastName,
-    email,
-    profilePic,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
 
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("Username: ", userName);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Description Input: ", descriptioninput);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
-      console.log("Last Name: ", lastName);
-      console.log("Email: ", email);
-      console.log("Profile Pic: ", profilePic);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
