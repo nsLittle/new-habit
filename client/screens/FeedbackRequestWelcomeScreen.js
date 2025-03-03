@@ -56,20 +56,23 @@ export default function FeedbackRequestWelcomeScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const {
-    teamMemberId,
-    teamMemberFirstName,
-    teamMemberLastName,
-    teamMemberEmail,
-    teamMemberProfilePic,
-  } = route.params || {};
+  const { teamMember } = route.params || {};
 
   console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", teamMember_id);
-  console.log("Team Member First Name: ", teamMemberFirstName);
-  console.log("Team Member Last Name: ", teamMemberLastName);
-  console.log("Team Memeber Email: ", teamMemberEmail);
-  console.log("Team Member Profile Pic: ", teamMemberProfilePic);
+  console.log("Team Member Id: ", route.params.teamMemberContextId);
+  console.log(
+    "Team Member First Name: ",
+    route.params.teamMemberContextFirstName
+  );
+  console.log(
+    "Team Member Last Name: ",
+    route.params.teamMemberContextLastName
+  );
+  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
+  console.log(
+    "Team Member Profile Pic: ",
+    route.params.teamMemberContextProfilePic
+  );
 
   const fetchUserData = async () => {
     try {
@@ -80,13 +83,13 @@ export default function FeedbackRequestWelcomeScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userName}`, {
+          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userName}`, {
+          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${userName}`, {
+          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -126,17 +129,17 @@ export default function FeedbackRequestWelcomeScreen() {
   };
 
   useEffect(() => {
-    if (userName) {
+    if (userNameContext) {
       fetchUserData();
     }
-  }, []);
+  }, [userNameContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View>
           <Image
-            source={{ uri: profilePic }}
+            source={{ uri: profilePicContext }}
             style={styles.profileImage}
             onError={(error) =>
               console.error("Image Load Error:", error?.nativeEvent)
@@ -144,9 +147,11 @@ export default function FeedbackRequestWelcomeScreen() {
           />
         </View>
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyTitleText}>Hi {teamMemberFirstName}</Text>
           <Text style={styles.bodyTitleText}>
-            {firstName} is working to {habitinput}
+            Hi {route.params.teamMemberContextFirstName}
+          </Text>
+          <Text style={styles.bodyTitleText}>
+            {firstNameContext} is working to {habitContextInput}
           </Text>
           <Text>
             They are requesting your feedback. This will only take 2-3 minutes.
@@ -155,20 +160,24 @@ export default function FeedbackRequestWelcomeScreen() {
             <TouchableOpacity
               style={styles.feedbackButton}
               onPress={() => {
-                console.log("Navigating with params:", {
-                  teamMember_id,
-                  teamMemberFirstName,
-                  teamMemberLastName,
-                  teamMemberEmail,
-                  teamMemberProfilePic,
-                });
+                console.log("Raw route.params:", route.params);
+
+                const {
+                  teamMemberContextId,
+                  teamMemberContextFirstName,
+                  teamMemberContextLastName,
+                  teamMemberContextEmail,
+                  teamMemberContextProfilePic,
+                } = route.params || {};
+
+                console.log("Navigating with params:", route.params);
 
                 navigation.navigate("FeedbackRequestRatingScreen", {
-                  teamMember_id,
-                  teamMemberFirstName,
-                  teamMemberLastName,
-                  teamMemberEmail,
-                  teamMemberProfilePic,
+                  teamMemberContextId,
+                  teamMemberContextFirstName,
+                  teamMemberContextLastName,
+                  teamMemberContextEmail,
+                  teamMemberContextProfilePic,
                 });
               }}>
               <Text style={styles.feedbackButtonText} title="Give Feedback">

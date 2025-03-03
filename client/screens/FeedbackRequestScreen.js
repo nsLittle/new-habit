@@ -59,6 +59,7 @@ export default function FeedbackRequestScreen() {
   const [contactData, setContactData] = useState({ teammembers: [] });
 
   useEffect(() => {
+    console.log("Fetching team membmer data");
     const fetchTeamMembersData = async () => {
       try {
         if (!token) throw new Error("Authentication token is missing.");
@@ -96,6 +97,10 @@ export default function FeedbackRequestScreen() {
         setContactData({ teammembers });
 
         console.log("Transformed team members:", teammembers);
+        console.log(
+          "Transformed team member first name: ",
+          teammembers[0].firstName
+        );
 
         setDialogMessage("Teammember fetched.");
       } catch (err) {
@@ -105,6 +110,12 @@ export default function FeedbackRequestScreen() {
     };
     fetchTeamMembersData();
   }, [userContext]);
+
+  const handlePress = (selectedTeamMember) => {
+    navigation.navigate("FeedbackRequestWelcomeScreen", {
+      teamMember: selectedTeamMember,
+    });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -140,24 +151,11 @@ export default function FeedbackRequestScreen() {
                 style={styles.contactPersonButton}
                 onPress={() => {
                   console.log("Navigating with params:", {
-                    teamMemberId: teammember.teamMember_id,
-                    teamMemberFirstName: teammember.firstName,
-                    teamMemberLastName: teammember.lastName,
-                    teamMemberEmail: teammember.email,
-                    teamMemberProfilePic: teammember.profilePic,
+                    teamMember: teammember,
                   });
 
-                  setUserContext((prev) => ({
-                    ...prev,
-                    teamMemberId: teammember.teamMember_id,
-                  }));
-
                   navigation.navigate("FeedbackRequestWelcomeScreen", {
-                    teamMemberId: teammember.teamMember_id,
-                    teamMemberFirstName: teammember.firstName,
-                    teamMemberLastName: teammember.lastName,
-                    teamMemberEmail: teammember.email,
-                    teamMemberProfilePic: teammember.profilePic,
+                    teamMember: teammember,
                   });
                 }}>
                 <View style={styles.contactPersonNameColumn}>
@@ -193,11 +191,11 @@ export default function FeedbackRequestScreen() {
                       });
 
                       navigation.navigate("FeedbackRequestWelcomeScreen", {
-                        teamMember_id: teammember.teamMember_id,
-                        teamMemberFirstName: teammember.firstName,
-                        teamMemberLastName: teammember.lastName,
-                        teamMemberEmail: teammember.email,
-                        teamMemberProfilePic: teammember.profilePic,
+                        teamMemberContextId: teammember.teamMember_id,
+                        teamMemberContextFirstName: teammember.firstName,
+                        teamMemberContextLastName: teammember.lastName,
+                        teamMemberContextEmail: teammember.email,
+                        teamMemberContextProfilePic: teammember.profilePic,
                       });
                     }}
                   />

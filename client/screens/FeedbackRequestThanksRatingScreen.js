@@ -19,23 +19,32 @@ export default function FeedbackRequestThanksRatingScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    username,
-    userId,
-    habitId,
-    habitinput,
-    teammemberId,
-    firstName,
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
     token,
   } = userContext || {};
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Input: ", habitinput);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstName);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
     }
   }, [userContext]);
@@ -44,20 +53,23 @@ export default function FeedbackRequestThanksRatingScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const {
-    teamMember_id,
-    teamMemberFirstName,
-    teamMemberLastName,
-    teamMemberEmail,
-    teamMemberProfilePic,
-  } = route.params || {};
+  const { teamMember } = route.params || {};
 
-  console.log("Received from FeedbackRequestThreeScreen:", route.params);
-  console.log("Team Member Id: ", teamMember_id);
-  console.log("Team Member First Name: ", teamMemberFirstName);
-  console.log("Team Member Last Name: ", teamMemberLastName);
-  console.log("Team Memeber Email: ", teamMemberEmail);
-  console.log("Team Member Profile Pic: ", teamMemberProfilePic);
+  console.log("Received from FeedbackRequestScreen:", route.params);
+  console.log("Team Member Id: ", route.params.teamMemberContextId);
+  console.log(
+    "Team Member First Name: ",
+    route.params.teamMemberContextFirstName
+  );
+  console.log(
+    "Team Member Last Name: ",
+    route.params.teamMemberContextLastName
+  );
+  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
+  console.log(
+    "Team Member Profile Pic: ",
+    route.params.teamMemberContextProfilePic
+  );
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
@@ -72,10 +84,12 @@ export default function FeedbackRequestThanksRatingScreen() {
   ];
 
   useEffect(() => {
+    console.log("I'm here to fetch GET feedback...");
+
     const fetchFeedback = async () => {
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/feedback/${username}/${habitId}`,
+          `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
           {
             method: "GET",
             headers: {
@@ -112,19 +126,19 @@ export default function FeedbackRequestThanksRatingScreen() {
     }
 
     const requestBody = {
-      teamMemberId: teamMember_id,
+      teamMemberId: route.params.teamMemberContextId,
       feedbackThanksRating: ratingValue,
     };
 
     console.log(
       "PATCH Request:",
-      `http://192.168.1.174:8000/feedback/${username}/${habitId}`
+      `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`
     );
     console.log("Request Body:", JSON.stringify(requestBody));
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/feedback/${username}/${habitId}`,
+        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
         {
           method: "PATCH",
           headers: {
@@ -140,21 +154,23 @@ export default function FeedbackRequestThanksRatingScreen() {
       }
 
       const data = await response.json();
+      console.log("Data: ", data);
+
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMember_id,
-        teamMemberFirstName,
-        teamMemberLastName,
-        teamMemberEmail,
-        teamMemberProfilePic,
+        teamMemberContextId: route.params.teamMemberContextId,
+        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
+        teamMemberContextLastName: route.params.teamMemberContextLastName,
+        teamMemberContextEmail: route.params.teamMemberContextEmail,
+        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
       });
       navigation.navigate("FeedbackRequestQualitativeScreen", {
-        teamMember_id,
-        teamMemberFirstName,
-        teamMemberLastName,
-        teamMemberEmail,
-        teamMemberProfilePic,
+        teamMemberContextId: route.params.teamMemberContextId,
+        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
+        teamMemberContextLastName: route.params.teamMemberContextLastName,
+        teamMemberContextEmail: route.params.teamMemberContextEmail,
+        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
       });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
@@ -167,8 +183,8 @@ export default function FeedbackRequestThanksRatingScreen() {
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>
-            Did {firstName} thank you and ask for more suggestions from last
-            feedback?
+            Did {firstNameContext} thank you and ask for more suggestions from
+            last feedback?
           </Text>
         </View>
 

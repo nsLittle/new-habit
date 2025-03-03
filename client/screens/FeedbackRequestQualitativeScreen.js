@@ -145,20 +145,20 @@ export default function FeedbackRequestQualitativeScreen() {
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>
-            What can {firstName} do to become even more effective at{" "}
-            {habitinput}?
+            What can {firstNameContext} do to become even more effective at{" "}
+            {habitContextInput}?
           </Text>
         </View>
 
         <View style={styles.bodyIntroContainer}>
           <Text style={styles.bodyIntroText}>
-            One concrete feedback to help {firstName}
+            One concrete feedback to help {firstNameContext}
           </Text>
           <TextInput
             style={styles.input}
             value={feedbackText}
             onChangeText={setFeedbackText}
-            placeholder={`${firstName} can become more effective at ${habitinput} by`}></TextInput>
+            placeholder={`${firstNameContext} can become more effective at ${habitContextInput} by`}></TextInput>
 
           <View style={styles.buttonRow}>
             <TouchableOpacity

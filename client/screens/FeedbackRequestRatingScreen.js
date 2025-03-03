@@ -55,20 +55,23 @@ export default function FeedbackRequestRatingScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const {
-    teamMember_id,
-    teamMemberFirstName,
-    teamMemberLastName,
-    teamMemberEmail,
-    teamMemberProfilePic,
-  } = route.params || {};
+  const { teamMember } = route.params || {};
 
-  console.log("Received from FeedbackRequestTwoScreen:", route.params);
-  console.log("Team Member Id: ", teamMember_id);
-  console.log("Team Member First Name: ", teamMemberFirstName);
-  console.log("Team Member Last Name: ", teamMemberLastName);
-  console.log("Team Memeber Email: ", teamMemberEmail);
-  console.log("Team Member Profile Pic: ", teamMemberProfilePic);
+  console.log("Received from FeedbackRequestScreen:", route.params);
+  console.log("Team Member Id: ", route.params.teamMemberContextId);
+  console.log(
+    "Team Member First Name: ",
+    route.params.teamMemberContextFirstName
+  );
+  console.log(
+    "Team Member Last Name: ",
+    route.params.teamMemberContextLastName
+  );
+  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
+  console.log(
+    "Team Member Profile Pic: ",
+    route.params.teamMemberContextProfilePic
+  );
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
@@ -91,7 +94,7 @@ export default function FeedbackRequestRatingScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/feedback/${username}/${habitId}`,
+          `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
           {
             method: "GET",
             headers: {
@@ -141,17 +144,17 @@ export default function FeedbackRequestRatingScreen() {
       console.log("Saving rating...");
       console.log(
         "Username: ",
-        username,
+        userNameContext,
         "and Habit Id: ",
-        habitId,
+        habitContextId,
         "from Team Member Id: ",
-        teamMember_id
+        route.params.teamMemberContextId
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
 
       const response = await fetch(
-        `http://192.168.1.174:8000/feedback/${username}`,
+        `http://192.168.1.174:8000/feedback/${userNameContext}`,
         {
           method: "POST",
           headers: {
@@ -159,8 +162,8 @@ export default function FeedbackRequestRatingScreen() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            habitId: habitId,
-            teamMemberId: teamMember_id,
+            habitContextId: [habitContextId],
+            teamMemberContextId: route.params.teamMemberContextId,
             feedbackRating: feedbackRating,
           }),
         }
@@ -175,18 +178,18 @@ export default function FeedbackRequestRatingScreen() {
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMember_id,
-        teamMemberFirstName,
-        teamMemberLastName,
-        teamMemberEmail,
-        teamMemberProfilePic,
+        teamMemberContextId: route.params.teamMemberContextId,
+        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
+        teamMemberContextLastName: route.params.teamMemberContextLastName,
+        teamMemberContextEmail: route.params.teamMemberContextEmail,
+        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
       });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
-        teamMember_id,
-        teamMemberFirstName,
-        teamMemberLastName,
-        teamMemberEmail,
-        teamMemberProfilePic,
+        teamMemberContextId: route.params.teamMemberContextId,
+        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
+        teamMemberContextLastName: route.params.teamMemberContextLastName,
+        teamMemberContextEmail: route.params.teamMemberContextEmail,
+        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
       });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
@@ -218,7 +221,7 @@ export default function FeedbackRequestRatingScreen() {
       <View style={styles.body}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>
-            Rate how well {firstName} has been living their goal
+            Rate how well {firstNameContext} has been living their goal
           </Text>
         </View>
 
