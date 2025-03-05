@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -19,14 +19,14 @@ exports.signup = async (req, res) => {
     });
 
     const token = jwt.sign(
-      { userId: user._id, username: user.username, password: user.password }, 
+      { userId: user._id, username: user.username, password: user.password },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-    console.log('Token: ', token);
-    console.log('UserId: ', user._id);
-    console.log('Username: ', user.username);
-    console.log('Password: ', user.password);
+    console.log("Token: ", token);
+    console.log("UserId: ", user._id);
+    console.log("Username: ", user.username);
+    console.log("Password: ", user.password);
 
     res.status(201).json({ message: "User created successfully", user, token });
   } catch (error) {
@@ -35,40 +35,41 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  console.log("I'm in the back logging in ...");
   try {
     const { username, password } = req.body;
-    console.log('Username: ', username);
-    console.log('Password: ', password);
+    console.log("Username: ", username);
+    console.log("Password: ", password);
 
     const user = await User.findOne({ username });
-    console.log('User found:', user);
+    console.log("User found:", user);
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    console.log('Username: ', user.username);
-    console.log('Saved Password: ', user.password);
-    console.log('Entered Password: ', password);
+    console.log("Username: ", user.username);
+    console.log("Saved Password: ", user.password);
+    console.log("Entered Password: ", password);
 
     console.log("Comparing passwords...");
     if (user.password === password) {
-      console.log('It is a match');
+      console.log("It is a match");
     }
     // const isMatch = await bcrypt.compare(password, user.password);
     // console.log("Password match result:", isMatch);
     // if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
-      { id: user._id, username: user.username }, 
+      { id: user._id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    console.log('Token: ', token);
+    console.log("Token: ", token);
 
     res.status(200).json({
       message: "Login successful",
       token,
       username: user.username,
-      userId: user._id
+      userId: user._id,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -76,5 +77,7 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-  res.status(200).json({ message: "Logged out successfully. Remove token on client-side." });
+  res
+    .status(200)
+    .json({ message: "Logged out successfully. Remove token on client-side." });
 };

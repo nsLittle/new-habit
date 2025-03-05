@@ -13,7 +13,13 @@ const PORT = process.env.PORT || 8000;
 connectDB();
 
 app.options("*", cors());
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 app.use((req, res, next) => {

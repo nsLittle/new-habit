@@ -85,7 +85,7 @@ export default function LoginScreen() {
       console.log("Username: ", username);
       console.log("Password: ", password);
 
-      const response = await fetch("http://192.168.1.174:8000/auth/login", {
+      const response = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,6 +95,8 @@ export default function LoginScreen() {
           password,
         }),
       });
+
+      console.log("Raw response:", response);
 
       const data = await response.json();
       console.log("Data: ", data);
