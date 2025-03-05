@@ -78,14 +78,23 @@ export default function CreateAccountScreen() {
 
   const nonDuplicateUsername = async () => {
     try {
-      console.log("Checking for duplicate username.");
+      console.log("Checking for duplicate username...");
       console.log("Username: ", username);
-      const response = await fetch(`http://192.168.1.174:8000/user`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+
+      const response = await fetch(
+        `http://192.168.1.174:8000/user/${username}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 404) {
+        // If the user is not found, it's not a duplicate (we can create an account)
+        return true;
+      }
 
       if (!response.ok) {
         throw new Error("Failed to check username.");
@@ -94,18 +103,10 @@ export default function CreateAccountScreen() {
       const data = await response.json();
       console.log("Data: ", data);
 
-      const usernames = data.usernames;
-
-      if (!Array.isArray(usernames)) {
-        console.error("API response is not an array:", data);
-        return false;
-      }
-
-      const isDuplicate = usernames.includes(username);
-
-      return !isDuplicate;
+      // If user data exists, the username is a duplicate
+      return !data.user;
     } catch (error) {
-      console.error("Error looking for duplication", error);
+      console.error("Error checking for duplicate username", error);
       return false;
     }
   };

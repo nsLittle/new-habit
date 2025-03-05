@@ -1,3 +1,4 @@
+import { useContext, useEffect } from "react";
 import {
   Platform,
   ScrollView,
@@ -7,14 +8,21 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
+  const { setUserContext } = useContext(UserContext) || {};
+
+  useEffect(() => {
+    const clearUserData = async () => {
+      await AsyncStorage.clear();
+      setUserContext(null);
+    };
+    clearUserData();
+  }, []);
 
   const openWebLink = async () => {
     try {
@@ -28,7 +36,6 @@ export default function WelcomeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <Text style={styles.bodyTitleText}>Welcome</Text>
-
         <Text style={styles.bodyIntroText}>
           The proven habit formation method{" "}
         </Text>
@@ -59,14 +66,14 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
+    paddingHorizontal: 20,
   },
   body: {
     flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+    paddingTop: Platform.OS === "web" ? 100 : 20,
   },
   bodyTitleText: {
     fontSize: 26,

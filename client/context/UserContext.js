@@ -6,19 +6,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const UserContext = createContext();
 
 const defaultUserState = {
-  userIdContext: null,
-  userNameContext: null,
-  firstNameContext: null,
-  lastNameContext: null,
-  emailContext: null,
-  profilePicContext: null,
-  habitContextId: null,
-  habitContextInput: null,
-  descriptionContextInput: null,
-  teamMemberContextId: null,
-  teamMemberContextFirstName: null,
-  teamMemberContextProfilePic: null,
-  token: null,
+  userIdContext: "",
+  userNameContext: "",
+  firstNameContext: "",
+  lastNameContext: "",
+  emailContext: "",
+  profilePicContext: "",
+  habitContextId: "",
+  habitContextInput: "",
+  descriptionContextInput: "",
+  teamMemberContextId: "",
+  teamMemberContextFirstName: "",
+  teamMemberContextProfilePic: "",
+  token: "",
 };
 
 export const UserProvider = ({ children }) => {
@@ -52,14 +52,13 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Saves user data to AsyncStorage & SecureStore
-   */
   useEffect(() => {
     const saveUserInfo = async () => {
-      if (!userContext.userIdContext) return; // Skip saving empty user data
+      if (!userContext || !userContext.userIdContext) return;
 
       try {
+        console.log("User Context: ", userContext);
+
         await AsyncStorage.multiSet(
           Object.entries(userContext).map(([key, value]) => [
             key,
@@ -86,7 +85,7 @@ export const UserProvider = ({ children }) => {
     try {
       await AsyncStorage.clear();
       if (Platform.OS !== "web") await SecureStore.deleteItemAsync("token");
-      setUserContext(defaultUserState);
+      setUserContext({ ...defaultUserState });
     } catch (error) {
       console.error("Error resetting user context:", error);
     }

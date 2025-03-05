@@ -13,15 +13,20 @@ exports.getAllUsernames = async (req, res) => {
 
 exports.getUserProfile = async (req, res) => {
   try {
+    console.log("I'm here to get user profile...");
     const { username } = req.params;
     console.log("Username: ", username);
 
-    const user = await User.findOne({ username }).populate("habits teamMember");
+    const user = await User.find({ username });
     console.log("user:", user);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.status(200).json(user);
+    const foundUser = Array.isArray(user) && user.length === 0 ? "" : user;
+
+    console.log("Found User: ", foundUser);
+
+    res.status(200).json(foundUser);
   } catch (error) {
     console.error("Error in getUserProfile:", error.message);
     res.status(400).json({ error: error.message });

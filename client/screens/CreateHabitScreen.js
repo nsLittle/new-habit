@@ -160,14 +160,14 @@ export default function CreateHabitScreen() {
 
       const responseData = await response.json();
       console.log("Response Data: ", responseData);
-      console.log("Habit Input: ", responseData.updatedHabit.habit);
-      console.log("Habit Id: ", responseData.updatedHabit._id);
+      console.log("Habit Input: ", responseData.habit);
+      console.log("Habit Id: ", responseData.habitId);
 
       setUserContext((prevContext) => {
         const updatedContext = {
           ...prevContext,
-          habitContextId: responseData.updatedHabit._id,
-          habitContextInput: responseData.updatedHabit.habit,
+          habitContextId: responseData.habitId,
+          habitContextInput: responseData.habit,
         };
         console.log("Updated UserContext: ", updatedContext);
         return updatedContext;

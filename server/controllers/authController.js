@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
-  console.log("At signup!");
+  console.log("I'm creating a new account...");
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     console.log("Entered Password: ", req.body.password);
@@ -53,9 +53,6 @@ exports.login = async (req, res) => {
     if (user.password === password) {
       console.log("It is a match");
     }
-    // const isMatch = await bcrypt.compare(password, user.password);
-    // console.log("Password match result:", isMatch);
-    // if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
       { id: user._id, username: user.username },

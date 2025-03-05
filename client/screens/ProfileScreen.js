@@ -93,9 +93,11 @@ export default function ProfileScreen() {
       const teamMemberData = await teamMemberResponse.json();
 
       console.log("User Data: ", userData);
+      console.log("User Data - Username: ", userData[0]?.username);
+      console.log("User Data - First Name: ", userData[0]?.firstName);
       console.log("Habit Data: ", habitData);
-      console.log("Habit Data - Habit: ", habitData.habits[0].habit);
-      console.log("Habit Data - Habit Id: ", habitData.habits[0]._id);
+      console.log("Habit Data - Habit: ", habitData.habits[0]?.habit);
+      console.log("Habit Data - Habit Id: ", habitData.habits[0]?._id);
       console.log("Team Member Data: ", teamMemberData);
 
       const incompleteHabits = habitData.habits.filter(
@@ -104,12 +106,12 @@ export default function ProfileScreen() {
 
       setUserContext((prev) => ({
         ...prev,
-        userNameContext: userData.username,
-        userIdContext: userData._id,
-        firstNameContext: userData.firstName,
-        lastNameContext: userData.lastName,
-        emailContext: userData.email,
-        profilePicContext: userData.profilePic,
+        userNameContext: userData[0].username,
+        userIdContext: userData[0]._id,
+        firstNameContext: userData[0].firstName,
+        lastNameContext: userData[0].lastName,
+        emailContext: userData[0].email,
+        profilePicContext: userData[0].profilePic,
         habitContextInput: incompleteHabits.map((habit) => habit.habit), // Array of habit names
         habitContextId: incompleteHabits.map((habit) => habit._id), // Array of habit IDs
         teammembers: teamMemberData.teamMembers || [],

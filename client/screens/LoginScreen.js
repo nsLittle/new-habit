@@ -42,16 +42,16 @@ export default function LoginScreen() {
 
   const resetUserContext = () => {
     setUserContext({
-      userIdContext: "",
-      userNameContext: "",
+      userIdContext: null,
+      userNameContext: null,
       firstNameContext: null,
       lastNameContext: null,
       emailContext: null,
       profilePicContext: null,
-      habitContextId: "",
-      habitContextInput: "",
-      descriptionContextInput: "",
-      teamMemberContextId: "",
+      habitIdContext: [],
+      habitInputContext: [],
+      descriptionInputContext: "",
+      teamMemberIdContext: "",
       token: null,
     });
   };
