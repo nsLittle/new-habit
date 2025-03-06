@@ -51,6 +51,9 @@ app.use("/feedback", feedbackRoutes);
 const notificationRoutes = require("./routes/notificationRoutes");
 app.use("/notification", notificationRoutes);
 
+const reminderRoutes = require("./routes/reminderRoutes");
+app.use("/reminders", reminderRoutes);
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   // console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);

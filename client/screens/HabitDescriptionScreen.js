@@ -87,6 +87,7 @@ export default function HabitDescriptionScreen() {
         console.log("Existing habit data ...", data);
         console.log("Eixisting habit id: ", data.habits._id);
         const incompleteHabit = data.habits.find((habit) => !habit.completed);
+        console.log("Incomplete Habit: ", incompleteHabit);
 
         if (incompleteHabit && incompleteHabit.description?.trim()) {
           console.log(

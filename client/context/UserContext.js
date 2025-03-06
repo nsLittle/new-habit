@@ -81,7 +81,9 @@ export const UserProvider = ({ children }) => {
     if (!loading) saveUserInfo();
   }, [userContext, loading]);
 
-  const resetUserContext = useCallback(async () => {
+  const resetUserContext = useCallback(async (caller = "Unknown") => {
+    console.log(`resetUserContext called by: ${caller}`);
+
     try {
       await AsyncStorage.clear();
       if (Platform.OS !== "web") await SecureStore.deleteItemAsync("token");

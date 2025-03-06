@@ -97,6 +97,10 @@ export default function ProfileScreen() {
       console.log("User Data - First Name: ", userData[0]?.firstName);
       console.log("Habit Data: ", habitData);
       console.log("Habit Data - Habit: ", habitData.habits[0]?.habit);
+      console.log(
+        "Habit Data - Description: ",
+        habitData.habits[0]?.description
+      );
       console.log("Habit Data - Habit Id: ", habitData.habits[0]?._id);
       console.log("Team Member Data: ", teamMemberData);
 
@@ -113,6 +117,9 @@ export default function ProfileScreen() {
         emailContext: userData[0].email,
         profilePicContext: userData[0].profilePic,
         habitContextInput: incompleteHabits.map((habit) => habit.habit), // Array of habit names
+        descriptionContextInput: incompleteHabits.map(
+          (habit) => habit.description
+        ),
         habitContextId: incompleteHabits.map((habit) => habit._id), // Array of habit IDs
         teammembers: teamMemberData.teamMembers || [],
       }));

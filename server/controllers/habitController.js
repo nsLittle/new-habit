@@ -233,6 +233,7 @@ exports.saveReminder = async (req, res) => {
       "for username:",
       username
     );
+
     console.log("Request Body:", req.body);
     console.log("Extracted reminders object:", req.body.reminders);
 
@@ -241,19 +242,21 @@ exports.saveReminder = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const habit = await Habit.findOne({ _id: habit_id, user: user._id });
+    console.log("User: ", user);
+
+    const habit = await Habit.findOne({ _id: habit_id });
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    // Ensure reminders exist in request body
+    console.log("Habit: ", habit);
+
     if (!req.body.reminders) {
       return res.status(400).json({ message: "Reminders data is missing" });
     }
 
     const { reminders } = req.body;
 
-    // Normalize selectedDays array
     let selectedDays = reminders.selectedDays;
     if (typeof selectedDays === "string") {
       selectedDays = selectedDays.split(",").map((day) => day.trim());
@@ -261,7 +264,6 @@ exports.saveReminder = async (req, res) => {
       selectedDays = [];
     }
 
-    // Normalize selectedTime
     const selectedTime = {
       hour: String(reminders.selectedTime?.hour) || "00",
       minute: String(reminders.selectedTime?.minute) || "00",
@@ -332,7 +334,7 @@ exports.saveCadence = async (req, res) => {
     }
 
     const updatedHabit = await Habit.findOneAndUpdate(
-      { _id: habit_id, user: user._id },
+      { _id: habit_id },
       { $set: { cadence } },
       { new: true, runValidators: true }
     );

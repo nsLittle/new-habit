@@ -137,24 +137,28 @@ export default function FeedbackRequestWelcomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        <View>
-          <Image
-            source={{ uri: profilePicContext }}
-            style={styles.profileImage}
-            onError={(error) =>
-              console.error("Image Load Error:", error?.nativeEvent)
-            }
-          />
-        </View>
         <View style={styles.bodyIntroContainer}>
           <Text style={styles.bodyTitleText}>
-            Hi {route.params.teamMemberContextFirstName}
+            Hi {route.params.teamMemberContextFirstName},
           </Text>
+          <View>
+            <Image
+              source={{ uri: profilePicContext }}
+              style={styles.profileImage}
+              onError={(error) =>
+                console.error("Image Load Error:", error?.nativeEvent)
+              }
+            />
+          </View>
           <Text style={styles.bodyTitleText}>
-            {firstNameContext} is working to {habitContextInput}
+            {firstNameContext} says, "{habitContextInput}"
           </Text>
-          <Text>
-            They are requesting your feedback. This will only take 2-3 minutes.
+          <Text style={styles.bodySubText}>
+            They are requesting your feedback on how well they are accomplishing
+            this.
+          </Text>
+          <Text style={styles.bodySubText}>
+            This will only take 2-3 minutes.
           </Text>
           <View style={styles.buttonRow}>
             <TouchableOpacity
@@ -184,6 +188,18 @@ export default function FeedbackRequestWelcomeScreen() {
                 Give Feedback
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.noThanksButton}
+              onPress={() => {
+                console.log("Team member declines feedback request.");
+
+                navigation.navigate("NoThankYouScreen", {});
+              }}>
+              <Text style={styles.noThanksButtonText} title="No Thanks">
+                No Thnaks
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -210,16 +226,14 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
+  bodySubText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
   bodyIntroContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-  },
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
   },
   profileImage: {
     borderWidth: 5,
@@ -231,7 +245,7 @@ const styles = StyleSheet.create({
   },
 
   buttonRow: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -240,6 +254,22 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   feedbackButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 300,
+    height: 45,
+    justifyContent: "center",
+  },
+  feedbackButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  noThanksButton: {
     backgroundColor: "#D3D3D3",
     borderRadius: 25,
     paddingVertical: 15,
@@ -249,7 +279,7 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: "center",
   },
-  feedbackButtonText: {
+  noThanksButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

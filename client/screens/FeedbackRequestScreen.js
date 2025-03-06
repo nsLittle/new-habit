@@ -173,7 +173,8 @@ export default function FeedbackRequestScreen() {
                     </Text>
                   )}
                   <Text style={styles.contactName}>
-                    {teammember.firstName} {teammember.lastName} {teammember.id}
+                    {teammember.firstName} {teammember.lastName}{" "}
+                    {teammember._id}
                   </Text>
                   <Text style={styles.contactName}>{teammember.email}</Text>
                   <MaterialIcons
@@ -209,7 +210,7 @@ export default function FeedbackRequestScreen() {
               style={styles.backButton}
               onPress={() => navigation.navigate("ReviewScreen")}>
               <Text style={styles.backButtonText} title="Back">
-                ◀ Back
+                ◀ Return to Review Habit Setting
               </Text>
             </TouchableOpacity>
           </View>
@@ -220,6 +221,18 @@ export default function FeedbackRequestScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -278,19 +291,17 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "gray",
   },
-
   profileImage: {
     width: 40,
     height: 40,
     borderRadius: 20,
   },
-  iconsColumn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: 80,
+  contactName: {
+    marginRight: 5,
   },
-
+  iconSend: {
+    marginLeft: 5,
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -300,29 +311,13 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  nextButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  nextButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
   backButton: {
     backgroundColor: "#D3D3D3",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 300,
     height: 45,
     justifyContent: "center",
   },
@@ -331,17 +326,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
-  },
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
   },
 });

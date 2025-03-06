@@ -50,11 +50,42 @@ export default function DefaultScreen() {
     }
   }, [userContext]);
 
+  const fetchFeedbackData = async () => {
+    try {
+      if (!token) {
+        console.warn("Authentication token is missing. Skipping API calls.");
+        return;
+      }
+
+      const [feedbackResponse] = await Promise.all([
+        fetch(
+          `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+      ]);
+
+      if (!feedbackResponse.ok)
+        throw new Error("Failed to fetch feedback data.");
+
+      const feedbackData = await feedbackResponse.json();
+
+      console.log("Feedback Data: ", feedbackData);
+    } catch (error) {
+      console.error("Error with data retrieval:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userNameContext) {
+      fetchFeedbackData();
+    }
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Default</Text>
+          <Text style={styles.bodyTitleText}>Feedback Data</Text>
         </View>
 
         <View style={styles.bodyIntroContainer}>

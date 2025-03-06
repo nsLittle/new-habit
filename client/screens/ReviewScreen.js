@@ -90,7 +90,7 @@ export default function ReviewScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/user/${username}`,
+          `http://192.168.1.174:8000/user/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -111,6 +111,7 @@ export default function ReviewScreen() {
         const data = await response.json();
         console.log("Retrieved Data:", data);
         setUserData(data);
+        setProfileData(data);
       } catch (error) {
         setDialogMessage("An error occurred while retrieving your data.");
         setDialogVisible(true);
@@ -147,37 +148,69 @@ export default function ReviewScreen() {
       const teamMemberData = await teamMemberResponse.json();
 
       console.log("User Data: ", userData);
-      console.log("User Data - First Name: ", userData.firstName);
-      console.log("User Data - Id: ", userData._id);
-      console.log("Habit Data: ", habitData);
-      console.log("Team Member Data: ", teamMemberData);
+
+      const user =
+        Array.isArray(userData) && userData.length > 0 ? userData[0] : {};
+
+      const habitsArray = Array.isArray(habitData.habits)
+        ? habitData.habits
+        : [];
 
       const teamMembersArray = Array.isArray(teamMemberData.teamMembers)
         ? teamMemberData.teamMembers
         : [];
 
-      setProfileData((prev) => ({
-        ...prev,
-        firstname: userData.firstName,
-        lastName: userData.lastName,
-        profilePic: userData.profilePic,
-        email: userData.email,
-        habits: habitData.habits,
+      console.log("Habit Data: ", habitData);
+      console.log(
+        "Habit Data - Description Input: ",
+        habitData.habits[0].description
+      );
+      console.log("Team Member Data: ", teamMemberData);
+
+      setProfileData({
+        firstname: user.firstName || "",
+        lastName: user.lastName || "",
+        profilePic: user.profilePic || "",
+        email: user.email || "",
+        habits: habitsArray,
         teammembers: teamMembersArray,
-      }));
+      });
 
-      setTimeout(() => {
-        console.log("Updated Profile Data: ", profileData);
-        console.log("Updated Team Members: ", profileData.teammembers);
-      }, 500);
+      console.log("Updated Profile Data:", {
+        firstname: user.firstName || "",
+        lastName: user.lastName || "",
+        profilePic: user.profilePic || "",
+        email: user.email || "",
+        habits: habitsArray,
+        teammembers: teamMembersArray,
+      });
 
-      console.log("Profile Data: ", profileData);
-      console.log("User First Name; ", profileData.firstname);
-      console.log("Teammembers: ", profileData.teammembers);
+      setUserContext((prev) => {
+        const newContext = {
+          ...prev,
+          firstNameContext: user.firstName || "",
+          lastNameContext: user.lastName || "",
+          profilePicContext: user.profilePic || "",
+          emailContext: user.email || "",
+          habitsContext: habitsArray,
+          descriptionContextInput: habitData.habits[0].description,
+          teamMembersContext: teamMembersArray,
+        };
+        console.log("Updated UserContext:", newContext);
+        return newContext;
+      });
     } catch (error) {
       console.error("Error with data retrieval:", error);
     }
   };
+
+  useEffect(() => {
+    console.log("UserContext Updated:", userContext);
+  }, [userContext]);
+
+  useEffect(() => {
+    console.log("Profile Data Updated:", profileData);
+  }, [profileData]);
 
   useEffect(() => {
     if (userNameContext) {
@@ -191,7 +224,7 @@ export default function ReviewScreen() {
   console.log("Profile Data: ", profileData);
   console.log("Habits: ", habits);
 
-  console.log("ProfilePic: ", profilePic);
+  console.log("ProfilePic: ", profileData.profilePic);
 
   const profilePicUrl = isValidUrl(profilePic)
     ? profilePic
@@ -226,18 +259,19 @@ export default function ReviewScreen() {
 
         <View style={styles.reviewBox}>
           <View style={styles.reviewHabit}>
-            {habits.length > 0 ? (
+            {Array.isArray(habits) && habits.length > 0 ? (
               habits.map((habit) => (
                 <View key={habit._id} style={styles.sectionTitle}>
                   <View style={styles.habitBox}>
+                    <Text style={styles.sectionTitle}>Your Habit:</Text>
                     <Text style={styles.habitData}>
                       {habit.habit || "No Habit Available"}
                     </Text>
-                    <Text style={styles.bold}>
-                      If you were doing this well, what would that look like?
+                    <Text style={styles.sectionTitle}>
+                      What that looks like:
                     </Text>
                     <Text style={styles.habitData}>
-                      {habit.description || "No Habit Description Available"}
+                      {habit.description || "No Description Available"}
                     </Text>
                   </View>
                 </View>
@@ -248,7 +282,7 @@ export default function ReviewScreen() {
           </View>
 
           <View style={styles.reviewCadence}>
-            {habits.length > 0 ? (
+            {Array.isArray(habits) && habits.length > 0 ? (
               habits.map((habit) => (
                 <View key={habit._id} style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
@@ -265,7 +299,7 @@ export default function ReviewScreen() {
           </View>
 
           <View style={styles.reviewReminders}>
-            {habits.length > 0 ? (
+            {Array.isArray(habits) && habits.length > 0 ? (
               habits.map((habit) => (
                 <View key={habit._id} style={styles.habitBox}>
                   <Text style={styles.sectionTitle}>
@@ -280,13 +314,16 @@ export default function ReviewScreen() {
                             ? "email reminder"
                             : "reminder"
                         } on ${
+                          Array.isArray(habit.reminders.selectedDays) &&
                           habit.reminders.selectedDays.length > 0
                             ? habit.reminders.selectedDays.join(", ")
                             : "No days selected"
-                        } at ${habit.reminders.selectedTime.hour}:${String(
-                          habit.reminders.selectedTime.minute
+                        } at ${
+                          habit.reminders.selectedTime?.hour ?? "--"
+                        }:${String(
+                          habit.reminders.selectedTime?.minute ?? "00"
                         ).padStart(2, "0")} ${
-                          habit.reminders.selectedTime.period
+                          habit.reminders.selectedTime?.period ?? "--"
                         }.`
                       : "No Reminder Cadence Available"}
                   </Text>
@@ -296,6 +333,7 @@ export default function ReviewScreen() {
               <Text style={styles.noProfileData}>No habits available.</Text>
             )}
           </View>
+
           <View style={styles.teamMemberDataBox}>
             <Text style={styles.sectionTitle}>Your feedback circle:</Text>
 

@@ -92,7 +92,7 @@ export default function TeamInviteScreen() {
             }))
           : [];
 
-        setContactData({ teammembers });
+        setUserContext({ teammembers });
 
         console.log("Transformed team members:", teammembers);
 

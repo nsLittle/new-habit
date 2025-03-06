@@ -5,7 +5,7 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "../context/UserContext";
 
-export default function Header() {
+export default function Header(props) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
@@ -17,25 +17,27 @@ export default function Header() {
 
   const navigation = useNavigation();
 
+  const { userNameContext } = useContext(UserContext);
+
   const currentRoute = useNavigationState((state) => {
     const route = state.routes[state.index];
     return route.name;
   });
 
-  useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        const storedUsername = await AsyncStorage.getItem("userName");
-        if (storedUsername) {
-          setUserContext((prev) => ({ ...prev, userName: storedUsername }));
-        }
-      } catch (error) {
-        console.error("Error retrieving username:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUsername = async () => {
+  //     try {
+  //       const storedUsername = await AsyncStorage.getItem("userName");
+  //       if (storedUsername) {
+  //         setUserContext((prev) => ({ ...prev, userName: storedUsername }));
+  //       }
+  //     } catch (error) {
+  //       console.error("Error retrieving username:", error);
+  //     }
+  //   };
 
-    fetchUsername();
-  }, []);
+  //   fetchUsername();
+  // }, []);
 
   const toggleMenu = () => {
     setMenuVisible(true);
@@ -69,7 +71,12 @@ export default function Header() {
         {currentRoute !== "WelcomeScreen" &&
           currentRoute !== "LoginScreen" &&
           currentRoute !== "LogoutScreen" &&
-          currentRoute !== "CreateAccountScreen" && (
+          currentRoute !== "CreateAccountScreen" &&
+          currentRoute !== "FeedbackRequestScreen" &&
+          currentRoute !== "FeedbackRequestWelcomeScreen" &&
+          currentRoute !== "FeedbackRequestRatingScreen" &&
+          currentRoute !== "FeedbackRequestThanksRatingScreen" &&
+          currentRoute !== "FeedbackRequestQualitativeScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;
@@ -88,7 +95,13 @@ export default function Header() {
         {currentRoute !== "WelcomeScreen" &&
           currentRoute !== "LoginScreen" &&
           currentRoute !== "LogoutScreen" &&
-          currentRoute !== "CreateAccountScreen" && (
+          currentRoute !== "CreateAccountScreen" &&
+          currentRoute !== "FeedbackRequestScreen" &&
+          currentRoute !== "FeedbackRequestWelcomeScreen" &&
+          currentRoute !== "FeedbackRequestRatingScreen" &&
+          currentRoute !== "FeedbackRequestThanksRatingScreen" &&
+          currentRoute !== "FeedbackRequestQualitativeScreen" &&
+          currentRoute !== "NoThankYouScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;

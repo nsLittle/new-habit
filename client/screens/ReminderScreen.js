@@ -87,7 +87,6 @@ export default function ReminderScreen() {
 
   const toggleReminderSwitch = (value) => {
     if (reminderProfile.isReminderEnabled && !value) {
-      // User is trying to turn off an existing reminder
       setDialogMessage(
         "You already have a reminder set. Are you sure you want to disable it?"
       );
@@ -147,8 +146,8 @@ export default function ReminderScreen() {
     setReminderProfile((prev) => ({
       ...prev,
       selectedDays: prev.selectedDays.includes(day)
-        ? prev.selectedDays.filter((d) => d !== day) // Remove day
-        : [...prev.selectedDays, day], // Add day
+        ? prev.selectedDays.filter((d) => d !== day)
+        : [...prev.selectedDays, day],
     }));
   };
 
@@ -261,7 +260,7 @@ export default function ReminderScreen() {
       );
 
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${username}/${habitId}/reminder`,
+        `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/reminder`,
         {
           method: "PATCH",
           headers: {

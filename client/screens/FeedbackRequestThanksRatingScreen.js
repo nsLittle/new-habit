@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Button, Dialog, Portal } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   heightPercentageToDP as hp,
@@ -156,7 +157,7 @@ export default function FeedbackRequestThanksRatingScreen() {
       const data = await response.json();
       console.log("Data: ", data);
 
-      setDialogMessage("Feedback rating updated successfully.");
+      setDialogMessage("Thank you rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
         teamMemberContextId: route.params.teamMemberContextId,
@@ -180,6 +181,25 @@ export default function FeedbackRequestThanksRatingScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Portal>
+        <Dialog
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
+          style={styles.dialog}>
+          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Text>{dialogMessage}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={() => setShowDialog(false)}
+              labelStyle={styles.dialogButton}>
+              OK
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>
@@ -236,6 +256,18 @@ export default function FeedbackRequestThanksRatingScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -310,29 +342,13 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  // backButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // backButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
   saveButton: {
-    backgroundColor: "#D3D3D3",
+    backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 300,
     height: 45,
     justifyContent: "center",
   },

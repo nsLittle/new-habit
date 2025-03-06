@@ -14,14 +14,21 @@ import { UserContext } from "../context/UserContext";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
-  const { setUserContext } = useContext(UserContext) || {};
+  const { resetUserContext } = useContext(UserContext) || {};
 
   useEffect(() => {
-    const clearUserData = async () => {
-      await AsyncStorage.clear();
-      setUserContext(null);
+    if (resetUserContext) {
+      console.log("Resetting UserContext from WelcomeScreen...");
+      resetUserContext("WelcomeScreen");
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkStorage = async () => {
+      const keys = await AsyncStorage.getAllKeys();
+      console.log("AsyncStorage keys after clearing:", keys);
     };
-    clearUserData();
+    checkStorage();
   }, []);
 
   const openWebLink = async () => {

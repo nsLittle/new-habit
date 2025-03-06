@@ -66,11 +66,20 @@ export default function FeedbackRequestQualitativeScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackRequestThreeScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberId);
-  console.log("Team Member First Name: ", teamMemberFirstName);
-  console.log("Team Member Last Name: ", teamMemberLastName);
-  console.log("Team Memeber Email: ", teamMemberEmail);
-  console.log("Team Member Profile Pic: ", teamMemberProfilePic);
+  console.log("Team Member Id: ", route.params.teamMemberContextId);
+  console.log(
+    "Team Member First Name: ",
+    route.params.teamMemberContextFirstName
+  );
+  console.log(
+    "Team Member Last Name: ",
+    route.params.teamMemberContextLastName
+  );
+  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
+  console.log(
+    "Team Member Profile Pic: ",
+    route.params.teamMemberContextProfilePic
+  );
 
   const [feedbackText, setFeedbackText] = useState("");
 
@@ -82,19 +91,19 @@ export default function FeedbackRequestQualitativeScreen() {
     }
 
     const requestBody = {
-      teamMemberId: teamMemberId,
+      teamMemberId: route.params.teamMemberContextId,
       feedbackText: feedbackText,
     };
 
     console.log(
       "PATCH Request:",
-      `http://192.168.1.174:8000/feedback/${userName}/${habitId}`
+      `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`
     );
     console.log("Request Body:", JSON.stringify(requestBody));
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/feedback/${userName}/${habitId}`,
+        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
         {
           method: "PATCH",
           headers: {
@@ -114,7 +123,7 @@ export default function FeedbackRequestQualitativeScreen() {
 
       setDialogMessage("Feedback text updated successfully.");
       setShowDialog(true);
-      navigation.navigate("UnknownScreen");
+      navigation.navigate("FeedbackDataScreen");
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
       setShowDialog(true);
@@ -162,15 +171,6 @@ export default function FeedbackRequestQualitativeScreen() {
 
           <View style={styles.buttonRow}>
             <TouchableOpacity
-              style={styles.backButton}
-              onPress={() =>
-                navigation.navigate("FeedbackRequestThanksRatingScreen")
-              }>
-              <Text style={styles.backButtonText} title="Back">
-                ◀ Back
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
                 console.log("Save button pressed");
@@ -187,7 +187,7 @@ export default function FeedbackRequestQualitativeScreen() {
                     teamMemberProfilePic,
                   });
 
-                  navigation.navigate("UnknownScreen", {
+                  navigation.navigate("FeedbackDataScreen", {
                     teamMemberId,
                     teamMemberFirstName,
                     teamMemberLastName,
@@ -195,7 +195,7 @@ export default function FeedbackRequestQualitativeScreen() {
                     teamMemberProfilePic,
                   });
                 }}>
-                Save
+                Save ▶
               </Text>
             </TouchableOpacity>
           </View>
@@ -275,27 +275,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 300,
     height: 45,
     justifyContent: "center",
   },
   saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

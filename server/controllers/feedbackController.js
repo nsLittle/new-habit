@@ -129,14 +129,16 @@ exports.getFeedback = async (req, res) => {
 
     console.log("Received Params:", req.params);
 
-    const feedback = await Feedback.find({ habit_id });
+    const feedback = await Feedback.find({ habit_id }).select(
+      "habitId teamMemberId feedbackRating feedbackThanksRating feedbackText cadenceStart cadenceEnd"
+    );
 
     console.log("Feedback: ", feedback);
 
     if (!feedback.length) {
       return res
-        .status(404)
-        .json({ message: "No feedback found for this habit" });
+        .status(200)
+        .json({ message: "No feedback found for this habit", feedback: [] });
     }
 
     res.status(200).json({
@@ -146,6 +148,10 @@ exports.getFeedback = async (req, res) => {
         habitId: fb.habitId,
         teamMemberId: fb.teamMemberId,
         feedbackRating: fb.feedbackRating,
+        feedbackThanksRating: fb.feedbackThanksRating,
+        feedbackText: fb.feedbackText,
+        cadenceStart: fb.cadenceStart,
+        cadenceEnd: fb.cadenceEnd,
       })),
     });
   } catch (error) {
