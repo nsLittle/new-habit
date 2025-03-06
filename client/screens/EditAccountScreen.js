@@ -70,61 +70,16 @@ export default function EditAccountScreen() {
   const [profilePic, setProfilePic] = useState("");
   const [email, setEmail] = useState("");
 
-  // useEffect(() => {
-  //   console.log(`I'm here to retrieve your profile....`);
-  //   const retrieveProfile = async () => {
-  //     if (!token) {
-  //       console.error("No token available, authentication required.");
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Sending Request with Token:", token);
-
-  //     try {
-  //       const response = await fetch(
-  //         `http://192.168.1.174:8000/user/${userNameContext}`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       if (!response.ok) {
-  //         const errorData = await response.json();
-  //         setDialogMessage(errorData.error || "We can't find you.");
-  //         setShowDialog(true);
-  //         console.log(`We can't find you.`);
-  //         setLoading(false);
-  //         return;
-  //       }
-
-  //       const data = await response.json();
-  //       console.log("Retrieved Data:", data);
-  //       setUserContext(data);
-  //     } catch (error) {
-  //       setDialogMessage("An error occurred while retrieving your data.");
-  //       setShowDialog(true);
-  //       console.error("Data Retrieval Error:", error);
-  //     }
-  //     setLoading(false);
-  //   };
-  //   retrieveProfile();
-  // }, []);
-
   const handleSave = async () => {
     console.log(`I'm here to save your edits...`);
     try {
       const updates = {
-        userNameContext: userName,
-        firstNameContext: firstName,
-        lastNameContext: lastName,
-        emailContext: email,
-        profilePicContext: profilePic,
-        passwordContext: password,
+        userName: userName,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        profilePic: profilePic,
+        password: password,
       };
       console.log("Updated User Data: ", updates);
 
@@ -211,7 +166,7 @@ export default function EditAccountScreen() {
           <TextInput
             style={[styles.input, filledFields.lastName && styles.filledInput]}
             placeholder="Last Name"
-            value={lastNameContext}
+            value={lastName}
             onChangeText={setLastName}
             placeholderTextColor="gray"
             onBlur={() => handleBlur("lastName", lastName)}
@@ -219,7 +174,7 @@ export default function EditAccountScreen() {
           <TextInput
             style={[styles.input, filledFields.email && styles.filledInput]}
             placeholder="Email"
-            value={emailContext}
+            value={email}
             onChangeText={setEmail}
             placeholderTextColor="gray"
             onBlur={() => handleBlur("email", email)}
@@ -232,7 +187,7 @@ export default function EditAccountScreen() {
                 filledFields.profilePic && styles.filledInput,
               ]}
               placeholder="Profile Picture"
-              value={profilePicContext}
+              value={profilePic}
               onChangeText={setProfilePic}
               placeholderTextColor="gray"
               onBlur={() => handleBlur("profilePic", profilePic)}
@@ -251,7 +206,7 @@ export default function EditAccountScreen() {
                 filledFields.password && styles.filledInput,
               ]}
               placeholder="Username"
-              value={userNameContext}
+              value={userName}
               placeholderTextColor="gray"
               editable={false}
             />

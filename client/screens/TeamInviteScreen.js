@@ -21,6 +21,10 @@ import { UserContext } from "../context/UserContext";
 export default function TeamInviteScreen() {
   const navigation = useNavigation();
 
+  const routes = navigation.getState().routes;
+  const currentRoute = routes[routes.length - 1]?.name;
+  console.log("Current Route:", currentRoute);
+
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
     userIdContext,
@@ -57,12 +61,11 @@ export default function TeamInviteScreen() {
   const [contactData, setContactData] = useState({ teammembers: [] });
 
   useEffect(() => {
+    console.log("I'm here to fetch team member data...");
+
     const fetchTeamMembersData = async () => {
       try {
-        if (!token) throw new Error("Authentication token is missing.");
-
-        const { userNameContext } = userContext || {};
-        if (!userNameContext) throw new Error("Username is missing.");
+        if (!token || !userNameContext) return;
 
         const response = await fetch(
           `http://192.168.1.174:8000/teammember/${userNameContext}`,
@@ -92,7 +95,10 @@ export default function TeamInviteScreen() {
             }))
           : [];
 
-        setUserContext({ teammembers });
+        setUserContext((prevContext) => ({
+          ...prevContext,
+          teammembers,
+        }));
 
         console.log("Transformed team members:", teammembers);
 
@@ -102,8 +108,9 @@ export default function TeamInviteScreen() {
         setDialogMessage("Error fetching teammembers.");
       }
     };
+
     fetchTeamMembersData();
-  }, [userContext]);
+  }, [token, userNameContext]); // ✅ Only run when these values change
 
   const sendEmail = (email) => {
     if (!email) {
@@ -160,23 +167,28 @@ export default function TeamInviteScreen() {
             <TouchableOpacity
               style={[
                 styles.addPersonButton,
-                contactData.teammembers.length >= 10
+                userContext.teammembers.length >= 10
                   ? { backgroundColor: "#D3D3D3" }
                   : {},
               ]}
-              onPress={() =>
-                contactData.teammembers.length < 10
-                  ? navigation.navigate("AddTeammemberScreen")
-                  : setDialogMessage(
-                      "You cannot have more than 10 team members."
-                    ) || setShowDialog(true)
-              }
-              disabled={contactData.teammembers.length >= 10}>
+              onPress={() => {
+                if (userContext.teammembers.length < 10) {
+                  console.log("Navigating to AddTeammemberScreen...");
+                  navigation.navigate("AddTeammemberScreen");
+                } else {
+                  console.log("Max team members reached. Showing dialog...");
+                  setDialogMessage(
+                    "You cannot have more than 10 team members."
+                  );
+                  setShowDialog(true);
+                }
+              }}
+              disabled={userContext.teammembers.length >= 10}>
               <Text style={styles.addPersonButtonText}>+ Add a person</Text>
             </TouchableOpacity>
           </View>
 
-          {contactData.teammembers.map((teammember, index) => (
+          {userContext.teammembers.map((teammember, index) => (
             <View style={styles.buttonContainer} key={index}>
               <TouchableOpacity style={styles.contactPersonButton}>
                 {teammember.profilePic ? (
@@ -249,12 +261,13 @@ export default function TeamInviteScreen() {
 
             <TouchableOpacity
               style={[
-                styles.nextButton,
+                styles.saveButton,
                 contactData.teammembers.length < 3
                   ? { backgroundColor: "#D3D3D3" }
                   : {},
               ]}
               onPress={() => {
+                console.log("Save button pressed...");
                 if (contactData.teammembers.length < 3) {
                   setDialogMessage(
                     "You must have at least 3 team members to proceed with habit formation."
@@ -263,9 +276,8 @@ export default function TeamInviteScreen() {
                   return;
                 }
                 navigation.navigate("CadenceScreen");
-              }}
-              disabled={contactData.teammembers.length < 3}>
-              <Text style={styles.nextButtonText} title="Next">
+              }}>
+              <Text style={styles.saveButtonText} title="Next">
                 Save ▶
               </Text>
             </TouchableOpacity>
@@ -367,7 +379,7 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  nextButton: {
+  saveButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
@@ -377,7 +389,7 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: "center",
   },
-  nextButtonText: {
+  saveButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

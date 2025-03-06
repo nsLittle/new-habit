@@ -13,31 +13,28 @@ export default function Header(props) {
     left: 0,
     top: 0,
   });
-  const { userContext, setUserContext, habitId } = useContext(UserContext);
 
   const navigation = useNavigation();
 
-  const { userNameContext } = useContext(UserContext);
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
 
   const currentRoute = useNavigationState((state) => {
     const route = state.routes[state.index];
     return route.name;
   });
-
-  // useEffect(() => {
-  //   const fetchUsername = async () => {
-  //     try {
-  //       const storedUsername = await AsyncStorage.getItem("userName");
-  //       if (storedUsername) {
-  //         setUserContext((prev) => ({ ...prev, userName: storedUsername }));
-  //       }
-  //     } catch (error) {
-  //       console.error("Error retrieving username:", error);
-  //     }
-  //   };
-
-  //   fetchUsername();
-  // }, []);
 
   const toggleMenu = () => {
     setMenuVisible(true);
@@ -61,7 +58,7 @@ export default function Header(props) {
     navigation.navigate(screenName, {
       ...params,
       userName: userContext.userName,
-      habitId,
+      habitContextId,
     });
   };
 
@@ -124,7 +121,7 @@ export default function Header(props) {
             onPress={() =>
               navigateToScreen("CreateHabitScreen", {
                 userName: userContext.userName,
-                habitId: userContext.habitId,
+                habitContextId,
               })
             }>
             <Text style={styles.menuItem}>Create Habit</Text>
@@ -133,7 +130,7 @@ export default function Header(props) {
             onPress={() =>
               navigateToScreen("HabitDescriptionScreen", {
                 userName: userContext.userName,
-                habitId: userContext.habitId,
+                habitContextId,
               })
             }>
             <Text style={styles.menuItem}>Habit Description</Text>
@@ -142,7 +139,7 @@ export default function Header(props) {
             onPress={() =>
               navigateToScreen("TeamInviteScreen", {
                 userName: userContext.userName,
-                habitId: userContext.habitId,
+                habitContextId,
               })
             }>
             <Text style={styles.menuItem}>Team Invite</Text>

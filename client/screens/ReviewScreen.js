@@ -20,6 +20,10 @@ import { UserContext } from "../context/UserContext";
 export default function ReviewScreen() {
   const navigation = useNavigation();
 
+  const routes = navigation.getState().routes;
+  const currentRoute = routes[routes.length - 1]?.name;
+  console.log("Current Route:", currentRoute);
+
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
     userIdContext,

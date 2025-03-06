@@ -16,7 +16,6 @@ const FeedbackSchema = new mongoose.Schema(
     },
     feedbackRating: {
       type: Number,
-      required: true,
       min: 1,
       max: 8,
     },
@@ -36,6 +35,22 @@ const FeedbackSchema = new mongoose.Schema(
     cadenceEnd: {
       type: Date,
       required: true,
+    },
+    requestSentAt: {
+      type: Date,
+      default: Date.now,
+    },
+    lastReminderSentAt: {
+      type: Date,
+    },
+    feedbackStatus: {
+      type: String,
+      enum: ["pending", "submitted", "declined", "non-response"],
+      default: "pending",
+    },
+    declineReason: {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true }

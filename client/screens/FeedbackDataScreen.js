@@ -51,6 +51,7 @@ export default function DefaultScreen() {
   }, [userContext]);
 
   const fetchFeedbackData = async () => {
+    console.log("I'm here to fetch feedback request data...");
     try {
       if (!token) {
         console.warn("Authentication token is missing. Skipping API calls.");
@@ -79,7 +80,7 @@ export default function DefaultScreen() {
     if (userNameContext) {
       fetchFeedbackData();
     }
-  }, []);
+  }, [userNameContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

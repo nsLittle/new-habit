@@ -20,6 +20,10 @@ import { UserContext } from "../context/UserContext";
 export default function AddTeammemberScreen() {
   const navigation = useNavigation();
 
+  const routes = navigation.getState().routes;
+  const currentRoute = routes[routes.length - 1]?.name;
+  console.log("Current Route:", currentRoute);
+
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
     userIdContext,
@@ -66,7 +70,7 @@ export default function AddTeammemberScreen() {
 
     if (!userIdContext) {
       setDialogMessage("Failed to fetch user information. Please try again.");
-      setDialogVisible(true);
+      setShowDialog(true);
       return;
     }
 

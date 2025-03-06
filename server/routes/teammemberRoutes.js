@@ -8,7 +8,6 @@ const {
 const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
-// router.post("/", protect, addTeamMember);
 router.post("/:username", protect, addTeamMember);
 router.get("/:username", protect, getTeamMembers);
 router.patch("/:username/:teamMember_id", protect, updateTeamMember);

@@ -82,14 +82,28 @@ export const UserProvider = ({ children }) => {
   }, [userContext, loading]);
 
   const resetUserContext = useCallback(async (caller = "Unknown") => {
-    console.log(`resetUserContext called by: ${caller}`);
+    if (
+      ![
+        "WelcomeScreen",
+        "LoginScreen",
+        "CreateAccountScreen",
+        "Logout",
+      ].includes(caller)
+    ) {
+      console.log(
+        `🛑 BLOCKED: resetUserContext should not be triggered by ${caller}`
+      );
+      return;
+    }
+
+    console.log(`✅ resetUserContext allowed: called by ${caller}`);
 
     try {
       await AsyncStorage.clear();
       if (Platform.OS !== "web") await SecureStore.deleteItemAsync("token");
       setUserContext({ ...defaultUserState });
     } catch (error) {
-      console.error("Error resetting user context:", error);
+      console.error("❌ Error resetting user context:", error);
     }
   }, []);
 

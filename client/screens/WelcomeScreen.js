@@ -26,7 +26,9 @@ export default function WelcomeScreen() {
   useEffect(() => {
     const checkStorage = async () => {
       const keys = await AsyncStorage.getAllKeys();
+      const values = await AsyncStorage.multiGet(keys);
       console.log("AsyncStorage keys after clearing:", keys);
+      console.log("Stored values:", values);
     };
     checkStorage();
   }, []);
