@@ -1,4 +1,14 @@
-import React from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import {
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { UserProvider } from "./context/UserContext";
@@ -24,11 +34,53 @@ import FeedbackRequestThanksRatingScreen from "./screens/FeedbackRequestThanksRa
 import FeedbackRequestQualitativeScreen from "./screens/FeedbackRequestQualitativeScreen";
 import FeedbackDataScreen from "./screens/FeedbackDataScreen";
 import NoThankYouScreen from "./screens/NoThankYouScreen";
+import EndingCreditScreen from "./screens/EndingCreditScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppReady(true);
+      }
+    }
+    prepare();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appReady]);
+
+  if (!appReady) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#FFD700",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onLayout={onLayoutRootView}>
+        <Text style={styles.tagline}>
+          Build Better Habits, One Feedback at a Time
+        </Text>
+        <Image
+          source={require("./assets/favicon.png")}
+          style={{ width: 200, height: 200 }}
+        />
+      </View>
+    );
+  }
   return (
     <PaperProvider>
       <UserProvider>
@@ -101,9 +153,21 @@ export default function App() {
               name="NoThankYouScreen"
               component={NoThankYouScreen}
             />
+            <Stack.Screen
+              name="EndingCreditScreen"
+              component={EndingCreditScreen}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>
     </PaperProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  tagline: {
+    fontWeight: "bold",
+    fontSize: 24,
+    marginBottom: 30,
+  },
+});

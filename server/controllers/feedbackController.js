@@ -9,9 +9,24 @@ exports.submitFeedback = async (req, res) => {
   try {
     const { habitContextId, teamMemberContextId, feedbackRating } = req.body;
 
+    console.log("✅ Received Habit ID:", habitContextId);
+    console.log("✅ Received Team Member ID:", teamMemberContextId);
+    console.log("✅ Received Feedback Rating:", feedbackRating);
+
+    console.log("Full Request Body:", JSON.stringify(req.body, null, 2));
+
+    if (!teamMemberContextId) {
+      console.error("Error: teamMemberContextId is missing in the request!");
+      return res.status(400).json({ error: "Team Member ID is required" });
+    }
+
+    console.log("Team Member Id (raw request):", req.body.teamMemberContextId);
+    console.log("Resolved Team Member Id:", teamMemberContextId);
+
     const habitId = Array.isArray(habitContextId)
-      ? habitContextId[0]
-      : habitContextId;
+      ? String(habitContextId.flat()[0])
+      : String(habitContextId);
+
     const teamMemberId = teamMemberContextId;
 
     console.log("Request Body:", req.body);
@@ -35,6 +50,32 @@ exports.submitFeedback = async (req, res) => {
     const cadenceEnd = new Date();
     cadenceEnd.setDate(cadenceStart.getDate() + cadenceLength);
 
+    console.log("Searching for habit with ID: ", habitId);
+
+    const existingFeedback = await Feedback.findOne({
+      habitId,
+      teamMemberId,
+      cadenceStart: { $lte: cadenceEnd },
+      cadenceEnd: { $gte: cadenceStart },
+    });
+
+    console.log("Existing Feedback: ", existingFeedback);
+
+    if (existingFeedback) {
+      console.log("⚠️ Feedback already exists, attempting to send response...");
+
+      if (res.headersSent) {
+        console.error(
+          "🚨 ERROR: Response already sent. Avoiding double response."
+        );
+        return;
+      }
+
+      return res.status(400).json({
+        message: "Feedback already exists for this cadence period.",
+      });
+    }
+
     const newFeedback = new Feedback({
       habitId,
       teamMemberId,
@@ -53,8 +94,13 @@ exports.submitFeedback = async (req, res) => {
       feedback: newFeedback,
     });
   } catch (error) {
-    console.error("Error details:", error);
-    res.status(500).json({ error: "Failed to submit feedback" });
+    console.error("❌ Error submitting feedback:", error);
+
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Failed to submit feedback" });
+    } else {
+      console.error("🚨 ERROR: Response already sent, cannot send another.");
+    }
   }
 };
 
@@ -129,9 +175,7 @@ exports.getFeedback = async (req, res) => {
 
     console.log("Received Params:", req.params);
 
-    const feedback = await Feedback.find({ habit_id }).select(
-      "habitId teamMemberId feedbackRating feedbackThanksRating feedbackText cadenceStart cadenceEnd"
-    );
+    const feedback = await Feedback.find({ habitId: habit_id });
 
     console.log("Feedback: ", feedback);
 

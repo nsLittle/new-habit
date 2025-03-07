@@ -70,6 +70,14 @@ export default function LogoutScreen() {
             We hope you enjoyed strengthening your habit.
           </Text>
 
+          <View style={styles.attribution}>
+            <TouchableOpacity
+              style={styles.link}
+              onPress={() => navigation.navigate("EndingCreditScreen")}>
+              <Text style={styles.resetLink}>Attribution</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.logoutButton} onPress={logout}>
               <Text style={styles.logoutButtonText}>Logout</Text>

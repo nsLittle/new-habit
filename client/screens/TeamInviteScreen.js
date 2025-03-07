@@ -268,7 +268,7 @@ export default function TeamInviteScreen() {
               ]}
               onPress={() => {
                 console.log("Save button pressed...");
-                if (contactData.teammembers.length < 3) {
+                if (userContext.teammembers.length < 3) {
                   setDialogMessage(
                     "You must have at least 3 team members to proceed with habit formation."
                   );

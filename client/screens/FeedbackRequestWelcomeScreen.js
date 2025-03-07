@@ -81,27 +81,40 @@ export default function FeedbackRequestWelcomeScreen() {
         return;
       }
 
-      const [userResponse, habitsResponse, teamMemberResponse] =
-        await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
+      const [
+        userResponse,
+        habitsResponse,
+        teamMemberResponse,
+        feedbackResponse,
+      ] = await Promise.all([
+        fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(
+          `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
+          {
             headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+          }
+        ),
+      ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
       if (!teamMemberResponse.ok)
         throw new Error("Failed to fetch team member data.");
+      if (!feedbackResponse.ok)
+        throw new Error("Failed to fetch feedback data.");
 
       const userData = await userResponse.json();
       const habitData = await habitsResponse.json();
       const teamMemberData = await teamMemberResponse.json();
+      const feedbackData = await feedbackResponse.json();
 
       console.log("User Data: ", userData);
       console.log("Profile Pic: ", userData?.profilePic);
@@ -110,6 +123,7 @@ export default function FeedbackRequestWelcomeScreen() {
       console.log("Habit: ", habitData?.habits[0].habit);
       console.log("Reminders: ", habitData?.habits[0].description);
       console.log("Team Member Data: ", teamMemberData);
+      console.log("Feedback Data: ", feedbackData);
 
       setUserContext((prev) => ({
         ...prev,
@@ -122,6 +136,7 @@ export default function FeedbackRequestWelcomeScreen() {
         habits: habitData.habit || [],
         habitId: habitData?.habits[0]._id,
         teammembers: teamMemberData.teamMembers || [],
+        feedbacks: feedbackData.feedback || [],
       }));
     } catch (error) {
       console.error("Error with data retrieval:", error);

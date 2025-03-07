@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const FeedbackSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     habitId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Habit",
@@ -28,6 +34,7 @@ const FeedbackSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    habitStartDate: { type: Date, required: true },
     cadenceStart: {
       type: Date,
       required: true,
@@ -52,6 +59,7 @@ const FeedbackSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    feedbackDate: { type: Date, required: true },
   },
   { timestamps: true }
 );

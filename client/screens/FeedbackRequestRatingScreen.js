@@ -153,6 +153,19 @@ export default function FeedbackRequestRatingScreen() {
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
 
+      const resolvedTeamMemberId = route.params?.teamMemberContextId;
+
+      if (!resolvedTeamMemberId) {
+        console.error(
+          "❌ ERROR: `teamMemberContextId` is missing before sending request."
+        );
+        setDialogMessage("Error: Team member ID is missing.");
+        setShowDialog(true);
+        return;
+      }
+
+      console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
+
       const response = await fetch(
         `http://192.168.1.174:8000/feedback/${userNameContext}`,
         {
@@ -168,9 +181,6 @@ export default function FeedbackRequestRatingScreen() {
           }),
         }
       );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
 
       const data = await response.json();
       console.log("Data: ", data);

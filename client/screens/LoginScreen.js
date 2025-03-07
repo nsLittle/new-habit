@@ -193,7 +193,6 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
         </View>
-        {/* </View> */}
 
         <View style={styles.resetContainer}>
           <TouchableOpacity
