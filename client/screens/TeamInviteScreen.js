@@ -21,9 +21,9 @@ import { UserContext } from "../context/UserContext";
 export default function TeamInviteScreen() {
   const navigation = useNavigation();
 
-  const routes = navigation.getState().routes;
-  const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
+  // const routes = navigation.getState().routes;
+  // const currentRoute = routes[routes.length - 1]?.name;
+  // console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
@@ -110,7 +110,7 @@ export default function TeamInviteScreen() {
     };
 
     fetchTeamMembersData();
-  }, [token, userNameContext]); // ✅ Only run when these values change
+  }, [token, userNameContext]);
 
   const sendEmail = (email) => {
     if (!email) {

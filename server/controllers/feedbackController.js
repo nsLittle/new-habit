@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Habit } = require("../models/Habit");
+const feedbackController = require("../controllers/feedbackController");
 console.log("Habit Model:", Habit);
 
 const Feedback = require("../models/Feedback");
@@ -13,7 +14,7 @@ exports.submitFeedback = async (req, res) => {
     console.log("✅ Received Team Member ID:", teamMemberContextId);
     console.log("✅ Received Feedback Rating:", feedbackRating);
 
-    console.log("Full Request Body:", JSON.stringify(req.body, null, 2));
+    console.log("Full Request Body:", req.body);
 
     if (!teamMemberContextId) {
       console.error("Error: teamMemberContextId is missing in the request!");
@@ -38,25 +39,32 @@ exports.submitFeedback = async (req, res) => {
       return res.status(400).json({ error: "All fields are required." });
     }
 
-    const habit = await Habit.findById(habitId);
+    const habit = await Habit.findById(habitContextId);
     console.log("Found habit: ", habit);
 
     if (!habit) {
       return res.status(404).json({ error: "Habit not found" });
     }
 
+    const userId = habit.userId;
+    const habitStartDate = habit.start_date;
+    const feedbackDate = new Date();
+
     const cadenceLength = habit.cadenceLength || 7;
     const cadenceStart = new Date();
     const cadenceEnd = new Date();
     cadenceEnd.setDate(cadenceStart.getDate() + cadenceLength);
 
-    console.log("Searching for habit with ID: ", habitId);
+    console.log(
+      "Checkign for exisgint feedback with habit id: ",
+      habitContextId,
+      "and team member Id, ",
+      teamMemberContextId
+    );
 
     const existingFeedback = await Feedback.findOne({
       habitId,
       teamMemberId,
-      cadenceStart: { $lte: cadenceEnd },
-      cadenceEnd: { $gte: cadenceStart },
     });
 
     console.log("Existing Feedback: ", existingFeedback);
@@ -77,9 +85,12 @@ exports.submitFeedback = async (req, res) => {
     }
 
     const newFeedback = new Feedback({
+      userId,
       habitId,
       teamMemberId,
       feedbackRating,
+      feedbackDate,
+      habitStartDate,
       cadenceStart,
       cadenceEnd,
     });
@@ -104,7 +115,7 @@ exports.submitFeedback = async (req, res) => {
   }
 };
 
-exports.editFeedback = async (req, res) => {
+exports.editFeedbackRating = async (req, res) => {
   console.log("Editing existing feedback...");
   console.log("Incoming PATCH request:", req.params);
   console.log("Incoming Request Body:", req.body);
@@ -114,38 +125,59 @@ exports.editFeedback = async (req, res) => {
     const { username, habit_id } = req.params;
     console.log("Username: ", username, "with habit id: ", habit_id);
 
-    const { feedbackRating, feedbackThanksRating, feedbackText } = req.body;
-    console.log(
-      "Feedback Rating: ",
-      feedbackRating,
-      "with Feedback ThanksRating: ",
-      feedbackThanksRating
-    );
+    const { feedbackRating, teamMemberId } = req.body;
+    console.log("Feedback Rating: ", feedbackRating);
 
-    if (!habit_id) {
+    if (!habit_id || feedbackRating === undefined || !teamMemberId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const feedback = await Feedback.findOne({
-      habitId: habit_id,
-      teamMemberId: req.body.teamMemberId,
-    });
-    console.log("Found Feedback: ", feedback);
+    const updatedFeedback = await Feedback.findOneAndUpdate(
+      { habitId: habit_id, teamMemberId },
+      { $set: { feedbackRating } },
+      { new: true }
+    );
 
-    if (!feedback) {
+    if (!updatedFeedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    const updateFields = {};
-    if (feedbackRating !== undefined)
-      updateFields.feedbackRating = feedbackRating;
-    if (feedbackThanksRating !== undefined)
-      updateFields.feedbackThanksRating = feedbackThanksRating;
-    if (feedbackText !== undefined) updateFields.feedbackText = feedbackText;
+    console.log("Successfully updating feedback rating");
+    return res.status(200).json({
+      message: "Feedback rating updated successfully",
+      feedback: updatedFeedback,
+    });
+  } catch (error) {
+    console.error("Error updating feedback rating:", error);
+    if (!res.headersSent) {
+      return res
+        .status(500)
+        .json({ error: "Failed to update feedback rating." });
+    }
+  }
+};
+
+exports.editFeedbackThanksRating = async (req, res) => {
+  console.log("Editing feedback thanks rating...");
+  console.log("Incoming PATCH request:", req.params);
+  console.log("Incoming Request Body:", req.body);
+
+  try {
+    const { habit_id } = req.params;
+    console.log("Req Param: ", req.params);
+    const { feedbackThanksRating, teamMemberContextId } = req.body;
+    console.log("Req Body: ", req.body);
+    console.log(
+      "Feedback Thanks Rating: ",
+      feedbackThanksRating,
+      "Team Member ID: ",
+      teamMemberContextId
+    );
+    console.log("Team Member ID: ", teamMemberContextId);
 
     const updatedFeedback = await Feedback.findOneAndUpdate(
-      { habitId: habit_id, teamMemberId: req.body.teamMemberId },
-      { $set: updateFields },
+      { habitId: habit_id },
+      { $set: { feedbackThanksRating } },
       { new: true }
     );
 
@@ -155,29 +187,67 @@ exports.editFeedback = async (req, res) => {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    console.log("Successfully updated feedback, sending response...");
+    console.log("Successfully updateing feedback thanks rating");
     return res.status(200).json({
-      message: "Feedback updated successfully",
+      message: "Feedback thanks rating updated successfully",
       feedback: updatedFeedback,
     });
   } catch (error) {
-    console.error("Error updating feedback:", error);
-    if (!res.headersSent) {
-      return res.status(500).json({ error: "Failed to update feedback" });
+    console.error("Error updating feedback thanks rating:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to update feedback thanks rating" });
+  }
+};
+
+exports.editFeedbackTextRating = async (req, res) => {
+  console.log("Editing feedback text...");
+  console.log("Incoming PATCH request:", req.params);
+  console.log("Incoming Request Body:", req.body);
+
+  try {
+    const { habit_id } = req.params;
+    const { feedbackText, teamMemberId } = req.body;
+
+    if (!habit_id || feedbackText === undefined || !teamMemberId) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
+
+    const updatedFeedback = await Feedback.findOneAndUpdate(
+      { habitId: habit_id, teamMemberId },
+      { $set: { feedbackText } },
+      { new: true }
+    );
+
+    if (!updatedFeedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    console.log("Successfully updated feedback text");
+    return res.status(200).json({
+      message: "Feedback text updated successfully",
+      feedback: updatedFeedback,
+    });
+  } catch (error) {
+    console.error("Error updating feedback text:", error);
+    return res.status(500).json({ error: "Failed to update feedback text" });
   }
 };
 
 exports.getFeedback = async (req, res) => {
   console.log("I'm here to get feedback...");
   try {
-    const { username, habit_id } = req.params;
+    const { habit_id } = req.params;
 
     console.log("Received Params:", req.params);
 
+    if (!mongoose.Types.ObjectId.isValid(habit_id)) {
+      return res.status(400).json({ error: "Invalid habit ID format" });
+    }
+
     const feedback = await Feedback.find({ habitId: habit_id });
 
-    console.log("Feedback: ", feedback);
+    console.log("Feedback:", feedback);
 
     if (!feedback.length) {
       return res
@@ -185,21 +255,15 @@ exports.getFeedback = async (req, res) => {
         .json({ message: "No feedback found for this habit", feedback: [] });
     }
 
+    console.log("Right before sneding feedback response...");
+
     res.status(200).json({
       message: "Feedback retrieved successfully",
-      feedback: feedback.map((fb) => ({
-        feedbackId: fb._id,
-        habitId: fb.habitId,
-        teamMemberId: fb.teamMemberId,
-        feedbackRating: fb.feedbackRating,
-        feedbackThanksRating: fb.feedbackThanksRating,
-        feedbackText: fb.feedbackText,
-        cadenceStart: fb.cadenceStart,
-        cadenceEnd: fb.cadenceEnd,
-      })),
+      feedback,
     });
+    console.log("Right afetr sneding feedback response...");
   } catch (error) {
-    console.error("Error fetching feedback:", error);
+    console.error("❌ Error fetching feedback:", error);
     res.status(500).json({ error: "Failed to retrieve feedback" });
   }
 };

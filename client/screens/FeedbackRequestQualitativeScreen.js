@@ -58,34 +58,25 @@ export default function FeedbackRequestQualitativeScreen() {
 
   const route = useRoute();
   const {
-    teamMemberId,
-    teamMemberFirstName,
-    teamMemberLastName,
-    teamMemberEmail,
-    teamMemberProfilePic,
+    teamMemberRouteId,
+    teamMemberRouteFirstName,
+    teamMemberRouteLastName,
+    teamMemberRouteEmail,
+    teamMemberRouteProfilePic,
   } = route.params || {};
 
-  console.log("Received from FeedbackRequestThreeScreen:", route.params);
-  console.log("Team Member Id: ", route.params.teamMemberContextId);
-  console.log(
-    "Team Member First Name: ",
-    route.params.teamMemberContextFirstName
-  );
-  console.log(
-    "Team Member Last Name: ",
-    route.params.teamMemberContextLastName
-  );
-  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
-  console.log(
-    "Team Member Profile Pic: ",
-    route.params.teamMemberContextProfilePic
-  );
+  console.log("Received from FeedbackWelcomeScreen:", route.params);
+  console.log("Team Member Id: ", teamMemberRouteId);
+  console.log("Team Member First Name: ", teamMemberRouteFirstName);
+  console.log("Team Member Last Name: ", teamMemberRouteLastName);
+  console.log("Team Memeber Email: ", teamMemberRouteEmail);
+  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
 
   const [feedbackText, setFeedbackText] = useState("");
 
   const handleSave = async () => {
     if (!feedbackText) {
-      setDialogMessage("Please give {firstName} some feedback.");
+      setDialogMessage(`Please give ${firstName} some feedback.`);
       setShowDialog(true);
       return;
     }
@@ -97,13 +88,13 @@ export default function FeedbackRequestQualitativeScreen() {
 
     console.log(
       "PATCH Request:",
-      `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`
+      `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}/text`
     );
     console.log("Request Body:", JSON.stringify(requestBody));
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
+        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}/text`,
         {
           method: "PATCH",
           headers: {
@@ -180,19 +171,19 @@ export default function FeedbackRequestQualitativeScreen() {
                 style={styles.saveButtonText}
                 onPress={() => {
                   console.log("Navigating with params:", {
-                    teamMemberId,
-                    teamMemberFirstName,
-                    teamMemberLastName,
-                    teamMemberEmail,
-                    teamMemberProfilePic,
+                    teamMemberRouteId,
+                    teamMemberRouteFirstName,
+                    teamMemberRouteLastName,
+                    teamMemberRouteEmail,
+                    teamMemberRouteProfilePic,
                   });
 
                   navigation.navigate("FeedbackDataScreen", {
                     teamMemberId,
-                    teamMemberFirstName,
-                    teamMemberLastName,
-                    teamMemberEmail,
-                    teamMemberProfilePic,
+                    teamMemberRouteFirstName,
+                    teamMemberRouteLastName,
+                    teamMemberRouteEmail,
+                    teamMemberRouteProfilePic,
                   });
                 }}>
                 Save ▶

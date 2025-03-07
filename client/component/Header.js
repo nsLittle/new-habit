@@ -73,7 +73,8 @@ export default function Header(props) {
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&
           currentRoute !== "FeedbackRequestThanksRatingScreen" &&
-          currentRoute !== "FeedbackRequestQualitativeScreen" && (
+          currentRoute !== "FeedbackRequestQualitativeScreen" &&
+          currentRoute !== "NoThankYouScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;
@@ -97,8 +98,7 @@ export default function Header(props) {
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&
           currentRoute !== "FeedbackRequestThanksRatingScreen" &&
-          currentRoute !== "FeedbackRequestQualitativeScreen" &&
-          currentRoute !== "NoThankYouScreen" && (
+          currentRoute !== "FeedbackRequestQualitativeScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;

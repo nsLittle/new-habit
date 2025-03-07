@@ -20,7 +20,8 @@ import { UserContext } from "../context/UserContext";
 export default function FeedbackRequestWelcomeScreen() {
   const navigation = useNavigation();
 
-  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { userContext, setUserContext, resetUserContext } =
+    useContext(UserContext) || {};
   const {
     userIdContext,
     userNameContext,
@@ -56,23 +57,20 @@ export default function FeedbackRequestWelcomeScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const { teamMember } = route.params || {};
+  const {
+    teamMemberRouteId,
+    teamMemberRouteFirstName,
+    teamMemberRouteLastName,
+    teamMemberRouteEmail,
+    teamMemberRouteProfilePic,
+  } = route.params || {};
 
   console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", route.params.teamMemberContextId);
-  console.log(
-    "Team Member First Name: ",
-    route.params.teamMemberContextFirstName
-  );
-  console.log(
-    "Team Member Last Name: ",
-    route.params.teamMemberContextLastName
-  );
-  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
-  console.log(
-    "Team Member Profile Pic: ",
-    route.params.teamMemberContextProfilePic
-  );
+  console.log("Team Member Id: ", teamMemberRouteId);
+  console.log("Team Member First Name: ", teamMemberRouteFirstName);
+  console.log("Team Member Last Name: ", teamMemberRouteLastName);
+  console.log("Team Memeber Email: ", teamMemberRouteEmail);
+  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
 
   const fetchUserData = async () => {
     try {
@@ -117,7 +115,7 @@ export default function FeedbackRequestWelcomeScreen() {
       const feedbackData = await feedbackResponse.json();
 
       console.log("User Data: ", userData);
-      console.log("Profile Pic: ", userData?.profilePic);
+      console.log("Profile Pic: ", userData[0].profilePic);
       console.log("Habit Data: ", habitData);
       console.log("Habit Id: ", habitData?.habits[0]._id);
       console.log("Habit: ", habitData?.habits[0].habit);
@@ -179,24 +177,20 @@ export default function FeedbackRequestWelcomeScreen() {
             <TouchableOpacity
               style={styles.feedbackButton}
               onPress={() => {
-                console.log("Raw route.params:", route.params);
-
-                const {
-                  teamMemberContextId,
-                  teamMemberContextFirstName,
-                  teamMemberContextLastName,
-                  teamMemberContextEmail,
-                  teamMemberContextProfilePic,
-                } = route.params || {};
-
-                console.log("Navigating with params:", route.params);
+                console.log("Navigating with params:", {
+                  teamMemberRouteId,
+                  teamMemberRouteFirstName,
+                  teamMemberRouteLastName,
+                  teamMemberRouteEmail,
+                  teamMemberRouteProfilePic,
+                });
 
                 navigation.navigate("FeedbackRequestRatingScreen", {
-                  teamMemberContextId,
-                  teamMemberContextFirstName,
-                  teamMemberContextLastName,
-                  teamMemberContextEmail,
-                  teamMemberContextProfilePic,
+                  teamMemberRouteId,
+                  teamMemberRouteFirstName,
+                  teamMemberRouteLastName,
+                  teamMemberRouteEmail,
+                  teamMemberRouteProfilePic,
                 });
               }}>
               <Text style={styles.feedbackButtonText} title="Give Feedback">
@@ -208,7 +202,7 @@ export default function FeedbackRequestWelcomeScreen() {
               style={styles.noThanksButton}
               onPress={() => {
                 console.log("Team member declines feedback request.");
-
+                resetUserContext("NoThankYouScreen");
                 navigation.navigate("NoThankYouScreen", {});
               }}>
               <Text style={styles.noThanksButtonText} title="No Thanks">

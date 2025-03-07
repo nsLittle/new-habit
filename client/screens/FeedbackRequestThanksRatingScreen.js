@@ -54,23 +54,20 @@ export default function FeedbackRequestThanksRatingScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const { teamMember } = route.params || {};
+  const {
+    teamMemberRouteId,
+    teamMemberRouteFirstName,
+    teamMemberRouteLastName,
+    teamMemberRouteEmail,
+    teamMemberRouteProfilePic,
+  } = route.params || {};
 
-  console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", route.params.teamMemberContextId);
-  console.log(
-    "Team Member First Name: ",
-    route.params.teamMemberContextFirstName
-  );
-  console.log(
-    "Team Member Last Name: ",
-    route.params.teamMemberContextLastName
-  );
-  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
-  console.log(
-    "Team Member Profile Pic: ",
-    route.params.teamMemberContextProfilePic
-  );
+  console.log("Received from FeedbackWelcomeScreen:", route.params);
+  console.log("Team Member Id: ", teamMemberRouteId);
+  console.log("Team Member First Name: ", teamMemberRouteFirstName);
+  console.log("Team Member Last Name: ", teamMemberRouteLastName);
+  console.log("Team Memeber Email: ", teamMemberRouteEmail);
+  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
@@ -85,9 +82,9 @@ export default function FeedbackRequestThanksRatingScreen() {
   ];
 
   useEffect(() => {
-    console.log("I'm here to fetch GET feedback...");
+    const checkForExistingThanksRating = async () => {
+      console.log(`Checking for existing thanks rating...`);
 
-    const fetchFeedback = async () => {
       try {
         const response = await fetch(
           `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
@@ -101,77 +98,90 @@ export default function FeedbackRequestThanksRatingScreen() {
         );
 
         if (!response.ok) {
-          console.error("No existing feedback found.");
-          return;
+          console.error("No existing rating found.");
+          setRatingValue("");
+          setExistingRating("");
+          return false;
         }
 
         const data = await response.json();
-        console.log("Retrieved Feedback:", data);
-        if (data.feedback.length > 0) {
-          setFeedbackId(data.feedback[0].feedbackId); // Store feedbackId in state
-        }
+        console.log("Data: ", data);
       } catch (error) {
-        console.error("Error fetching feedback:", error);
+        console.error("Error checking existing rating:", error);
       }
     };
-
-    fetchFeedback();
+    checkForExistingThanksRating();
   }, []);
 
   const handleSave = async () => {
-    console.log("I'm here to handle save...");
+    console.log("I'm here saving thanks rating...");
+
     if (!ratingValue) {
-      setDialogMessage("Please select a feedback rating.");
+      setDialogMessage("Please select a feedback thanks rating.");
       setShowDialog(true);
       return;
     }
 
-    const requestBody = {
-      teamMemberId: route.params.teamMemberContextId,
-      feedbackThanksRating: ratingValue,
-    };
-
-    console.log(
-      "PATCH Request:",
-      `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`
-    );
-    console.log("Request Body:", JSON.stringify(requestBody));
-
     try {
+      console.log("Saving thanks rating...");
+      console.log(
+        "Username: ",
+        userNameContext,
+        "and Habit Id: ",
+        habitContextId,
+        "from Team Member Id: ",
+        teamMemberRouteId
+      );
+      const feedbackThanksRating = ratingValue;
+      console.log("Feedback Thanks Rating :", feedbackThanksRating);
+
+      const resolvedTeamMemberId = teamMemberRouteId;
+
+      if (!resolvedTeamMemberId) {
+        console.error(
+          "❌ ERROR: `teamMemberContextId` is missing before sending request."
+        );
+        setDialogMessage("Error: Team member ID is missing.");
+        setShowDialog(true);
+        return;
+      }
+
+      console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
+
       const response = await fetch(
-        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
+        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}/thanks-rating`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({
+            habitContextId: [habitContextId],
+            teamMemberContextId: resolvedTeamMemberId,
+            feedbackThanksRating: feedbackThanksRating,
+          }),
         }
       );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
 
       const data = await response.json();
       console.log("Data: ", data);
 
-      setDialogMessage("Thank you rating updated successfully.");
+      setDialogMessage("Feedback thanks rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMemberContextId: route.params.teamMemberContextId,
-        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
-        teamMemberContextLastName: route.params.teamMemberContextLastName,
-        teamMemberContextEmail: route.params.teamMemberContextEmail,
-        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
+        teamMemberRouteId,
+        teamMemberRouteFirstName,
+        teamMemberRouteLastName,
+        teamMemberRouteEmail,
+        teamMemberRouteProfilePic,
       });
       navigation.navigate("FeedbackRequestQualitativeScreen", {
-        teamMemberContextId: route.params.teamMemberContextId,
-        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
-        teamMemberContextLastName: route.params.teamMemberContextLastName,
-        teamMemberContextEmail: route.params.teamMemberContextEmail,
-        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
+        teamMemberRouteId,
+        teamMemberRouteFirstName,
+        teamMemberRouteLastName,
+        teamMemberRouteEmail,
+        teamMemberRouteProfilePic,
       });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
@@ -239,7 +249,7 @@ export default function FeedbackRequestThanksRatingScreen() {
             ))}
           </View>
 
-          <View style={styles.buttonRow}>
+          <View style={styles.buttonColumn}>
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
@@ -247,6 +257,18 @@ export default function FeedbackRequestThanksRatingScreen() {
                 handleSave();
               }}>
               <Text>Save</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.noThanksButton}
+              onPress={() => {
+                console.log("Team member declines feedback request.");
+                resetUserContext("NoThankYouScreen");
+                navigation.navigate("NoThankYouScreen", {});
+              }}>
+              <Text style={styles.noThanksButtonText} title="No Thanks">
+                No Thnaks
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -333,8 +355,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  buttonRow: {
-    flexDirection: "row",
+  buttonColumn: {
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -353,6 +375,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   saveButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  noThanksButton: {
+    backgroundColor: "#D3D3D3",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  noThanksButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

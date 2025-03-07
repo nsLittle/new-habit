@@ -184,19 +184,19 @@ export default function FeedbackRequestScreen() {
                     style={styles.iconSend}
                     onPress={() => {
                       console.log("Navigating with params:", {
-                        teamMember_id: teammember.teamMember_id,
-                        teamMemberFirstName: teammember.firstName,
-                        teamMemberLastName: teammember.lastName,
-                        teamMemberEmail: teammember.email,
-                        teamMemberProfilePic: teammember.profilePic,
+                        teamMemberRouteId: teammember.teamMember_id,
+                        teamMemberRouteFirstName: teammember.firstName,
+                        teamMemberRouteLastName: teammember.lastName,
+                        teamMemberRouteEmail: teammember.email,
+                        teamMemberRouteProfilePic: teammember.profilePic,
                       });
 
                       navigation.navigate("FeedbackRequestWelcomeScreen", {
-                        teamMemberContextId: teammember.teamMember_id,
-                        teamMemberContextFirstName: teammember.firstName,
-                        teamMemberContextLastName: teammember.lastName,
-                        teamMemberContextEmail: teammember.email,
-                        teamMemberContextProfilePic: teammember.profilePic,
+                        teamMemberRouteId: teammember.teamMember_id,
+                        teamMemberRouteFirstName: teammember.firstName,
+                        teamMemberRouteLastName: teammember.lastName,
+                        teamMemberRouteEmail: teammember.email,
+                        teamMemberRouteProfilePic: teammember.profilePic,
                       });
                     }}
                   />

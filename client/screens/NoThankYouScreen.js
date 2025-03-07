@@ -18,7 +18,8 @@ import { UserContext } from "../context/UserContext";
 export default function NoThankYouScreen() {
   const navigation = useNavigation();
 
-  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { userContext, setUserContext, resetUserContext } =
+    useContext(UserContext) || {};
   const {
     userIdContext,
     userNameContext,

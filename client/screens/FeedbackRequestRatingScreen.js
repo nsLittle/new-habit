@@ -55,23 +55,20 @@ export default function FeedbackRequestRatingScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const { teamMember } = route.params || {};
+  const {
+    teamMemberRouteId,
+    teamMemberRouteFirstName,
+    teamMemberRouteLastName,
+    teamMemberRouteEmail,
+    teamMemberRouteProfilePic,
+  } = route.params || {};
 
-  console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", route.params.teamMemberContextId);
-  console.log(
-    "Team Member First Name: ",
-    route.params.teamMemberContextFirstName
-  );
-  console.log(
-    "Team Member Last Name: ",
-    route.params.teamMemberContextLastName
-  );
-  console.log("Team Memeber Email: ", route.params.teamMemberContextEmail);
-  console.log(
-    "Team Member Profile Pic: ",
-    route.params.teamMemberContextProfilePic
-  );
+  console.log("Received from FeedbackWelcomeScreen:", route.params);
+  console.log("Team Member Id: ", teamMemberRouteId);
+  console.log("Team Member First Name: ", teamMemberRouteFirstName);
+  console.log("Team Member Last Name: ", teamMemberRouteLastName);
+  console.log("Team Memeber Email: ", teamMemberRouteEmail);
+  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
@@ -112,18 +109,7 @@ export default function FeedbackRequestRatingScreen() {
         }
 
         const data = await response.json();
-        const existingRating = data.habits[0]?.rating || "";
         console.log("Data: ", data);
-        console.log("Existing Rating: ", existingRating);
-
-        if (existingRating) {
-          setRatingValue(existingRating);
-          setExistingRating(existingRating);
-          setDialogMessage(
-            "ARE YOU SURE YOU WANT TO EDIT YOUR RATING?\n\nPress 'Keep Rating' if you want to retain your current rating."
-          );
-          setShowDialog(true);
-        }
       } catch (error) {
         console.error("Error checking existing rating:", error);
       }
@@ -148,12 +134,12 @@ export default function FeedbackRequestRatingScreen() {
         "and Habit Id: ",
         habitContextId,
         "from Team Member Id: ",
-        route.params.teamMemberContextId
+        teamMemberRouteId
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
 
-      const resolvedTeamMemberId = route.params?.teamMemberContextId;
+      const resolvedTeamMemberId = teamMemberRouteId;
 
       if (!resolvedTeamMemberId) {
         console.error(
@@ -188,18 +174,18 @@ export default function FeedbackRequestRatingScreen() {
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMemberContextId: route.params.teamMemberContextId,
-        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
-        teamMemberContextLastName: route.params.teamMemberContextLastName,
-        teamMemberContextEmail: route.params.teamMemberContextEmail,
-        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
+        teamMemberRouteId,
+        teamMemberRouteFirstName,
+        teamMemberRouteLastName,
+        teamMemberRouteEmail,
+        teamMemberRouteProfilePic,
       });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
-        teamMemberContextId: route.params.teamMemberContextId,
-        teamMemberContextFirstName: route.params.teamMemberContextFirstName,
-        teamMemberContextLastName: route.params.teamMemberContextLastName,
-        teamMemberContextEmail: route.params.teamMemberContextEmail,
-        teamMemberContextProfilePic: route.params.teamMemberContextProfilePic,
+        teamMemberRouteId,
+        teamMemberRouteFirstName,
+        teamMemberRouteLastName,
+        teamMemberRouteEmail,
+        teamMemberRouteProfilePic,
       });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
@@ -275,6 +261,17 @@ export default function FeedbackRequestRatingScreen() {
               handleSave();
             }}>
             <Text style={styles.saveButtonText}>Save ▶</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.noThanksButton}
+            onPress={() => {
+              console.log("Team member declines feedback request.");
+              navigation.navigate("NoThankYouScreen", {});
+            }}>
+            <Text style={styles.noThanksButtonText} title="No Thanks">
+              No Thnaks
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -380,6 +377,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   saveButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  noThanksButton: {
+    backgroundColor: "#D3D3D3",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 150,
+    height: 45,
+    justifyContent: "center",
+  },
+  noThanksButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",
