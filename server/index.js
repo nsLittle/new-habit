@@ -15,7 +15,7 @@ connectDB();
 app.options("*", cors());
 app.use(
   cors({
-    origin: "*",
+    origin: ["https://new-habit-69tm.onrender.com", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })

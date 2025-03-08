@@ -160,7 +160,7 @@ export default function ReminderScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/habit/${username}`,
+          `https://new-habit-69tm.onrender.com/habit/${username}`,
           {
             method: "GET",
             headers: {
@@ -260,7 +260,7 @@ export default function ReminderScreen() {
       );
 
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/reminder`,
+        `https://new-habit-69tm.onrender.com/habit/${userNameContext}/${habitContextId}/reminder`,
         {
           method: "PATCH",
           headers: {

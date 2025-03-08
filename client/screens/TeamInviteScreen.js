@@ -64,7 +64,7 @@ export default function TeamInviteScreen() {
         if (!token || !userNameContext) return;
 
         const response = await fetch(
-          `http://192.168.1.174:8000/teammember/${userNameContext}`,
+          `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,

@@ -94,7 +94,7 @@ export default function ReviewScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/user/${userNameContext}`,
+          `https://new-habit-69tm.onrender.com/user/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -131,15 +131,21 @@ export default function ReviewScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
+          fetch(`https://new-habit-69tm.onrender.com/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(
+            `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
         ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
@@ -233,7 +239,7 @@ export default function ReviewScreen() {
   const profilePicUrl = isValidUrl(profilePic)
     ? profilePic
     : profilePic
-    ? `http://192.168.1.174:8000/data/${profilePic.trim()}`
+    ? `https://new-habit-69tm.onrender.com/data/${profilePic.trim()}`
     : "default-image-url-here";
 
   const testImage =

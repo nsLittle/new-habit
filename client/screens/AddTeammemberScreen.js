@@ -103,7 +103,7 @@ export default function AddTeammemberScreen() {
       }
 
       const response = await fetch(
-        `http://192.168.1.174:8000/teammember/${userNameContext}`,
+        `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
         {
           method: "POST",
           headers: {
@@ -121,7 +121,7 @@ export default function AddTeammemberScreen() {
 
       if (data.message === "Person already on your team.") {
         setDialogMessage("Person already on your team.");
-        // setDialogVisible(true);
+        setShowDialog(true);
         return;
       }
 
@@ -136,13 +136,13 @@ export default function AddTeammemberScreen() {
         setTeamMemberProfilePic("");
 
         setDialogMessage("Team member added successfully!");
-        // setDialogVisible(true);
+        setShowDialog(true);
         navigation.navigate("TeamInviteScreen");
       }
     } catch (error) {
       console.error("Error saving team member.", error);
       setDialogMessage("Error saving team member.");
-      // setDialogVisible(true);
+      setShowDialog(true);
       navigation.navigate("TeamInviteScreen");
     }
   };

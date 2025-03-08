@@ -66,7 +66,7 @@ export default function CadenceScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/habit/${userNameContext}`,
+          `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -116,7 +116,7 @@ export default function CadenceScreen() {
     try {
       console.log("Saving cadence...");
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/cadence`,
+        `https://new-habit-69tm.onrender.com/habit/${userNameContext}/${habitContextId}/cadence`,
         {
           method: "PATCH",
           headers: {

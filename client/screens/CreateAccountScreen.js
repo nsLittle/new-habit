@@ -82,7 +82,7 @@ export default function CreateAccountScreen() {
       console.log("Username: ", username);
 
       const response = await fetch(
-        `http://192.168.1.174:8000/user/${username}`,
+        `https://new-habit-69tm.onrender.com/user/${username}`,
         {
           method: "GET",
           headers: {
@@ -92,7 +92,6 @@ export default function CreateAccountScreen() {
       );
 
       if (response.status === 404) {
-        // If the user is not found, it's not a duplicate (we can create an account)
         return true;
       }
 
@@ -103,7 +102,6 @@ export default function CreateAccountScreen() {
       const data = await response.json();
       console.log("Data: ", data);
 
-      // If user data exists, the username is a duplicate
       return !data.user;
     } catch (error) {
       console.error("Error checking for duplicate username", error);
@@ -163,11 +161,14 @@ export default function CreateAccountScreen() {
     console.log("Sending signup request:", JSON.stringify(userData));
 
     try {
-      const response = await fetch("http://192.168.1.174:8000/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
+      const response = await fetch(
+        "https://new-habit-69tm.onrender.com/auth/signup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData),
+        }
+      );
 
       const data = await response.json();
 

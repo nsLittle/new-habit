@@ -67,7 +67,7 @@ export default function FeedbackRequestScreen() {
         if (!userNameContext) throw new Error("Username is missing.");
 
         const response = await fetch(
-          `http://192.168.1.174:8000/teammember/${userNameContext}`,
+          `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,

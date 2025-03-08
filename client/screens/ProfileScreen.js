@@ -76,15 +76,21 @@ export default function ProfileScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
+          fetch(`https://new-habit-69tm.onrender.com/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(
+            `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
         ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");

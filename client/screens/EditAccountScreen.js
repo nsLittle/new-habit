@@ -86,7 +86,7 @@ export default function EditAccountScreen() {
       if (!token) throw new Error("Authentication token is missing.");
 
       const response = await fetch(
-        `http://192.168.1.174:8000/user/${userNameContext}`,
+        `https://new-habit-69tm.onrender.com/user/${userNameContext}`,
         {
           method: "PATCH",
           headers: {
