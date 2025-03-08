@@ -45,14 +45,19 @@ exports.login = async (req, res) => {
     console.log("User found:", user);
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    console.log("Username: ", user.username);
-    console.log("Saved Password: ", user.password);
+    console.log("Found Username: ", user.username);
+    console.log("Found Password: ", user.password);
     console.log("Entered Password: ", password);
 
     console.log("Comparing passwords...");
-    if (user.password === password) {
-      console.log("It is a match");
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      console.log("Password does not match");
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
+    console.log("Password matched!");
 
     const token = jwt.sign(
       { id: user._id, username: user.username },
@@ -61,7 +66,7 @@ exports.login = async (req, res) => {
     );
 
     console.log("Token: ", token);
-
+    console.log("Login succesfukl");
     res.status(200).json({
       message: "Login successful",
       token,
