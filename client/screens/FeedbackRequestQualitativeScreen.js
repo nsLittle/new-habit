@@ -82,7 +82,7 @@ export default function FeedbackRequestQualitativeScreen() {
     }
 
     const requestBody = {
-      teamMemberId: route.params.teamMemberContextId,
+      teamMemberId: teamMemberRouteId,
       feedbackText: feedbackText,
     };
 
@@ -114,7 +114,20 @@ export default function FeedbackRequestQualitativeScreen() {
 
       setDialogMessage("Feedback text updated successfully.");
       setShowDialog(true);
-      navigation.navigate("FeedbackDataScreen");
+      console.log("Navigating with params:", {
+        teamMemberRouteId,
+        teamMemberRouteFirstName,
+        teamMemberRouteLastName,
+        teamMemberRouteEmail,
+        teamMemberRouteProfilePic,
+      });
+      navigation.navigate("FeedbackDataScreen", {
+        teamMemberRouteId,
+        teamMemberRouteFirstName,
+        teamMemberRouteLastName,
+        teamMemberRouteEmail,
+        teamMemberRouteProfilePic,
+      });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
       setShowDialog(true);
@@ -167,27 +180,7 @@ export default function FeedbackRequestQualitativeScreen() {
                 console.log("Save button pressed");
                 handleSave();
               }}>
-              <Text
-                style={styles.saveButtonText}
-                onPress={() => {
-                  console.log("Navigating with params:", {
-                    teamMemberRouteId,
-                    teamMemberRouteFirstName,
-                    teamMemberRouteLastName,
-                    teamMemberRouteEmail,
-                    teamMemberRouteProfilePic,
-                  });
-
-                  navigation.navigate("FeedbackDataScreen", {
-                    teamMemberId,
-                    teamMemberRouteFirstName,
-                    teamMemberRouteLastName,
-                    teamMemberRouteEmail,
-                    teamMemberRouteProfilePic,
-                  });
-                }}>
-                Save ▶
-              </Text>
+              <Text style={styles.saveButtonText}>Save ▶</Text>
             </TouchableOpacity>
           </View>
         </View>
