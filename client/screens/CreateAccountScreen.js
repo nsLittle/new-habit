@@ -102,7 +102,13 @@ export default function CreateAccountScreen() {
       const data = await response.json();
       console.log("Data: ", data);
 
-      return !data.user;
+      if (data && data.user) {
+        console.log("Username already exists.");
+        return false;
+      }
+
+      console.log("Username is available.");
+      return true;
     } catch (error) {
       console.error("Error checking for duplicate username", error);
       return false;
