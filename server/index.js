@@ -1,5 +1,9 @@
 require("dotenv").config();
 
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("MONGO_URI:", process.env.MONGO_URI);
+console.log("BASE_URL:", process.env.BASE_URL);
+
 const express = require("express");
 const cors = require("cors");
 // const swaggerUi = require("swagger-ui-express");
