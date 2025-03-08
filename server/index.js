@@ -12,7 +12,14 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+if (!process.env.PORT) {
+  console.error(
+    "❌ ERROR: process.env.PORT is not set. This server is meant to run on Render."
+  );
+  process.exit(1); // Stop the server from running locally
+}
+
+const PORT = process.env.PORT; // No fallback port
 
 connectDB();
 
