@@ -16,7 +16,7 @@ if (!process.env.PORT) {
   console.error(
     "❌ ERROR: process.env.PORT is not set. This server is meant to run on Render."
   );
-  process.exit(1); // Stop the server from running locally
+  process.exit(1);
 }
 
 const PORT = process.env.PORT; // No fallback port
@@ -64,6 +64,16 @@ app.use("/notification", notificationRoutes);
 
 const reminderRoutes = require("./routes/reminderRoutes");
 app.use("/reminders", reminderRoutes);
+
+app._router.stack.forEach((r) => {
+  if (r.route && r.route.path) {
+    console.log(
+      `Registered Route: ${r.route.path} [${Object.keys(r.route.methods)
+        .join(", ")
+        .toUpperCase()}]`
+    );
+  }
+});
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${PORT}`);

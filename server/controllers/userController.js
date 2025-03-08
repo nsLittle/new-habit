@@ -13,12 +13,12 @@ exports.getAllUsernames = async (req, res) => {
 
 exports.getUserProfile = async (req, res) => {
   try {
-    console.log("I'm here to get user profile...");
+    console.log("Request for username:", req.params.username);
     const { username } = req.params;
     console.log("Username: ", username);
 
     const user = await User.find({ username });
-    console.log("user:", user);
+    console.log("MongoDB user found:", user);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 

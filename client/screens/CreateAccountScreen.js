@@ -91,16 +91,18 @@ export default function CreateAccountScreen() {
         }
       );
 
+      const data = await response.json();
+      console.log("Data: ", data);
+
       if (response.status === 404) {
         return true;
       }
 
       if (!response.ok) {
+        console.log("No dup");
         throw new Error("Failed to check username.");
+        return true;
       }
-
-      const data = await response.json();
-      console.log("Data: ", data);
 
       if (data && data.user) {
         console.log("Username already exists.");

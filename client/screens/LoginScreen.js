@@ -97,9 +97,15 @@ export default function LoginScreen() {
       );
 
       console.log("Raw response:", response);
+      const text = await response.text();
+      console.log("Response text:", text);
 
-      const data = await response.json();
-      console.log("Data: ", data);
+      try {
+        const data = JSON.parse(text);
+        console.log("Parsed Data: ", data);
+      } catch (error) {
+        console.error("Failed to parse JSON:", error);
+      }
 
       if (!response.ok) {
         setDialogMessage("Invalid username or password.");
