@@ -93,7 +93,7 @@ export default function TeamInviteScreen() {
 
         setUserContext((prevContext) => ({
           ...prevContext,
-          teammembers,
+          teammembers: teammembers || [],
         }));
 
         console.log("Transformed team members:", teammembers);
@@ -163,7 +163,7 @@ export default function TeamInviteScreen() {
             <TouchableOpacity
               style={[
                 styles.addPersonButton,
-                userContext.teammembers.length >= 10
+                (userContext?.teammembers?.length ?? 0) >= 10
                   ? { backgroundColor: "#D3D3D3" }
                   : {},
               ]}
@@ -179,12 +179,12 @@ export default function TeamInviteScreen() {
                   setShowDialog(true);
                 }
               }}
-              disabled={userContext.teammembers.length >= 10}>
+              disabled={(userContext?.teammembers?.length ?? 0) >= 10}>
               <Text style={styles.addPersonButtonText}>+ Add a person</Text>
             </TouchableOpacity>
           </View>
 
-          {userContext.teammembers.map((teammember, index) => (
+          {(userContext?.teammembers ?? []).map((teammember, index) => (
             <View style={styles.buttonContainer} key={index}>
               <TouchableOpacity style={styles.contactPersonButton}>
                 {teammember.profilePic ? (
@@ -249,7 +249,7 @@ export default function TeamInviteScreen() {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.navigate("HabitDescriptionScreen")}>
+              onPress={() => navigation.navigate("ReminderScreen")}>
               <Text style={styles.backButtonText} title="Back">
                 ◀ Back
               </Text>
@@ -271,7 +271,7 @@ export default function TeamInviteScreen() {
                   setShowDialog(true);
                   return;
                 }
-                navigation.navigate("CadenceScreen");
+                navigation.navigate("ReviewScreen");
               }}>
               <Text style={styles.saveButtonText} title="Next">
                 Save ▶

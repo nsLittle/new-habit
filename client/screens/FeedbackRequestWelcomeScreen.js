@@ -155,7 +155,7 @@ export default function FeedbackRequestWelcomeScreen() {
       <View style={styles.body}>
         <View style={styles.bodyIntroContainer}>
           <Text style={styles.bodyTitleText}>
-            Hi {route.params.teamMemberContextFirstName},
+            Hi {teamMemberRouteFirstName},
           </Text>
           <View>
             <Image
@@ -209,7 +209,7 @@ export default function FeedbackRequestWelcomeScreen() {
                 navigation.navigate("NoThankYouScreen", {});
               }}>
               <Text style={styles.noThanksButtonText} title="No Thanks">
-                No Thnaks
+                No Thanks
               </Text>
             </TouchableOpacity>
           </View>

@@ -193,7 +193,7 @@ export default function HabitDescriptionScreen() {
 
       setTimeout(() => {
         setShowDialog(false);
-        navigation.navigate("TeamInviteScreen");
+        navigation.navigate("CadenceScreen");
       }, 500);
     } catch (error) {
       console.error(
@@ -252,11 +252,12 @@ export default function HabitDescriptionScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.navigate("CreateHabitScreen")}>
             <Text style={styles.buttonText}>◀ Back</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
           <TouchableOpacity style={styles.saveButton} onPress={saveDescription}>
             <Text style={styles.buttonText}>Save ▶</Text>
           </TouchableOpacity>

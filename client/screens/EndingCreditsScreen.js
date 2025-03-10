@@ -15,7 +15,7 @@ import {
 } from "react-native-responsive-screen";
 import { UserContext } from "../context/UserContext";
 
-export default function EndingCreditScreen() {
+export default function EndingCreditsScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
@@ -54,15 +54,15 @@ export default function EndingCreditScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Default</Text>
+          <Text style={styles.bodyTitleText}>Ending Credits</Text>
         </View>
 
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>Attribution</Text>
+          <Text style={styles.bodyIntroText}>Favicon designed by:</Text>
           <a
             href="https://www.flaticon.com/free-icons/daily"
             title="daily icons">
-            Daily icons created by Awicon - Flaticon
+            by Awicon - Flaticon
           </a>
 
           <View style={styles.buttonRow}></View>

@@ -198,7 +198,7 @@ export default function CadenceScreen() {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.navigate("WelcomeScreen")}>
+              onPress={() => navigation.navigate("HabitDescriptionScreen")}>
               <Text style={styles.backButtonText}>◀ Back</Text>
             </TouchableOpacity>
 

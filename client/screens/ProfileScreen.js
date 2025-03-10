@@ -171,9 +171,9 @@ export default function ProfileScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        <View style={styles.bodyTitleContainer}>
+        {/* <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>Profile</Text>
-        </View>
+        </View> */}
 
         <View style={styles.profileDataBox}>
           {profilePicContext ? (
@@ -220,12 +220,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
   bodyTitleTextSub: {
     fontSize: 18,
     textAlign: "center",

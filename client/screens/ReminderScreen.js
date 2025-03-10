@@ -292,7 +292,7 @@ export default function ReminderScreen() {
 
       setDialogMessage("Reminder settings updated successfully.");
       setShowDialog(true);
-      navigation.navigate("ReviewScreen");
+      navigation.navigate("TeamInviteScreen");
     } catch (error) {
       console.error("Error updating reminder settings:", error);
       setDialogMessage("Failed to update reminder settings. Please try again.");

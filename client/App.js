@@ -34,7 +34,7 @@ import FeedbackRequestThanksRatingScreen from "./screens/FeedbackRequestThanksRa
 import FeedbackRequestQualitativeScreen from "./screens/FeedbackRequestQualitativeScreen";
 import FeedbackDataScreen from "./screens/FeedbackDataScreen";
 import NoThankYouScreen from "./screens/NoThankYouScreen";
-import EndingCreditScreen from "./screens/EndingCreditScreen";
+import EndingCreditsScreen from "./screens/EndingCreditsScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -150,12 +150,12 @@ export default function App() {
               component={FeedbackDataScreen}
             />
             <Stack.Screen
-              name="NoThankYouScreen"
-              component={NoThankYouScreen}
+              name="EndingCreditsScreen"
+              component={EndingCreditsScreen}
             />
             <Stack.Screen
-              name="EndingCreditScreen"
-              component={EndingCreditScreen}
+              name="NoThankYouScreen"
+              component={NoThankYouScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>
