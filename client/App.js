@@ -16,6 +16,8 @@ import { PaperProvider } from "react-native-paper";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import CreateAccountScreen from "./screens/CreateAccountScreen";
 import LoginScreen from "./screens/LoginScreen";
+import ResetPasswordRequestScreen from "./screens/ResetPasswordRequestScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import LogoutScreen from "./screens/LogoutScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import EditAccountScreen from "./screens/EditAccountScreen";
@@ -96,6 +98,14 @@ export default function App() {
               component={CreateAccountScreen}
             />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen
+              name="ResetPasswordRequestScreen"
+              component={ResetPasswordRequestScreen}
+            />
+            <Stack.Screen
+              name="ResetPasswordScreen"
+              component={ResetPasswordScreen}
+            />
             <Stack.Screen name="LogoutScreen" component={LogoutScreen} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen

@@ -1,13 +1,23 @@
 const User = require("../models/User");
 
-exports.getAllUsernames = async (req, res) => {
+exports.checkAllUsernames = async (req, res) => {
+  console.log("I'm here checkign users...");
   try {
-    const users = await User.find({}, "username");
-    const usernames = users.map((user) => user.username);
-    res.status(200).json({ usernames });
+    const { username } = req.params;
+
+    console.log("Usernmae: ", username);
+    if (!username) {
+      console.log("No username given");
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    const userExists = (await User.exists({ username })) ? true : false;
+    console.log(userExists);
+
+    return res.status(200).json(userExists);
   } catch (error) {
-    console.error("Error fetching usernames:", error.message);
-    res.status(500).json({ message: "Error fetching usernames" });
+    console.error("Error checking username:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -36,16 +46,35 @@ exports.getUserProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    const updates = req.body;
+    let updates = req.body;
 
     console.log("Updating Profile for:", username);
     console.log("Update Data:", updates);
 
-    const updatedUser = await User.findOneAndUpdate({ username }, updates, {
-      new: true,
-      runValidators: true,
-    });
-    console.log("Updated User: ", updatedUser);
+    const existingUser = await User.findOne({ username });
+    if (!existingUser) {
+      console.log("User not found in database");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("Existing User Found:", existingUser);
+
+    delete updates.username;
+
+    if (updates.password === "********") {
+      delete updates.password;
+    } else if (updates.password) {
+      const salt = await bcrypt.genSalt(10);
+      updates.password = await bcrypt.hash(updates.password, salt);
+    }
+
+    console.log("Filtered Updates Object:", updates);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { username },
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });

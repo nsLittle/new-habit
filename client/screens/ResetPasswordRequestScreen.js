@@ -13,132 +13,52 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import emailjs from "@emailjs/react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
-export default function LoginScreen() {
+export default function ResetPasswordRequestScreen() {
   const navigation = useNavigation();
 
-  const routes = navigation.getState().routes;
-  const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
-
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-    token,
-  } = userContext || {};
-
-  useEffect(() => {
-    if (userContext && Object.keys(userContext).length !== 0) {
-      resetUserContext();
-    }
-  }, []);
-
-  const resetUserContext = () => {
-    setUserContext({
-      userIdContext: null,
-      userNameContext: null,
-      firstNameContext: null,
-      lastNameContext: null,
-      emailContext: null,
-      profilePicContext: null,
-      habitIdContext: [],
-      habitInputContext: [],
-      descriptionInputContext: "",
-      teamMemberIdContext: "",
-      token: null,
-    });
-  };
-
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // const routes = navigation.getState().routes;
+  // const currentRoute = routes[routes.length - 1]?.name;
+  // console.log("Current Route:", currentRoute);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [email, setEmail] = useState("");
+  const handleResetEmail = async () => {
+    if (!email) {
+      setDialogMessage("Please enter a valid email address.");
+      setShowDialog(true);
+      return;
+    }
 
-  const login = async () => {
+    const templateParams = {
+      user_email: email,
+      reset_link: `http://localhost:3000/reset-password?token=${btoa(email)}`, // Encoding email as a basic token for testing
+    };
+
     try {
-      console.log("Starting login...");
-      console.log("Username: ", username);
-      console.log("Password: ", password);
-
-      const response = await fetch(
-        "https://new-habit-69tm.onrender.com/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-        }
+      const response = await emailjs.send(
+        "service_rt4bnxx",
+        "template_999rs3p",
+        templateParams,
+        "M-BzZXfTrnZlWxItt"
       );
 
-      console.log("Raw response:", response);
-      const text = await response.text();
-      console.log("Response text:", text);
-
-      try {
-        const data = JSON.parse(text);
-        console.log("Parsed Data: ", data);
-      } catch (error) {
-        console.error("Failed to parse JSON:", error);
-      }
-
-      if (!response.ok) {
-        setDialogMessage("Invalid username or password.");
-        setShowDialog(true);
-        console.log("Invalid username or password.");
-        return;
-      }
-
-      setUserContext((prev) => ({
-        ...prev,
-        userIdContext: data.userId,
-        userNameContext: data.username,
-        firstNameContext: data.firstName,
-        lastNameContext: data.lastName,
-        emailContext: data.email,
-        profilePicContext: data.profilePic,
-        habitContextId: data.habitId,
-        habitContextInput: data.habitinput,
-        descriptionContextInput: data.descriptioninput,
-        teamMemberContextId: data.teamMemberId,
-        token: data.token,
-      }));
-
-      setTimeout(() => {
-        console.log("UserContext Updated! Navigating...");
-        navigation.navigate("ProfileScreen");
-      }, 200);
-    } catch (error) {
-      setDialogMessage("Something went wrong");
+      console.log("EmailJS response:", response);
+      setDialogMessage("Success. Password reset email sent!");
       setShowDialog(true);
-      console.log("Error saving user", error);
+      return;
+    } catch (error) {
+      console.error("Error sending email:", error);
+      Alert.alert("Error", "Failed to send reset email.");
     }
   };
 
@@ -167,21 +87,21 @@ export default function LoginScreen() {
 
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Login</Text>
+          <Text style={styles.bodyTitleText}>Reset Password</Text>
         </View>
 
         <View style={styles.inputContainer}>
-          <View style={styles.usernameContainer}>
+          <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
-              placeholder="Username"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               placeholderTextColor="gray"
             />
           </View>
 
-          <View style={styles.passwordContainer}>
+          {/* <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
               placeholder="Password"
@@ -202,28 +122,14 @@ export default function LoginScreen() {
             <TouchableOpacity style={styles.infoIcon}>
               <MaterialIcons name="info-outline" size={20} color="gray" />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
 
         <View style={styles.resetContainer}>
           <TouchableOpacity
-            style={styles.reset}
-            onPress={() => navigation.navigate("ResetPasswordScreen")}>
-            <Text style={styles.resetLink}>Reset Password</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("WelcomeScreen")}>
-            <Text style={styles.backButtonText} title="Back">
-              ◀ Back
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.loginButton} onPress={login}>
-            <Text style={styles.loginButtonText}>Login ▶</Text>
+            style={styles.resetButton}
+            onPress={handleResetEmail}>
+            <Text style={styles.resetButtonText}>Send Me Validation Email</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -307,23 +213,7 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  loginButton: {
+  resetButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
@@ -333,10 +223,9 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: "center",
   },
-  loginButtonText: {
+  resetButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
 });

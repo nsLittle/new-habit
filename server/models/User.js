@@ -1,56 +1,63 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
   {
-    username: { 
-      type: String, 
-      required: true, 
-      unique: true, 
-      minlength: 3 
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      minlength: 3,
     },
-    password: { 
-      type: String, 
-      required: true, 
-      minlength: 6, 
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
       validate: {
         validator: function (value) {
           return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(value);
         },
-        message: "Password must have at least one uppercase letter, one lowercase letter, and one number."
-      } 
+        message:
+          "Password must have at least one uppercase letter, one lowercase letter, and one number.",
+      },
     },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    email: { 
-      type: String, 
-      required: true, 
-      unique: true, 
-      match: /.+\@.+\..+/ 
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: /.+\@.+\..+/,
     },
-    profilePic: { 
-      type: String, 
-      default: 'default-profile.png',
+    profilePic: {
+      type: String,
+      default: "default-profile.png",
       validate: {
         validator: function (value) {
-          return /^https?:\/\/.+\..+/.test(value) || /\.(jpg|jpeg|png|gif)$/i.test(value);
+          return (
+            /^https?:\/\/.+\..+/.test(value) ||
+            /\.(jpg|jpeg|png|gif)$/i.test(value)
+          );
         },
-        message: "Profile picture must be a valid URL or an image file path (e.g., .jpg, .png)."
-      } 
+        message:
+          "Profile picture must be a valid URL or an image file path (e.g., .jpg, .png).",
+      },
     },
-    habits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Habit' }],
-    teamMember: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember' }],
+    habits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
+    teamMember: [{ type: mongoose.Schema.Types.ObjectId, ref: "TeamMember" }],
+
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
-
-UserSchema.virtual('fullName').get(function () {
+UserSchema.virtual("fullName").get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -64,5 +71,5 @@ UserSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model("User", UserSchema);
 module.exports = User;

@@ -3,12 +3,12 @@ const {
   getUserProfile,
   updateUserProfile,
   deleteUserProfile,
-  getAllUsernames,
+  checkAllUsernames,
 } = require("../controllers/userController");
 const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
-router.get("/", getAllUsernames);
+router.get("/check/:username", checkAllUsernames);
 router.get("/:username", getUserProfile);
 router.patch("/:username", protect, updateUserProfile);
 router.delete("/:username", protect, deleteUserProfile);

@@ -126,10 +126,20 @@ exports.updateTeamMember = async (req, res) => {
 };
 
 exports.deleteTeamMember = async (req, res) => {
+  console.log("I'm here to delete a team member...");
   try {
-    const { teamMember_id } = req.params;
+    const { username, teamMember_id } = req.params;
+    console.log("Username:", username);
+    console.log("Team member ID: ", teamMember_id);
 
-    const deletedTeamMember = await TeamMember.findByIdAndDelete(teamMember_id);
+    // if (!mongoose.Types.ObjectId.isValid(teamMember_id)) {
+    //   console.log("Invalid Team Member ID:", teamMember_id);
+    //   return res.status(400).json({ error: "Invalid Team Member ID" });
+    // }
+
+    const deletedTeamMember = await TeamMember.findById(teamMember_id);
+
+    console.log("Delted Team member: ", deletedTeamMember);
 
     if (!deletedTeamMember) {
       return res.status(404).json({ message: "Team member not found" });

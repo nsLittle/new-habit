@@ -35,6 +35,14 @@ export default function CreateHabitScreen() {
   } = userContext || {};
 
   useEffect(() => {
+    if (!userContext) {
+      console.error("UserContext is NULL in CreateHabitScreen!");
+    } else {
+      console.log("UserContext in CreateHabitScreen:", userContext);
+    }
+  }, []);
+
+  useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
       console.log("User Id Context: ", userIdContext);
@@ -134,12 +142,15 @@ export default function CreateHabitScreen() {
       let url;
       let method;
 
-      if (habitContextId) {
-        url = `https://new-habit-69tm.onrender.com/habit/${userNameContext}/${habitContextId}/habit`;
-        method = "PATCH";
-      } else {
-        url = `https://new-habit-69tm.onrender.com/habit/${userNameContext}`;
+      if (
+        !habitContextId ||
+        (Array.isArray(habitContextId) && habitContextId.length === 0)
+      ) {
+        url = `http://192.168.1.174:8000/habit/${userNameContext}`;
         method = "POST";
+      } else {
+        url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/habit`;
+        method = "PATCH";
       }
 
       console.log(`Sending ${method} request to:`, url);

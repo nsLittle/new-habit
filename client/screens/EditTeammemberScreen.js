@@ -19,6 +19,7 @@ import { UserContext } from "../context/UserContext";
 
 export default function EditTeammemberScreen() {
   const navigation = useNavigation();
+
   const route = useRoute();
   const { teamMember_id, firstName, lastName, email, profilePic } =
     route.params;
@@ -48,21 +49,6 @@ export default function EditTeammemberScreen() {
   };
   const [userData, setUserData] = useState("");
 
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { username, userId, habitId, teammemberId, firstname, token } =
-    userContext || {};
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Name: ", username);
-      console.log("User Id: ", userId);
-      console.log("Habit Id: ", habitId);
-      console.log("Teammember Id: ", teammemberId);
-      console.log("First Name: ", firstname);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
-
   useEffect(() => {
     console.log(`I'm here to reset passed team member data...`);
     setEditedFirstName(firstName);
@@ -72,6 +58,38 @@ export default function EditTeammemberScreen() {
     setEditedEmail(email);
     setEditedProfilePic(profilePic);
   }, []);
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
+
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   const handleSave = async () => {
     console.log(`I'm here to save your team member edits...`);
@@ -87,11 +105,11 @@ export default function EditTeammemberScreen() {
       if (!token) throw new Error("Authentication token is missing.");
 
       console.log("Team Member Id: ", teamMember_id);
-      const routeCheck = `https://new-habit-69tm.onrender.com/teammember/${username}/${teamMember_id}`;
+      const routeCheck = `http://192.168.1.174:8000/teammember/${userNameContext}/${teamMember_id}`;
       console.log("Route Check: ", routeCheck);
 
       const response = await fetch(
-        `https://new-habit-69tm.onrender.com/teammember/${username}/${teamMember_id}`,
+        `http://192.168.1.174:8000/teammember/${userNameContext}/${teamMember_id}`,
         {
           method: "PATCH",
           headers: {
@@ -120,7 +138,7 @@ export default function EditTeammemberScreen() {
 
       setTimeout(() => {
         setDialogVisible(false);
-        navigation.navigate("ProfileScreen", { username });
+        navigation.navigate("ProfileScreen", { userNameContext });
       }, 1000);
     } catch (err) {
       console.log("Error", err.message);

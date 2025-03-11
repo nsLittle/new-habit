@@ -35,13 +35,13 @@ export default function CreateAccountScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    resetUserContext();
-  }, []);
-
   const resetUserContext = () => {
     setUserContext(null);
   };
+
+  useEffect(() => {
+    resetUserContext();
+  }, []);
 
   useEffect(() => {
     if (userContext) {
@@ -76,13 +76,15 @@ export default function CreateAccountScreen() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const nonDuplicateUsername = async () => {
+  const nonDuplicateUsername = async (username) => {
+    if (!username.trim()) return false;
+
     try {
       console.log("Checking for duplicate username...");
       console.log("Username: ", username);
 
       const response = await fetch(
-        `https://new-habit-69tm.onrender.com/user/${username}`,
+        `http://192.168.1.174:8000/user/check/${username}`,
         {
           method: "GET",
           headers: {
@@ -91,26 +93,16 @@ export default function CreateAccountScreen() {
         }
       );
 
-      const data = await response.json();
-      console.log("Data: ", data);
-
-      if (response.status === 404) {
-        return true;
-      }
-
       if (!response.ok) {
-        console.log("No dup");
-        throw new Error("Failed to check username.");
-        return true;
-      }
-
-      if (data && data.user) {
-        console.log("Username already exists.");
+        console.error("Unexpected response checking username.");
         return false;
       }
 
-      console.log("Username is available.");
-      return true;
+      const data = await response.json();
+      console.log("Data: ", data);
+
+      // If user data exists, the username is a duplicate
+      return !data.exists;
     } catch (error) {
       console.error("Error checking for duplicate username", error);
       return false;
@@ -148,11 +140,9 @@ export default function CreateAccountScreen() {
       return;
     }
 
-    const isUniqueUsername = await nonDuplicateUsername();
-    if (!isUniqueUsername) {
-      setDialogMessage(
-        "This username is already taken. Please choose another one."
-      );
+    const isUnique = await nonDuplicateUsername(username);
+    if (!isUnique) {
+      setDialogMessage("Username already taken. Please choose another.");
       setShowDialog(true);
       return;
     }
@@ -201,18 +191,20 @@ export default function CreateAccountScreen() {
         console.log("Saved User Context: ", updatedContext);
         setDialogMessage("Account created successfully!");
         setShowDialog(true);
-        return updatedContext;
+        setTimeout(() => {
+          navigation.navigate("CreateHabitScreen");
+        }, 500);
       });
-
-      setTimeout(() => {
-        navigation.navigate("CreateHabitScreen");
-      }, 500);
     } catch (error) {
       setDialogMessage("Signup error. Please try again.");
       setShowDialog(true);
       console.error("Signup Error:", error);
     }
   };
+
+  useEffect(() => {
+    console.log("Updated UserContext in CreateAccountScreen:", userContext);
+  }, [userContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

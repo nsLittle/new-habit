@@ -199,7 +199,7 @@ export default function ProfileScreen() {
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => navigation.navigate("ReviewScreen")}>
-            <Text style={styles.saveButtonText}>Review Habit Settings ▶</Text>
+            <Text style={styles.saveButtonText}>Review Habit Settings</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -220,12 +220,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
   bodyTitleTextSub: {
     fontSize: 18,
     textAlign: "center",
@@ -360,6 +354,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
 });

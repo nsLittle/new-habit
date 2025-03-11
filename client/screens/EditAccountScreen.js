@@ -115,7 +115,8 @@ export default function EditAccountScreen() {
     setLastName(lastNameContext || "");
     setEmail(emailContext || "");
     setProfilePic(profilePicContext || "");
-    setPassword(password || "");
+    setPassword("********");
+    setUserName(userNameContext || "");
   }, [userContext]);
 
   const handleBlur = (field, value) => {
@@ -229,6 +230,9 @@ export default function EditAccountScreen() {
               secureTextEntry={!showPassword}
               onChangeText={setPassword}
               onBlur={() => handleBlur("password", password)}
+              onFocus={() => {
+                if (password === "********") setPassword(""); // Clears the placeholder when clicked
+              }}
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}

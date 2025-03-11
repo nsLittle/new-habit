@@ -1,6 +1,11 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const sgMail = require("@sendgrid/mail");
+const { clear } = require("console");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.signup = async (req, res) => {
   console.log("I'm creating a new account...");
@@ -29,6 +34,7 @@ exports.signup = async (req, res) => {
     console.log("Password: ", user.password);
 
     res.status(201).json({ message: "User created successfully", user, token });
+    console.log("User created beautifully.");
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -82,4 +88,28 @@ exports.logout = async (req, res) => {
   res
     .status(200)
     .json({ message: "Logged out successfully. Remove token on client-side." });
+};
+
+exports.passwordReset = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Password successfully reset" });
+  } catch (error) {
+    res.status(400).json({ message: "Invalid or expired token" });
+  }
 };

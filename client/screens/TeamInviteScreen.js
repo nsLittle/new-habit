@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Dialog, Portal } from "react-native-paper";
+import { Button, Dialog, IconButton, Portal } from "react-native-paper";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -54,6 +54,9 @@ export default function TeamInviteScreen() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
+
   const [contactData, setContactData] = useState({ teammembers: [] });
 
   useEffect(() => {
@@ -97,8 +100,6 @@ export default function TeamInviteScreen() {
         }));
 
         console.log("Transformed team members:", teammembers);
-
-        setDialogMessage("Teammember fetched.");
       } catch (err) {
         console.error("Error fetching teammembers.", err);
         setDialogMessage("Error fetching teammembers.");
@@ -108,28 +109,86 @@ export default function TeamInviteScreen() {
     fetchTeamMembersData();
   }, [token, userNameContext]);
 
-  const sendEmail = (email) => {
-    if (!email) {
-      console.error("No email address provided");
-      setDialogMessage("No email address provided");
-      setShowDialog(true);
+  // const sendEmail = (email) => {
+  //   if (!email) {
+  //     console.error("No email address provided");
+  //     setDialogMessage("No email address provided");
+  //     setShowDialog(true);
+  //     return;
+  //   }
+
+  //   const subject = encodeURIComponent(`Help ${firstNameContext}`);
+  //   const requestUrl = "habit-app://feedback";
+  //   const body = encodeURIComponent(
+  //     `Hello,\n\nThis is ${firstNameContext}. I am working to ${habitContextInput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
+  //   );
+
+  //   const mailtoURL = `mailto:${emailContext}?subject=${subject}&body=${body}`;
+  //   console.log("Mail To: ", mailtoURL);
+
+  //   Linking.openURL(mailtoURL).catch((err) => {
+  //     console.error("Failed to open email client", err);
+  //     setDialogMessage("Failed to open email client.");
+  //     setShowDialog(true);
+  //   });
+  // };
+
+  const confirmDeleteMember = (teammember) => {
+    setSelectedTeamMember(teammember);
+    setDialogMessage("Are you sure you want to delete this team member?");
+    setShowDialog(true);
+  };
+
+  const deleteTeamMember = async () => {
+    if (!selectedTeamMember || !userNameContext || !token) {
+      console.error("Missing required data:", {
+        selectedTeamMember,
+        userNameContext,
+        token,
+      });
       return;
     }
 
-    const subject = encodeURIComponent(`Help ${firstNameContext}`);
-    const requestUrl = "habit-app://feedback";
-    const body = encodeURIComponent(
-      `Hello,\n\nThis is ${firstNameContext}. I am working to ${habitinput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
-    );
+    try {
+      const deleteUrl = `http://192.168.1.174:8000/teammember/${userNameContext}/${selectedTeamMember.teamMember_id}`;
+      console.log("Attempting DELETE request to:", deleteUrl);
 
-    const mailtoURL = `mailto:${emailContext}?subject=${subject}&body=${body}`;
-    console.log("Mail To: ", mailtoURL);
+      const response = await fetch(
+        `http://192.168.1.174:8000/teammember/${userNameContext}/${selectedTeamMember.teamMember_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    Linking.openURL(mailtoURL).catch((err) => {
-      console.error("Failed to open email client", err);
-      setDialogMessage("Failed to open email client.");
-      setShowDialog(true);
-    });
+      const responseText = await response.text();
+      console.log("Response Status:", response.status);
+      console.log("Response Text:", responseText);
+
+      if (!response.ok) {
+        throw new Error("Failed to delete team member.");
+      }
+
+      console.log("Successfully deleted:", selectedTeamMember.teamMember_id);
+
+      setUserContext((prevContext) => ({
+        ...prevContext,
+        teammembers: prevContext.teammembers.filter(
+          (member) => member.teamMember_id !== selectedTeamMember.teamMember_id
+        ),
+      }));
+
+      setDialogMessage("Team member deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting team member.", err);
+      setDialogMessage("Error deleting team member.");
+    }
+
+    setShowDialog(false);
+    setSelectedTeamMember(null);
   };
 
   return (
@@ -139,15 +198,20 @@ export default function TeamInviteScreen() {
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          <Dialog.Title style={styles.dialogTitle}>
+            Confirm Deletion
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button
               onPress={() => setShowDialog(false)}
-              labelStyle={styles.dialogButton}>
-              OK
+              labelStyle={styles.dialogButtonNo}>
+              NO
+            </Button>
+            <Button onPress={deleteTeamMember} labelStyle={styles.dialogButton}>
+              YES
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -207,13 +271,13 @@ export default function TeamInviteScreen() {
                   <Text style={styles.contactEmail}>{teammember.email}</Text>
                 </View>
                 <View style={styles.iconsColumn}>
-                  <MaterialIcons
+                  {/* <MaterialIcons
                     name="send"
                     size={24}
                     color="black"
                     style={styles.iconSend}
                     onPress={() => sendEmail(teammember.email)}
-                  />
+                  /> */}
                   <MaterialIcons
                     name="edit"
                     size={24}
@@ -234,12 +298,7 @@ export default function TeamInviteScreen() {
                     size={24}
                     color="black"
                     style={styles.iconDelete}
-                    onPress={() => {
-                      setDialogMessage(
-                        "ARE YOU SURE YOU WANT TO DELETE YOUR TEAM MEMBER?"
-                      );
-                      console.log(`Delete contact: ${teammember}`);
-                    }}
+                    onPress={() => confirmDeleteMember(teammember)}
                   />
                 </View>
               </TouchableOpacity>
@@ -291,6 +350,11 @@ const styles = StyleSheet.create({
   dialogTitle: {
     color: "red",
     fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
   },
   dialogButton: {
     color: "green",

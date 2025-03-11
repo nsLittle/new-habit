@@ -67,6 +67,7 @@ export default function Header(props) {
       <View style={styles.header}>
         {currentRoute !== "WelcomeScreen" &&
           currentRoute !== "LoginScreen" &&
+          currentRoute !== "ResetPasswordScreen" &&
           currentRoute !== "LogoutScreen" &&
           currentRoute !== "CreateAccountScreen" &&
           currentRoute !== "FeedbackRequestScreen" &&
@@ -93,6 +94,7 @@ export default function Header(props) {
         <Text style={styles.headerText}>HabitApp</Text>
         {currentRoute !== "WelcomeScreen" &&
           currentRoute !== "LoginScreen" &&
+          currentRoute !== "ResetPasswordScreen" &&
           currentRoute !== "LogoutScreen" &&
           currentRoute !== "CreateAccountScreen" &&
           currentRoute !== "FeedbackRequestScreen" &&
@@ -142,17 +144,6 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Habit Description</Text>
             </TouchableOpacity>
           )}
-          {currentRoute !== "TeamInviteScreen" && (
-            <TouchableOpacity
-              onPress={() =>
-                navigateToScreen("TeamInviteScreen", {
-                  userName: userContext.userName,
-                  habitContextId,
-                })
-              }>
-              <Text style={styles.menuItem}>Team Invite</Text>
-            </TouchableOpacity>
-          )}
           {currentRoute !== "CadenceScreen" && (
             <TouchableOpacity
               onPress={() =>
@@ -173,6 +164,17 @@ export default function Header(props) {
                 })
               }>
               <Text style={styles.menuItem}>Reminder Cadence</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "TeamInviteScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("TeamInviteScreen", {
+                  userName: userContext.userName,
+                  habitContextId,
+                })
+              }>
+              <Text style={styles.menuItem}>Team Invite</Text>
             </TouchableOpacity>
           )}
           {currentRoute !== "ReviewScreen" && (
@@ -212,7 +214,7 @@ export default function Header(props) {
                   userName: userContext.userName,
                 })
               }>
-              <Text style={styles.menuItem}>Edit Account</Text>
+              <Text style={styles.menuItem}>Edit Profile</Text>
             </TouchableOpacity>
           )}
           {currentRoute !== "LogoutScreen" && (
