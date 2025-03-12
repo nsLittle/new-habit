@@ -67,7 +67,7 @@ export default function TeamInviteScreen() {
         if (!token || !userNameContext) return;
 
         const response = await fetch(
-          `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
+          `http://localhost:8000/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,
@@ -120,7 +120,7 @@ export default function TeamInviteScreen() {
   //   const subject = encodeURIComponent(`Help ${firstNameContext}`);
   //   const requestUrl = "habit-app://feedback";
   //   const body = encodeURIComponent(
-  //     `Hello,\n\nThis is ${firstNameContext}. I am working to ${habitContextInput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
+  //     `Hello,\n\nThis is ${firstNameContext}. I am working to ${habitinput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
   //   );
 
   //   const mailtoURL = `mailto:${emailContext}?subject=${subject}&body=${body}`;
@@ -133,28 +133,16 @@ export default function TeamInviteScreen() {
   //   });
   // };
 
-  const confirmDeleteMember = (teammember) => {
-    setSelectedTeamMember(teammember);
-    setDialogMessage("Are you sure you want to delete this team member?");
-    setShowDialog(true);
-  };
-
-  const deleteTeamMember = async () => {
-    if (!selectedTeamMember || !userNameContext || !token) {
-      console.error("Missing required data:", {
-        selectedTeamMember,
-        userNameContext,
-        token,
-      });
+  const handleDelete = async (teamMember_id) => {
+    if (!token) {
+      setDialogMessage("No authentication token found.");
+      setShowDialog(true);
       return;
     }
 
     try {
-      const deleteUrl = `http://192.168.1.174:8000/teammember/${userNameContext}/${selectedTeamMember.teamMember_id}`;
-      console.log("Attempting DELETE request to:", deleteUrl);
-
       const response = await fetch(
-        `http://192.168.1.174:8000/teammember/${userNameContext}/${selectedTeamMember.teamMember_id}`,
+        `http://localhost:8000/teammember/${userNameContext}/${teamMember_id}`,
         {
           method: "DELETE",
           headers: {
@@ -164,31 +152,24 @@ export default function TeamInviteScreen() {
         }
       );
 
-      const responseText = await response.text();
-      console.log("Response Status:", response.status);
-      console.log("Response Text:", responseText);
-
       if (!response.ok) {
-        throw new Error("Failed to delete team member.");
+        throw new Error(`Failed to delete. Status: ${response.status}`);
       }
 
-      console.log("Successfully deleted:", selectedTeamMember.teamMember_id);
+      setDialogMessage("Team member deleted successfully.");
+      setShowDialog(true);
 
       setUserContext((prevContext) => ({
         ...prevContext,
         teammembers: prevContext.teammembers.filter(
-          (member) => member.teamMember_id !== selectedTeamMember.teamMember_id
+          (member) => member.teamMember_id !== teamMember_id
         ),
       }));
-
-      setDialogMessage("Team member deleted successfully.");
-    } catch (err) {
-      console.error("Error deleting team member.", err);
+    } catch (error) {
+      console.error("Error deleting team member:", error);
       setDialogMessage("Error deleting team member.");
+      setShowDialog(true);
     }
-
-    setShowDialog(false);
-    setSelectedTeamMember(null);
   };
 
   return (
@@ -202,15 +183,33 @@ export default function TeamInviteScreen() {
             Confirm Deletion
           </Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage}</Text>
+            <Text>
+              Are you sure you want to delete {selectedTeamMember?.firstName}{" "}
+              {selectedTeamMember?.lastName}?
+            </Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setShowDialog(false)}
+              onPress={() => {
+                console.log("User clicked NO. Deletion canceled.");
+                setShowDialog(false);
+                setSelectedTeamMember(null); // Ensure no deletion happens
+              }}
               labelStyle={styles.dialogButtonNo}>
               NO
             </Button>
-            <Button onPress={deleteTeamMember} labelStyle={styles.dialogButton}>
+            <Button
+              onPress={async () => {
+                if (selectedTeamMember) {
+                  console.log(
+                    `User clicked YES. Deleting team member: ${selectedTeamMember.firstName} ${selectedTeamMember.lastName} (ID: ${selectedTeamMember.teamMember_id})`
+                  );
+                  await handleDelete(selectedTeamMember.teamMember_id);
+                }
+                setShowDialog(false);
+                setSelectedTeamMember(null);
+              }}
+              labelStyle={styles.dialogButton}>
               YES
             </Button>
           </Dialog.Actions>
@@ -298,7 +297,19 @@ export default function TeamInviteScreen() {
                     size={24}
                     color="black"
                     style={styles.iconDelete}
-                    onPress={() => confirmDeleteMember(teammember)}
+                    onPress={() => {
+                      console.log("Delete button clicked...");
+                      console.log("Selected Team Member:", teammember);
+
+                      if (!teammember.teamMember_id) {
+                        console.error("Error: Team member ID is undefined.");
+                        return;
+                      }
+
+                      // Open the confirmation dialog without deleting yet
+                      setSelectedTeamMember(teammember);
+                      setShowDialog(true);
+                    }}
                   />
                 </View>
               </TouchableOpacity>

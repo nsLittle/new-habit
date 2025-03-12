@@ -87,7 +87,7 @@ export default function FeedbackRequestThanksRatingScreen() {
 
       try {
         const response = await fetch(
-          `https://new-habit-69tm.onrender.com/feedback/${userNameContext}/${habitContextId}`,
+          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
           {
             method: "GET",
             headers: {
@@ -149,7 +149,7 @@ export default function FeedbackRequestThanksRatingScreen() {
       console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
 
       const response = await fetch(
-        `https://new-habit-69tm.onrender.com/feedback/${userNameContext}/${habitContextId}/thanks-rating`,
+        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/thanks-rating`,
         {
           method: "PATCH",
           headers: {

@@ -84,30 +84,20 @@ export default function LoginScreen() {
       console.log("Username: ", username);
       console.log("Password: ", password);
 
-      const response = await fetch(
-        "https://new-habit-69tm.onrender.com/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
 
       console.log("Raw response:", response);
-      const text = await response.text();
-      console.log("Response text:", text);
-
-      try {
-        const data = JSON.parse(text);
-        console.log("Parsed Data: ", data);
-      } catch (error) {
-        console.error("Failed to parse JSON:", error);
-      }
+      const data = await response.json();
+      console.log("Response text:", data);
 
       if (!response.ok) {
         setDialogMessage("Invalid username or password.");

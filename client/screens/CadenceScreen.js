@@ -66,7 +66,7 @@ export default function CadenceScreen() {
 
       try {
         const response = await fetch(
-          `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
+          `http://localhost:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -116,7 +116,7 @@ export default function CadenceScreen() {
     try {
       console.log("Saving cadence...");
       const response = await fetch(
-        `https://new-habit-69tm.onrender.com/habit/${userNameContext}/${habitContextId}/cadence`,
+        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/cadence`,
         {
           method: "PATCH",
           headers: {
@@ -198,6 +198,7 @@ export default function CadenceScreen() {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.backButton}
+              onPress={() => navigation.navigate("HabitDescriptionScreen")}>
               onPress={() => navigation.navigate("HabitDescriptionScreen")}>
               <Text style={styles.backButtonText}>◀ Back</Text>
             </TouchableOpacity>

@@ -91,7 +91,7 @@ export default function FeedbackRequestRatingScreen() {
 
       try {
         const response = await fetch(
-          `https://new-habit-69tm.onrender.com/feedback/${userNameContext}/${habitContextId}`,
+          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
           {
             method: "GET",
             headers: {
@@ -153,7 +153,7 @@ export default function FeedbackRequestRatingScreen() {
       console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
 
       const response = await fetch(
-        `https://new-habit-69tm.onrender.com/feedback/${userNameContext}`,
+        `http://localhost:8000/feedback/${userNameContext}`,
         {
           method: "POST",
           headers: {

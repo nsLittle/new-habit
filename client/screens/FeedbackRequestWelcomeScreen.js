@@ -85,20 +85,17 @@ export default function FeedbackRequestWelcomeScreen() {
         teamMemberResponse,
         feedbackResponse,
       ] = await Promise.all([
-        fetch(`https://new-habit-69tm.onrender.com/user/${userNameContext}`, {
+        fetch(`http://localhost:8000/user/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`https://new-habit-69tm.onrender.com/habit/${userNameContext}`, {
+        fetch(`http://localhost:8000/habit/${userNameContext}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`http://localhost:8000/teammember/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(
-          `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        ),
-        fetch(
-          `https://new-habit-69tm.onrender.com/feedback/${userNameContext}/${habitContextId}`,
+          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

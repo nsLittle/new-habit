@@ -61,11 +61,11 @@ export default function HabitDescriptionScreen() {
 
       try {
         console.log(
-          `Fetching URL: https://new-habit-69tm.onrender.com/habit/${userNameContext}`
+          `Fetching URL: http://localhost:8000/habit/${userNameContext}`
         );
 
         const response = await fetch(
-          `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
+          `http://localhost:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -148,11 +148,11 @@ export default function HabitDescriptionScreen() {
 
     try {
       let response;
-      let url = `https://new-habit-69tm.onrender.com/habit/${userNameContext}/${habitContextId}/description`;
+      let url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/description`;
       let method = "PATCH";
 
       if (habitContextId) {
-        url = `https://new-habit-69tm.onrender.com/habit/${userNameContext}/${habitContextId}/description`;
+        url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/description`;
         method = "PATCH";
       }
 

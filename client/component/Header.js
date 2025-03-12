@@ -197,36 +197,30 @@ export default function Header(props) {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
-          {currentRoute !== "ProfileScreen" && (
-            <TouchableOpacity
-              onPress={() =>
-                navigateToScreen("ProfileScreen", {
-                  userName: userContext.userName,
-                })
-              }>
-              <Text style={styles.menuItem}>Profile</Text>
-            </TouchableOpacity>
-          )}
-          {currentRoute !== "EditAccountScreen" && (
-            <TouchableOpacity
-              onPress={() =>
-                navigateToScreen("EditAccountScreen", {
-                  userName: userContext.userName,
-                })
-              }>
-              <Text style={styles.menuItem}>Edit Profile</Text>
-            </TouchableOpacity>
-          )}
-          {currentRoute !== "LogoutScreen" && (
-            <TouchableOpacity
-              onPress={() =>
-                navigateToScreen("LogoutScreen", {
-                  userName: userContext.userName,
-                })
-              }>
-              <Text style={styles.menuItem}>Logout</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            onPress={() =>
+              navigateToScreen("ProfileScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigateToScreen("EditAccountScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Edit Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigateToScreen("LogoutScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Logout</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>

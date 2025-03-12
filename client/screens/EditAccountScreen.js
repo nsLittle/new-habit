@@ -65,10 +65,26 @@ export default function EditAccountScreen() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
+  const [maskedPassword, setMaskedPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState("");
   const [profilePic, setProfilePic] = useState("");
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    setFirstName(firstNameContext || "");
+    setLastName(lastNameContext || "");
+    setEmail(emailContext || "");
+    setProfilePic(profilePicContext || "");
+    setUserName(userNameContext || "");
+    setPassword("password123");
+    setMaskedPassword("*".repeat("password123".length));
+  }, [userContext]);
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    setMaskedPassword("*".repeat(text.length));
+  };
 
   const handleSave = async () => {
     console.log(`I'm here to save your edits...`);
@@ -86,7 +102,7 @@ export default function EditAccountScreen() {
       if (!token) throw new Error("Authentication token is missing.");
 
       const response = await fetch(
-        `https://new-habit-69tm.onrender.com/user/${userNameContext}`,
+        `http://localhost:8000/user/${userNameContext}`,
         {
           method: "PATCH",
           headers: {
@@ -200,15 +216,11 @@ export default function EditAccountScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.usernameContainer}>
+          <View style={styles.pictureContainer}>
             <TextInput
-              style={[
-                styles.passwordInput,
-                filledFields.password && styles.filledInput,
-              ]}
+              style={[styles.passwordInput, styles.nonEditable]}
               placeholder="Username"
               value={userName}
-              placeholderTextColor="gray"
               editable={false}
             />
             <TouchableOpacity
@@ -218,21 +230,13 @@ export default function EditAccountScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.passwordContainer}>
+          <View style={styles.pictureContainer}>
             <TextInput
-              style={[
-                styles.passwordInput,
-                filledFields.password && styles.filledInput,
-              ]}
+              style={styles.passwordInput}
               placeholder="Password"
-              value={password}
-              placeholderTextColor="gray"
+              value={showPassword ? password : maskedPassword}
               secureTextEntry={!showPassword}
-              onChangeText={setPassword}
-              onBlur={() => handleBlur("password", password)}
-              onFocus={() => {
-                if (password === "********") setPassword(""); // Clears the placeholder when clicked
-              }}
+              onChangeText={handlePasswordChange}
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
@@ -242,12 +246,6 @@ export default function EditAccountScreen() {
                 size={20}
                 color="gray"
               />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setShowPasswordDialog(true)}
-              style={styles.iconButton}>
-              <MaterialIcons name="info-outline" size={20} color="gray" />
             </TouchableOpacity>
           </View>
         </View>

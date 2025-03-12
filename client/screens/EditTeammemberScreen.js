@@ -105,11 +105,11 @@ export default function EditTeammemberScreen() {
       if (!token) throw new Error("Authentication token is missing.");
 
       console.log("Team Member Id: ", teamMember_id);
-      const routeCheck = `http://192.168.1.174:8000/teammember/${userNameContext}/${teamMember_id}`;
+      const routeCheck = `http://localhost:8000/teammember/${userNameContext}/${teamMember_id}`;
       console.log("Route Check: ", routeCheck);
 
       const response = await fetch(
-        `http://192.168.1.174:8000/teammember/${userNameContext}/${teamMember_id}`,
+        `http://localhost:8000/teammember/${userNameContext}/${teamMember_id}`,
         {
           method: "PATCH",
           headers: {

@@ -52,29 +52,31 @@ exports.updateUserProfile = async (req, res) => {
     console.log("Update Data:", updates);
 
     const existingUser = await User.findOne({ username });
+
     if (!existingUser) {
-      console.log("User not found in database");
-      return res.status(404).json({ message: "User not found" });
+      console.log(`User not found: ${username}`);
+      return res.status(404).json({ message: "User not found." });
     }
 
-    console.log("Existing User Found:", existingUser);
+    console.log("Existing User:", existingUser);
+    console.log("Updates Before Applying:", updates);
 
-    delete updates.username;
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([_, v]) => v !== "")
+    );
 
-    if (updates.password === "********") {
-      delete updates.password;
-    } else if (updates.password) {
-      const salt = await bcrypt.genSalt(10);
-      updates.password = await bcrypt.hash(updates.password, salt);
-    }
-
-    console.log("Filtered Updates Object:", updates);
+    console.log("Filtered Updates:", filteredUpdates);
 
     const updatedUser = await User.findOneAndUpdate(
       { username },
-      { $set: updates },
-      { new: true, runValidators: true }
+      filteredUpdates,
+      {
+        new: true,
+        runValidators: true,
+      }
     );
+
+    console.log("Updated User: ", updatedUser);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });

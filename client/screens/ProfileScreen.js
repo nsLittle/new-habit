@@ -76,21 +76,15 @@ export default function ProfileScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`https://new-habit-69tm.onrender.com/user/${userNameContext}`, {
+          fetch(`http://localhost:8000/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(
-            `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          ),
-          fetch(
-            `https://new-habit-69tm.onrender.com/teammember/${userNameContext}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          ),
+          fetch(`http://localhost:8000/habit/${userNameContext}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://localhost:8000/teammember/${userNameContext}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
@@ -220,6 +214,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
   bodyTitleTextSub: {
     fontSize: 18,
     textAlign: "center",

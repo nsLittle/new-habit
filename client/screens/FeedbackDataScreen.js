@@ -80,7 +80,7 @@ export default function FeedbackDataScreenScreen() {
 
       const [feedbackResponse] = await Promise.all([
         fetch(
-          `https://new-habit-69tm.onrender.com/feedback/${userNameContext}/${habitContextId}`,
+          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         ),
       ]);

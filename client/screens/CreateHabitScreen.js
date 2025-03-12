@@ -71,7 +71,7 @@ export default function CreateHabitScreen() {
 
       try {
         const response = await fetch(
-          `https://new-habit-69tm.onrender.com/habit/${userNameContext}`,
+          `http://localhost:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -142,15 +142,12 @@ export default function CreateHabitScreen() {
       let url;
       let method;
 
-      if (
-        !habitContextId ||
-        (Array.isArray(habitContextId) && habitContextId.length === 0)
-      ) {
-        url = `http://192.168.1.174:8000/habit/${userNameContext}`;
-        method = "POST";
-      } else {
-        url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/habit`;
+      if (habitContextId) {
+        url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/habit`;
         method = "PATCH";
+      } else {
+        url = `http://localhost:8000/habit/${userNameContext}`;
+        method = "POST";
       }
 
       console.log(`Sending ${method} request to:`, url);
