@@ -88,13 +88,13 @@ export default function FeedbackRequestQualitativeScreen() {
 
     console.log(
       "PATCH Request:",
-      `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}/text`
+      `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/text`
     );
     console.log("Request Body:", JSON.stringify(requestBody));
 
     try {
       const response = await fetch(
-        `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}/text`,
+        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/text`,
         {
           method: "PATCH",
           headers: {

@@ -74,7 +74,8 @@ export default function Header(props) {
           currentRoute !== "FeedbackRequestRatingScreen" &&
           currentRoute !== "FeedbackRequestThanksRatingScreen" &&
           currentRoute !== "FeedbackRequestQualitativeScreen" &&
-          currentRoute !== "NoThankYouScreen" && (
+          currentRoute !== "NoThankYouScreen" &&
+          currentRoute !== "EndingCreditsScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;
@@ -98,7 +99,9 @@ export default function Header(props) {
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&
           currentRoute !== "FeedbackRequestThanksRatingScreen" &&
-          currentRoute !== "FeedbackRequestQualitativeScreen" && (
+          currentRoute !== "FeedbackRequestQualitativeScreen" &&
+          currentRoute !== "NoThankYouScreen" &&
+          currentRoute !== "EndingCreditsScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;
@@ -117,60 +120,72 @@ export default function Header(props) {
       {menuVisible && (
         <View
           style={[styles.menuList, { left: 25, top: menuPosition.top + 10 }]}>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("CreateHabitScreen", {
-                userName: userContext.userName,
-                habitContextId,
-              })
-            }>
-            <Text style={styles.menuItem}>Create Habit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("HabitDescriptionScreen", {
-                userName: userContext.userName,
-                habitContextId,
-              })
-            }>
-            <Text style={styles.menuItem}>Habit Description</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("TeamInviteScreen", {
-                userName: userContext.userName,
-                habitContextId,
-              })
-            }>
-            <Text style={styles.menuItem}>Team Invite</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("CadenceScreen", {
-                userName: userContext.userName,
-                habitId: userContext.habitId,
-              })
-            }>
-            <Text style={styles.menuItem}>Feedback Cadence</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("ReminderScreen", {
-                userName: userContext.userName,
-                habitId: userContext.habitId,
-              })
-            }>
-            <Text style={styles.menuItem}>Reminder Cadence</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("ReviewScreen", {
-                userName: userContext.userName,
-                habitId: userContext.habitId,
-              })
-            }>
-            <Text style={styles.menuItem}>Review</Text>
-          </TouchableOpacity>
+          {currentRoute !== "CreateHabitScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("CreateHabitScreen", {
+                  userName: userContext.userName,
+                  habitContextId,
+                })
+              }>
+              <Text style={styles.menuItem}>Create Habit</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "HabitDescriptionScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("HabitDescriptionScreen", {
+                  userName: userContext.userName,
+                  habitContextId,
+                })
+              }>
+              <Text style={styles.menuItem}>Habit Description</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "CadenceScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("CadenceScreen", {
+                  userName: userContext.userName,
+                  habitId: userContext.habitId,
+                })
+              }>
+              <Text style={styles.menuItem}>Feedback Cadence</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "ReminderScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("ReminderScreen", {
+                  userName: userContext.userName,
+                  habitId: userContext.habitId,
+                })
+              }>
+              <Text style={styles.menuItem}>Reminder Cadence</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "TeamInviteScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("TeamInviteScreen", {
+                  userName: userContext.userName,
+                  habitContextId,
+                })
+              }>
+              <Text style={styles.menuItem}>Team Invite</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "ReviewScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("ReviewScreen", {
+                  userName: userContext.userName,
+                  habitId: userContext.habitId,
+                })
+              }>
+              <Text style={styles.menuItem}>Review</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 
@@ -180,30 +195,36 @@ export default function Header(props) {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("ProfileScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("EditAccountScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Edit Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("LogoutScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Logout</Text>
-          </TouchableOpacity>
+          {currentRoute !== "ProfileScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("ProfileScreen", {
+                  userName: userContext.userName,
+                })
+              }>
+              <Text style={styles.menuItem}>Profile</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "EditAccountScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("EditAccountScreen", {
+                  userName: userContext.userName,
+                })
+              }>
+              <Text style={styles.menuItem}>Edit Account</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "LogoutScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("LogoutScreen", {
+                  userName: userContext.userName,
+                })
+              }>
+              <Text style={styles.menuItem}>Logout</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </View>

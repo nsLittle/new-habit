@@ -61,11 +61,11 @@ export default function HabitDescriptionScreen() {
 
       try {
         console.log(
-          `Fetching URL: http://192.168.1.174:8000/habit/${userNameContext}`
+          `Fetching URL: http://localhost:8000/habit/${userNameContext}`
         );
 
         const response = await fetch(
-          `http://192.168.1.174:8000/habit/${userNameContext}`,
+          `http://localhost:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -148,11 +148,11 @@ export default function HabitDescriptionScreen() {
 
     try {
       let response;
-      let url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/description`;
+      let url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/description`;
       let method = "PATCH";
 
       if (habitContextId) {
-        url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/description`;
+        url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/description`;
         method = "PATCH";
       }
 
@@ -193,7 +193,7 @@ export default function HabitDescriptionScreen() {
 
       setTimeout(() => {
         setShowDialog(false);
-        navigation.navigate("TeamInviteScreen");
+        navigation.navigate("CadenceScreen");
       }, 500);
     } catch (error) {
       console.error(
@@ -252,11 +252,12 @@ export default function HabitDescriptionScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.navigate("CreateHabitScreen")}>
             <Text style={styles.buttonText}>◀ Back</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
           <TouchableOpacity style={styles.saveButton} onPress={saveDescription}>
             <Text style={styles.buttonText}>Save ▶</Text>
           </TouchableOpacity>

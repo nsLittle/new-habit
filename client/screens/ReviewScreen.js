@@ -94,7 +94,7 @@ export default function ReviewScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/user/${userNameContext}`,
+          `http://localhost:8000/user/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -131,13 +131,13 @@ export default function ReviewScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
+          fetch(`http://localhost:8000/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
+          fetch(`http://localhost:8000/habit/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
+          fetch(`http://localhost:8000/teammember/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -233,7 +233,7 @@ export default function ReviewScreen() {
   const profilePicUrl = isValidUrl(profilePic)
     ? profilePic
     : profilePic
-    ? `http://192.168.1.174:8000/data/${profilePic.trim()}`
+    ? `http://localhost:8000/data/${profilePic.trim()}`
     : "default-image-url-here";
 
   const testImage =
@@ -345,7 +345,7 @@ export default function ReviewScreen() {
               teammembers.map((teammember) => (
                 <View
                   key={teammember.teamMemberId}
-                  style={styles.teamMemberContainer}>
+                  style={styles.contactPersonNameColumn}>
                   <TouchableOpacity style={styles.contactPersonButton}>
                     {teammember.teamMemberProfilePic ? (
                       <Image
@@ -360,15 +360,15 @@ export default function ReviewScreen() {
                         No profile picture available.
                       </Text>
                     )}
-                    <View style={styles.contactPersonNameColumn}>
-                      <Text style={styles.contactName}>
-                        {teammember.teamMemberFirstName || "No First Name"}{" "}
-                        {teammember.teamMemberLastName || "No Last Name"}
-                      </Text>
-                      <Text style={styles.contactEmail}>
-                        {teammember.teamMemberEmail || "No Email"}
-                      </Text>
-                    </View>
+                    {/* <View style={styles.contactPersonNameColumn}> */}
+                    <Text style={styles.contactName}>
+                      {teammember.teamMemberFirstName || "No First Name"}{" "}
+                      {teammember.teamMemberLastName || "No Last Name"}
+                    </Text>
+                    <Text style={styles.contactEmail}>
+                      {teammember.teamMemberEmail || "No Email"}
+                    </Text>
+                    {/* </View> */}
                   </TouchableOpacity>
                 </View>
               ))
@@ -426,8 +426,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   teamMemberProfilePic: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
+    // borderWidth: 5,
+    // borderColor: "#FFD700",
     width: 40,
     height: 40,
     marginBottom: 15,
@@ -469,8 +469,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   teammemberProfilePicMain: {
-    borderWidth: 0.5,
-    borderColor: "#FFD700",
+    // borderWidth: 0.5,
+    // borderColor: "#FFD700",
     width: 15,
     height: 15,
     marginTop: 3,
@@ -484,7 +484,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-
   contactPersonButton: {
     paddingVertical: 5,
     paddingHorizontal: 5,
@@ -499,14 +498,13 @@ const styles = StyleSheet.create({
   },
   contactPersonNameColumn: {
     flexDirection: "row",
-    alignItem: "left",
-    justifyContent: "left",
+    alignItem: "center",
+    justifyContent: "center",
   },
   contactEmail: {
     fontSize: 16,
     alignItems: "right",
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -532,20 +530,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  // backButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // backButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
 });

@@ -1,5 +1,9 @@
 require("dotenv").config();
 
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("MONGO_URI:", process.env.MONGO_URI);
+console.log("BASE_URL:", process.env.BASE_URL);
+
 const express = require("express");
 const cors = require("cors");
 // const swaggerUi = require("swagger-ui-express");
@@ -8,14 +12,25 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+if (!process.env.PORT) {
+  console.error(
+    "❌ ERROR: process.env.PORT is not set. This server is meant to run on Render."
+  );
+  process.exit(1);
+}
+
+const PORT = process.env.PORT; // No fallback port
 
 connectDB();
 
 app.options("*", cors());
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "https://new-habit-69tm.onrender.com",
+      "http://localhost:3000",
+      "http://localhost:8081",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -53,6 +68,16 @@ app.use("/notification", notificationRoutes);
 
 const reminderRoutes = require("./routes/reminderRoutes");
 app.use("/reminders", reminderRoutes);
+
+app._router.stack.forEach((r) => {
+  if (r.route && r.route.path) {
+    console.log(
+      `Registered Route: ${r.route.path} [${Object.keys(r.route.methods)
+        .join(", ")
+        .toUpperCase()}]`
+    );
+  }
+});
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${PORT}`);

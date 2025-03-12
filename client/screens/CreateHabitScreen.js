@@ -63,7 +63,7 @@ export default function CreateHabitScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/habit/${userNameContext}`,
+          `http://localhost:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -135,10 +135,10 @@ export default function CreateHabitScreen() {
       let method;
 
       if (habitContextId) {
-        url = `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/habit`;
+        url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/habit`;
         method = "PATCH";
       } else {
-        url = `http://192.168.1.174:8000/habit/${userNameContext}`;
+        url = `http://localhost:8000/habit/${userNameContext}`;
         method = "POST";
       }
 

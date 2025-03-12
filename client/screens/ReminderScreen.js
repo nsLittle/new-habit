@@ -160,7 +160,7 @@ export default function ReminderScreen() {
 
       try {
         const response = await fetch(
-          `http://192.168.1.174:8000/habit/${username}`,
+          `http://localhost:8000/habit/${username}`,
           {
             method: "GET",
             headers: {
@@ -260,7 +260,7 @@ export default function ReminderScreen() {
       );
 
       const response = await fetch(
-        `http://192.168.1.174:8000/habit/${userNameContext}/${habitContextId}/reminder`,
+        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/reminder`,
         {
           method: "PATCH",
           headers: {
@@ -292,7 +292,7 @@ export default function ReminderScreen() {
 
       setDialogMessage("Reminder settings updated successfully.");
       setShowDialog(true);
-      navigation.navigate("ReviewScreen");
+      navigation.navigate("TeamInviteScreen");
     } catch (error) {
       console.error("Error updating reminder settings:", error);
       setDialogMessage("Failed to update reminder settings. Please try again.");

@@ -85,17 +85,17 @@ export default function FeedbackRequestWelcomeScreen() {
         teamMemberResponse,
         feedbackResponse,
       ] = await Promise.all([
-        fetch(`http://192.168.1.174:8000/user/${userNameContext}`, {
+        fetch(`http://localhost:8000/user/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`http://192.168.1.174:8000/habit/${userNameContext}`, {
+        fetch(`http://localhost:8000/habit/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`http://192.168.1.174:8000/teammember/${userNameContext}`, {
+        fetch(`http://localhost:8000/teammember/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(
-          `http://192.168.1.174:8000/feedback/${userNameContext}/${habitContextId}`,
+          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -152,7 +152,7 @@ export default function FeedbackRequestWelcomeScreen() {
       <View style={styles.body}>
         <View style={styles.bodyIntroContainer}>
           <Text style={styles.bodyTitleText}>
-            Hi {route.params.teamMemberContextFirstName},
+            Hi {teamMemberRouteFirstName},
           </Text>
           <View>
             <Image
@@ -206,7 +206,7 @@ export default function FeedbackRequestWelcomeScreen() {
                 navigation.navigate("NoThankYouScreen", {});
               }}>
               <Text style={styles.noThanksButtonText} title="No Thanks">
-                No Thnaks
+                No Thanks
               </Text>
             </TouchableOpacity>
           </View>

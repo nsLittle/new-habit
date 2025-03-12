@@ -13,12 +13,12 @@ exports.getAllUsernames = async (req, res) => {
 
 exports.getUserProfile = async (req, res) => {
   try {
-    console.log("I'm here to get user profile...");
+    console.log("Request for username:", req.params.username);
     const { username } = req.params;
     console.log("Username: ", username);
 
     const user = await User.find({ username });
-    console.log("user:", user);
+    console.log("MongoDB user found:", user);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -41,10 +41,31 @@ exports.updateUserProfile = async (req, res) => {
     console.log("Updating Profile for:", username);
     console.log("Update Data:", updates);
 
-    const updatedUser = await User.findOneAndUpdate({ username }, updates, {
-      new: true,
-      runValidators: true,
-    });
+    const existingUser = await User.findOne({ username });
+
+    if (!existingUser) {
+      console.log(`User not found: ${username}`);
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    console.log("Existing User:", existingUser);
+    console.log("Updates Before Applying:", updates);
+
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([_, v]) => v !== "")
+    );
+
+    console.log("Filtered Updates:", filteredUpdates);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { username },
+      filteredUpdates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
     console.log("Updated User: ", updatedUser);
 
     if (!updatedUser) {
