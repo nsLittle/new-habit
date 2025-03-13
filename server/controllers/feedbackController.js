@@ -210,10 +210,6 @@ exports.editFeedbackTextRating = async (req, res) => {
     const { feedbackText, teamMemberId } = req.body;
     console.log("Req Body: ", req.body);
 
-    // if (!habit_id || feedbackText === undefined || !teamMemberId) {
-    //   return res.status(400).json({ error: "Missing required fields" });
-    // }
-
     const updatedFeedback = await Feedback.findOneAndUpdate(
       { habitId: habit_id, teamMemberId },
       { $set: { feedbackText } },

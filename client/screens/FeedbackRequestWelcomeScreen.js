@@ -276,7 +276,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
   noThanksButton: {
     backgroundColor: "#D3D3D3",
@@ -291,7 +290,5 @@ const styles = StyleSheet.create({
   noThanksButtonText: {
     color: "black",
     fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
   },
 });

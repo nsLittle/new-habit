@@ -162,7 +162,7 @@ export default function FeedbackRequestRatingScreen() {
           },
           body: JSON.stringify({
             habitContextId: [habitContextId],
-            teamMemberContextId: route.params.teamMemberContextId,
+            teamMemberContextId: resolvedTeamMemberId,
             feedbackRating: feedbackRating,
           }),
         }
@@ -396,6 +396,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
 });

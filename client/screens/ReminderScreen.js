@@ -54,6 +54,7 @@ export default function ReminderScreen() {
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
 
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
@@ -185,6 +186,9 @@ export default function ReminderScreen() {
         const data = await response.json();
         const existingReminder = data?.habits?.[0]?.reminders || null;
 
+        const incompleteHabit = data.habits.find((habit) => !habit.completed);
+        console.log("Incomplete Habit: ", incompleteHabit);
+
         if (!existingReminder) {
           console.warn("No reminder data in API response.");
           return;
@@ -239,9 +243,14 @@ export default function ReminderScreen() {
 
         if (existingReminder.isReminderEnabled === true) {
           setDialogMessage(
-            "ARE YOU SURE YOU WANT TO EDIT YOUR REMINDER SETTING?\n\nPress 'Keep Setting' if you want to retain your current reminder settings."
+            "Do you want to edit your existing reminder setting?"
           );
+          setDialogAction("editOrSkip");
           setShowDialog(true);
+
+          setTimeout(() => {
+            setShowDialog(false);
+          }, 10000);
         }
       } catch (error) {
         console.error("Error checking existing reminders:", error);
@@ -313,6 +322,7 @@ export default function ReminderScreen() {
       console.log("Response Data from Back End: ", data);
 
       setDialogMessage("Reminder settings updated successfully.");
+      setDialogAction("successfulUpdate");
       setShowDialog(true);
       navigation.navigate("TeamInviteScreen");
       navigation.navigate("TeamInviteScreen");
@@ -332,19 +342,56 @@ export default function ReminderScreen() {
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
-          style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "red", fontWeight: "bold" }}>
-            Alert
-          </Dialog.Title>
+          style={styles.dialog}>
+          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage}</Text>
+            <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}
-              onPress={() => setShowDialog(false)}>
-              OK
-            </Button>
+            {dialogAction === "confirmNavigate" ? (
+              <>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("TeamInviteScreen");
+                  }}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : dialogAction === "editOrSkip" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("TeamInviteScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : (
+              <Button
+                onPress={() => {
+                  setShowDialog(false);
+                  if (dialogAction === "successfulUpdate") {
+                    navigation.navigate("TeamInviteScreen");
+                  }
+                }}
+                labelStyle={styles.dialogButton}>
+                OK
+              </Button>
+            )}
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -488,6 +535,23 @@ export default function ReminderScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -571,7 +635,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#4a4a4a",
   },
-
   pickerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -625,7 +688,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#4a4a4a",
   },
-
   resetText: {
     fontSize: 12,
     paddingTop: 15,
@@ -634,7 +696,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",

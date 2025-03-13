@@ -52,9 +52,11 @@ export default function CadenceScreen() {
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
 
   const [cadenceInput, setCadenceInput] = useState(null);
   const [existingCadence, setExistingCadence] = useState("");
+  const [incompleteHabit, setIncompleteHabit] = useState(null);
 
   const handleSelectOption = (option) => {
     setCadenceInput(option);
@@ -80,25 +82,35 @@ export default function CadenceScreen() {
           console.error("No existing habit found.");
           setCadenceInput("");
           setExistingCadence("");
-          return;
+          setIncompleteHabit(null);
+          return false;
         }
 
         const data = await response.json();
-        const existingCadence = data.habits[0]?.cadence || "";
+
+        const foundCadence = data.habits[0]?.cadence || "";
         console.log("Data: ", data);
-        console.log("Existing Cadence: ", existingCadence);
+        console.log("Existing Cadence: ", foundCadence);
+        setExistingCadence(foundCadence);
 
         if (
-          existingCadence &&
-          typeof existingCadence === "string" &&
-          existingCadence.trim() !== ""
+          foundCadence &&
+          typeof foundCadence === "string" &&
+          foundCadence.trim() !== ""
         ) {
-          setCadenceInput(existingCadence);
-          setExistingCadence(existingCadence);
-          setDialogMessage(
-            "ARE YOU SURE YOU WANT TO EDIT YOUR CADENCE?\n\nPress 'Keep Cadence' if you want to retain your current cadence."
-          );
-          setShowDialog(true);
+          setCadenceInput(foundCadence);
+          setExistingCadence(foundCadence);
+          setIncompleteHabit(incompleteHabit);
+
+          if (foundCadence) {
+            setDialogMessage("Do you want to edit your existing cadence?");
+            setDialogAction("editOrSkip");
+            setShowDialog(true);
+
+            setTimeout(() => {
+              setShowDialog(false);
+            }, 10000);
+          }
         }
       } catch (error) {
         console.error("Error checking existing cadence:", error);
@@ -150,16 +162,55 @@ export default function CadenceScreen() {
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage}</Text>
+            <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowDialog(false)}
-              labelStyle={styles.dialogButton}>
-              OK
-            </Button>
+            {dialogAction === "confirmNavigate" ? (
+              <>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("ReminderScreen");
+                  }}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : dialogAction === "editOrSkip" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("ReminderScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : (
+              <Button
+                onPress={() => {
+                  setShowDialog(false);
+                  if (dialogAction === "navigate") {
+                    navigation.navigate("ReminderScreen");
+                  }
+                }}
+                labelStyle={styles.dialogButton}>
+                OK
+              </Button>
+            )}
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -199,7 +250,6 @@ export default function CadenceScreen() {
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.navigate("HabitDescriptionScreen")}>
-              onPress={() => navigation.navigate("HabitDescriptionScreen")}>
               <Text style={styles.backButtonText}>◀ Back</Text>
             </TouchableOpacity>
 
@@ -214,6 +264,23 @@ export default function CadenceScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -306,7 +373,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   backButton: {
     backgroundColor: "#D3D3D3",
@@ -322,18 +389,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
-  },
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
+    // fontWeight: "bold",
   },
 });

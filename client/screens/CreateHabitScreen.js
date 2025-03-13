@@ -61,9 +61,11 @@ export default function CreateHabitScreen() {
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
 
   const [habitInput, setHabitInput] = useState("");
   const [existingHabit, setExistingHabit] = useState("");
+  const [incompleteHabit, setIncompleteHabit] = useState(null);
 
   useEffect(() => {
     const checkForExistingHabit = async () => {
@@ -100,7 +102,7 @@ export default function CreateHabitScreen() {
           console.log("Existing Habit ID Found:", incompleteHabit._id);
           setHabitInput(incompleteHabit.habit);
           setExistingHabit(incompleteHabit.habit);
-          setDialogMessage("Do you want to edit your existing habit?");
+          setIncompleteHabit(incompleteHabit);
 
           setUserContext((prevContext) => ({
             ...prevContext,
@@ -108,7 +110,11 @@ export default function CreateHabitScreen() {
             habitContextInput: incompleteHabit.habit,
           }));
 
-          setShowDialog(true);
+          if (incompleteHabit.habit.trim().length > 0) {
+            setDialogMessage("Do you want to edit your existing habit?");
+            setDialogAction("editOrSkip");
+            setShowDialog(true);
+          }
         }
       } catch (error) {
         console.error("Error checking existing habit:", error);
@@ -133,6 +139,15 @@ export default function CreateHabitScreen() {
 
     if (!userNameContext) {
       setDialogMessage("Failed to find user.");
+      setShowDialog(true);
+      return;
+    }
+
+    if (habitInput === existingHabit) {
+      setDialogMessage(
+        "No edits were made.\n\nTo keep habit as is, press KEEP.\nOtherwise, press EDIT."
+      );
+      setDialogAction("confirmNavigate");
       setShowDialog(true);
       return;
     }
@@ -210,16 +225,55 @@ export default function CreateHabitScreen() {
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage}</Text>
+            <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowDialog(false)}
-              labelStyle={styles.dialogButton}>
-              OK
-            </Button>
+            {dialogAction === "confirmNavigate" ? (
+              <>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButtonNo}>
+                  KEEP
+                </Button>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("HabitDescriptionScreen");
+                  }}
+                  labelStyle={styles.dialogButton}>
+                  EDIT
+                </Button>
+              </>
+            ) : dialogAction === "editOrSkip" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("HabitDescriptionScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : (
+              <Button
+                onPress={() => {
+                  setShowDialog(false);
+                  if (dialogAction === "navigate") {
+                    navigation.navigate("HabitDescriptionScreen");
+                  }
+                }}
+                labelStyle={styles.dialogButton}>
+                OK
+              </Button>
+            )}
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -241,11 +295,6 @@ export default function CreateHabitScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          {/* <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("HabitDescriptionScreen")}>
-            <Text style={styles.buttonText}>Keep Habit ▶</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity style={styles.saveButton} onPress={saveHabit}>
             <Text style={styles.buttonText}>Save Changes ▶</Text>
           </TouchableOpacity>
@@ -262,6 +311,11 @@ const styles = StyleSheet.create({
   dialogTitle: {
     color: "red",
     fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
   },
   dialogButton: {
     color: "green",

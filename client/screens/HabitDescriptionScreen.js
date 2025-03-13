@@ -50,6 +50,7 @@ export default function HabitDescriptionScreen() {
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
 
   const [descriptionInput, setDescriptionInput] = useState("");
   const [existingDescription, setExistingDescription] = useState("");
@@ -108,7 +109,12 @@ export default function HabitDescriptionScreen() {
 
           if (incompleteHabit.description.trim().length > 0) {
             setDialogMessage("Do you want to edit your existing description?");
+            setDialogAction("editOrSkip");
             setShowDialog(true);
+
+            setTimeout(() => {
+              setShowDialog(false);
+            }, 10000);
           }
         }
       } catch (error) {
@@ -140,8 +146,9 @@ export default function HabitDescriptionScreen() {
 
     if (descriptionInput === existingDescription) {
       setDialogMessage(
-        "No edits were made; are you sure?\n\nTo Keep Description as is, press 'Keep Description'."
+        "No edits were made.\n\nTo keep description as is, press YES.\nOtherwise, press NO."
       );
+      setDialogAction("confirmNavigate");
       setShowDialog(true);
       return;
     }
@@ -189,6 +196,7 @@ export default function HabitDescriptionScreen() {
       console.log("Updated UserContext:", userContext);
 
       setDialogMessage("Description successfully saved");
+      setDialogAction("successfulUpdate");
       setShowDialog(true);
 
       setTimeout(() => {
@@ -216,16 +224,55 @@ export default function HabitDescriptionScreen() {
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage}</Text>
+            <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowDialog(false)}
-              labelStyle={styles.dialogButton}>
-              OK
-            </Button>
+            {dialogAction === "confirmNavigate" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("CadenceScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : dialogAction === "editOrSkip" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("CadenceScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+              </>
+            ) : (
+              <Button
+                onPress={() => {
+                  setShowDialog(false);
+                  if (dialogAction === "navigate") {
+                    navigation.navigate("CadenceScreen");
+                  }
+                }}
+                labelStyle={styles.dialogButton}>
+                OK
+              </Button>
+            )}
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -252,12 +299,6 @@ export default function HabitDescriptionScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          {/* <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("CreateHabitScreen")}>
-            <Text style={styles.buttonText}>◀ Back</Text>
-          </TouchableOpacity> */}
-
           <TouchableOpacity style={styles.saveButton} onPress={saveDescription}>
             <Text style={styles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
@@ -274,6 +315,11 @@ const styles = StyleSheet.create({
   dialogTitle: {
     color: "red",
     fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
   },
   dialogButton: {
     color: "green",
@@ -370,6 +416,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
 });

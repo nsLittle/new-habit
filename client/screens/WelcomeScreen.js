@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   createAccountButton: {
     backgroundColor: "#D3D3D3",
@@ -142,6 +142,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
 });

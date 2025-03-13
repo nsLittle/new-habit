@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   loginButton: {
     backgroundColor: "#FFD700",
@@ -327,6 +327,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
 });

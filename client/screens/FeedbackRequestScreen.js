@@ -210,7 +210,7 @@ export default function FeedbackRequestScreen() {
               style={styles.backButton}
               onPress={() => navigation.navigate("ReviewScreen")}>
               <Text style={styles.backButtonText} title="Back">
-                ◀ Return to Review Habit Setting
+                Return to Review Habit Setting
               </Text>
             </TouchableOpacity>
           </View>
@@ -325,6 +325,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
 });
