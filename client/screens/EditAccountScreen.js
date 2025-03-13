@@ -95,8 +95,13 @@ export default function EditAccountScreen() {
         lastName: lastName,
         email: email,
         profilePic: profilePic,
-        password: password,
       };
+      console.log("Updated User Data: ", updates);
+
+      if (password && password !== "********") {
+        updates.password = password;
+      }
+
       console.log("Updated User Data: ", updates);
 
       if (!token) throw new Error("Authentication token is missing.");

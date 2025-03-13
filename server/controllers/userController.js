@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 exports.checkAllUsernames = async (req, res) => {
   console.log("I'm here checkign users...");
@@ -46,46 +47,69 @@ exports.getUserProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    let updates = req.body;
+    const updates = req.body;
 
     console.log("Updating Profile for:", username);
-    console.log("Update Data:", updates);
+    console.log("Raw Updates:", updates);
 
     const existingUser = await User.findOne({ username });
-
     if (!existingUser) {
-      console.log(`User not found: ${username}`);
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("Existing User:", existingUser);
-    console.log("Updates Before Applying:", updates);
-
+    // Filter out empty fields
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== "")
     );
 
     console.log("Filtered Updates:", filteredUpdates);
 
-    const updatedUser = await User.findOneAndUpdate(
-      { username },
-      filteredUpdates,
-      {
-        new: true,
-        runValidators: true,
+    // Prevent updating to an email that already exists
+    if (filteredUpdates.email) {
+      const existingEmail = await User.findOne({
+        email: filteredUpdates.email,
+        username: { $ne: username }, // Exclude current user
+      });
+
+      if (existingEmail) {
+        return res.status(400).json({ message: "Email is already in use" });
       }
-    );
-
-    console.log("Updated User: ", updatedUser);
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Profile updated successfully", user: updatedUser });
+    if (filteredUpdates.password) {
+      const salt = await bcrypt.genSalt(10);
+      filteredUpdates.password = await bcrypt.hash(
+        filteredUpdates.password,
+        salt
+      );
+      console.log("Hashed password:", filteredUpdates.password);
+    }
+
+    if (filteredUpdates.profilePic === "") {
+      delete filteredUpdates.profilePic;
+    }
+
+    if (Object.keys(filteredUpdates).length === 0) {
+      return res.status(400).json({ message: "No changes detected" });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { username },
+      { $set: { ...filteredUpdates } }, // Ensure update object is valid
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({ message: "Update failed" });
+    }
+
+    // Manually set virtual `fullName`
+    updatedUser.fullName = `${updatedUser.firstName} ${updatedUser.lastName}`;
+
+    console.log("Updated User:", updatedUser);
+    res.status(200).json(updatedUser);
   } catch (error) {
+    console.error("Error in updateUserProfile:", error);
     res.status(400).json({ error: error.message });
   }
 };

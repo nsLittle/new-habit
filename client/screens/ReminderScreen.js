@@ -158,9 +158,16 @@ export default function ReminderScreen() {
     const checkForExistingReminder = async () => {
       console.log(`Checking for existing reminder...`);
 
+      if (!userNameContext || !habitContextId) {
+        console.warn("User or Habit ID missing, skipping API call.");
+        return;
+      }
+
+      console.log(`Fetching existing reminder for ${userNameContext}...`);
+
       try {
         const response = await fetch(
-          `http://localhost:8000/habit/${username}`,
+          `http://localhost:8000/habit/${userNameContext}`,
           {
             method: "GET",
             headers: {
@@ -176,21 +183,36 @@ export default function ReminderScreen() {
         }
 
         const data = await response.json();
-        const existingReminder = data.habits[0]?.reminders || {
-          isReminderEnabled: false,
-          isEmailReminderEnabled: false,
-          isTextReminderEnabled: false,
-          selectedDays: [],
-          selectedTime: { hour: "", minute: "" },
-          selectedPeriod: false,
-        };
-        console.log("Data: ", data);
-        console.log("Existing Reminders: ", existingReminder.isReminderEnabled);
-        console.log("Hour: ", existingReminder.selectedTime.hour);
-        console.log("Minutes: ", existingReminder.selectedTime.minute);
-        console.log("Period: ", existingReminder.selectedPeriod);
+        const existingReminder = data?.habits?.[0]?.reminders || null;
 
-        setReminderProfile(existingReminder);
+        if (!existingReminder) {
+          console.warn("No reminder data in API response.");
+          return;
+        }
+
+        console.log("Existing Reminders Fetched:", existingReminder);
+
+        setReminderProfile((prev) => ({
+          ...prev,
+          isReminderEnabled: existingReminder.isReminderEnabled || false,
+          isEmailReminderEnabled:
+            existingReminder.isEmailReminderEnabled || false,
+          isTextReminderEnabled:
+            existingReminder.isTextReminderEnabled || false,
+          selectedDays: existingReminder.selectedDays || [],
+          selectedHour: existingReminder.selectedTime?.hour || "",
+          selectedMinute: existingReminder.selectedTime?.minute || "",
+          selectedPeriod: existingReminder.selectedTime?.period || "AM",
+        }));
+
+        setSelectedHour(
+          existingReminder.selectedTime?.hour?.toString().padStart(2, "0") || ""
+        );
+        setSelectedMinute(
+          existingReminder.selectedTime?.minute?.toString().padStart(2, "0") ||
+            ""
+        );
+        setSelectedPeriod(existingReminder.selectedTime?.period || "AM");
 
         if (
           existingReminder.selectedTime?.hour !== undefined &&
