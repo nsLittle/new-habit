@@ -22,6 +22,27 @@ exports.checkAllUsernames = async (req, res) => {
   }
 };
 
+exports.checkAllEmails = async (req, res) => {
+  console.log("I'm here checkign emails...");
+
+  try {
+    const { email } = req.params;
+    console.log("Email: ", email);
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+    console.log("User: ", user);
+
+    return res.status(200).json({ exists: !!user });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 exports.getUserProfile = async (req, res) => {
   try {
     console.log("Request for username:", req.params.username);

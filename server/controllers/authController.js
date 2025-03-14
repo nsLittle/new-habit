@@ -105,26 +105,62 @@ exports.logout = async (req, res) => {
     .json({ message: "Logged out successfully. Remove token on client-side." });
 };
 
+const crypto = require("crypto");
+
+exports.passwordResetRequest = async (req, res) => {
+  console.log("I'm in the back requesting password reset ...");
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.passwordResetToken = hashedToken;
+    user.passwordResetExpires = Date.now() + 3600000;
+    await user.save();
+
+    const resetLink = `habitapp://password-reset/${resetToken}`;
+
+    res.json({
+      message: "Password reset token generated",
+      resetToken,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error generating password reset token" });
+  }
+};
+
 exports.passwordReset = async (req, res) => {
+  console.log("I'm in the back resetting passwrord ...");
   const { token, newPassword } = req.body;
 
   try {
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
 
-    // Hash new password
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = await bcrypt.hash(newPassword, salt);
 
-    // Update password
-    user.password = hashedPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
     await user.save();
 
     res.json({ message: "Password successfully reset" });
   } catch (error) {
-    res.status(400).json({ message: "Invalid or expired token" });
+    res.status(500).json({ error: "Error resetting password" });
   }
 };

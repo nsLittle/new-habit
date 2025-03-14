@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import {
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -13,13 +14,41 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import emailjs from "@emailjs/react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
 export default function ResetPasswordRequestScreen() {
   const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   // const routes = navigation.getState().routes;
   // const currentRoute = routes[routes.length - 1]?.name;
@@ -39,26 +68,67 @@ export default function ResetPasswordRequestScreen() {
       return;
     }
 
-    const templateParams = {
-      user_email: email,
-      reset_link: `http://localhost:3000/reset-password?token=${btoa(email)}`, // Encoding email as a basic token for testing
-    };
-
     try {
-      const response = await emailjs.send(
-        "service_rt4bnxx",
-        "template_999rs3p",
-        templateParams,
-        "M-BzZXfTrnZlWxItt"
+      const checkResponse = await fetch(
+        `http://localhost:8000/user/check-email/${email}`
+      );
+      const checkData = await checkResponse.json();
+
+      if (!checkData.exists) {
+        setDialogMessage("Email not found. Please enter a registered email.");
+        setShowDialog(true);
+        return;
+      }
+
+      const response = await fetch(
+        "http://localhost:8000/auth/password-reset-request",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
       );
 
-      console.log("EmailJS response:", response);
-      setDialogMessage("Success. Password reset email sent!");
-      setShowDialog(true);
-      return;
+      const data = await response.json();
+      if (!data) {
+        setDialogMessage(data.message || "Error requesting password reset.");
+        setShowDialog(true);
+        return;
+      }
+      console.log("Data: ", data);
+      console.log("Token: ", data.resetToken);
+
+      const token = data.resetToken;
+      console.log("Token: ", token);
+
+      if (!token) {
+        setDialogMessage("Error generating reset token.");
+        setShowDialog(true);
+        return;
+      }
+
+      const subject = encodeURIComponent("Password Reset");
+      const deepLink = __DEV__
+        ? `http://localhost:8081/password-reset/${token}`
+        : `myapp://password-reset/${token}`;
+
+      const body = encodeURIComponent(
+        `Hello, you requested a password reset link:\n${deepLink}`
+      );
+
+      const emailAddress = email;
+
+      const emailURL = `mailto:${email}?subject=${subject}&body=${body}`;
+
+      Linking.openURL(emailURL).catch((err) =>
+        console.error("Error opening email:", err)
+      );
     } catch (error) {
-      console.error("Error sending email:", error);
-      Alert.alert("Error", "Failed to send reset email.");
+      console.error("Password reset request error:", error);
+      setDialogMessage("Something went wrong.");
+      setShowDialog(true);
     }
   };
 
@@ -100,29 +170,6 @@ export default function ResetPasswordRequestScreen() {
               placeholderTextColor="gray"
             />
           </View>
-
-          {/* <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              placeholderTextColor="gray"
-            />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setShowPassword(!showPassword)}>
-              <MaterialIcons
-                name={showPassword ? "visibility" : "visibility-off"}
-                size={20}
-                color="gray"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.infoIcon}>
-              <MaterialIcons name="info-outline" size={20} color="gray" />
-            </TouchableOpacity>
-          </View> */}
         </View>
 
         <View style={styles.resetContainer}>

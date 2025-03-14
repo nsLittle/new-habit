@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import {
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -198,7 +199,7 @@ export default function LoginScreen() {
         <View style={styles.resetContainer}>
           <TouchableOpacity
             style={styles.reset}
-            onPress={() => navigation.navigate("ResetPasswordScreen")}>
+            onPress={() => navigation.navigate("ResetPasswordRequestScreen")}>
             <Text style={styles.resetLink}>Reset Password</Text>
           </TouchableOpacity>
         </View>
@@ -311,7 +312,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
   loginButton: {
     backgroundColor: "#FFD700",
@@ -327,6 +327,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
 });

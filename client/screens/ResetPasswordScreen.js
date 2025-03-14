@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import {
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -15,8 +16,12 @@ import {
 } from "react-native-responsive-screen";
 import emailjs from "@emailjs/browser";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { UserContext } from "../context/UserContext";
+import {
+  createNavigationContainerRef,
+  useNavigation,
+} from "@react-navigation/native";
+
+export const navigationRef = createNavigationContainerRef();
 
 export default function ResetPasswordScreen() {
   const navigation = useNavigation();
@@ -41,7 +46,7 @@ export default function ResetPasswordScreen() {
       }
 
       const response = await fetch(
-        "http://localhost:8000/auth/password-reset",
+        "http://localhost:8000/auth/request-password-reset",
         {
           method: "POST",
           headers: {
@@ -57,8 +62,32 @@ export default function ResetPasswordScreen() {
 
       if (!response.ok) {
         console.log("Something went wrong.");
+        setDialogMessage(data.message || "Error requesting password reset.");
+        setShowDialog(true);
         return;
       }
+
+      const { token } = data;
+      if (!token) {
+        setDialogMessage("Error generating reset token.");
+        setShowDialog(true);
+        return;
+      }
+
+      const resetLink = __DEV__
+        ? `http://localhost:8081/password-reset/${token}`
+        : `myapp://password-reset/${token}`;
+
+      const subject = encodeURIComponent("Password Reset Request");
+      const body = encodeURIComponent(
+        `Hello,\n\nClick the link below to reset your password:\n${resetLink}\n\nIf you didn't request this, you can ignore this email.`
+      );
+
+      const emailURL = `mailto:${email}?subject=${subject}&body=${body}`;
+
+      Linking.openURL(emailURL).catch((err) =>
+        console.error("Error opening email:", err)
+      );
 
       console.log("Success", "A password reset email has been sent!");
       setDialogMessage("Success. A password reset email has been sent!");
@@ -69,6 +98,41 @@ export default function ResetPasswordScreen() {
       console.log("Unable to send reset email.");
     }
   };
+
+  useEffect(() => {
+    const handleDeepLink = (event) => {
+      const url = event.url;
+      console.log("Deep Link URL:", url);
+
+      if (!url) return;
+
+      if (url) {
+        const tokenMatch = url.match(/token=([^&]+)/);
+        if (tokenMatch) {
+          const token = tokenMatch[1];
+          navigationRef.current?.navigate("ResetPasswordScreen", { token });
+        }
+      }
+
+      let token;
+      if (url.includes("password-reset/")) {
+        token = url.split("password-reset/")[1];
+      }
+
+      if (token) {
+        navigation.navigate("ResetPasswordScreen", { token });
+      }
+    };
+
+    Linking.getInitialURL().then((url) => {
+      if (url) handleDeepLink({ url });
+    });
+
+    const subscription = Linking.addEventListener("url", handleDeepLink);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -108,29 +172,6 @@ export default function ResetPasswordScreen() {
               placeholderTextColor="gray"
             />
           </View>
-
-          {/* <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              placeholderTextColor="gray"
-            />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setShowPassword(!showPassword)}>
-              <MaterialIcons
-                name={showPassword ? "visibility" : "visibility-off"}
-                size={20}
-                color="gray"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.infoIcon}>
-              <MaterialIcons name="info-outline" size={20} color="gray" />
-            </TouchableOpacity>
-          </View> */}
         </View>
 
         <View style={styles.resetContainer}>

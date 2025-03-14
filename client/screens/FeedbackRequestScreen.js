@@ -117,6 +117,71 @@ export default function FeedbackRequestScreen() {
     });
   };
 
+  const sendRequest = () => {
+    if (
+      !userNameContext ||
+      !firstNameContext ||
+      !contactData.teammembers.length
+    ) {
+      console.error("Missing required data for email.");
+      return;
+    }
+
+    contactData.teammembers.forEach((teammember) => {
+      if (!teammember.email || !teammember.teamMember_id) {
+        console.warn(
+          `Skipping team member due to missing email or ID:`,
+          teammember
+        );
+        return;
+      }
+
+      const subject = encodeURIComponent("Feedback Request");
+      const deepLink = __DEV__
+        ? `http://localhost:8081/feedback-request/${teamMemberContextId}`
+        : `myapp://feedback-request/${teamMemberContextId}`;
+
+      const body = encodeURIComponent(
+        `Hello Team,\n\n${userNameContext} (${firstNameContext}) is requesting feedback.\n\nClick the link below to provide feedback:\n${deepLink}`
+      );
+
+      const emailAddresses = contactData.teammembers
+        .map((member) => member.email)
+        .join(",");
+
+      const emailURL = `mailto:${emailAddresses}?subject=${subject}&body=${body}`;
+
+      Linking.openURL(emailURL).catch((err) =>
+        console.error("Error opening email:", err)
+      );
+    });
+
+    console.log("Emails triggered for all team members.");
+  };
+
+  const sendEmail = (teammember) => {
+    if (!teammember.teamMemberRouteEmail || !teammember.teamMemberRouteId) {
+      console.warn("Missing team member email or ID.");
+      return;
+    }
+
+    const subject = encodeURIComponent("Feedback Request");
+
+    const feedbackLink = __DEV__
+      ? `http://localhost:8081/feedback-request/${teammember.teamMemberRouteId}`
+      : `https://your-live-app.com/feedback-request/${teammember.teamMemberRouteId}`;
+
+    const body = encodeURIComponent(
+      `Hello ${teammember.teamMemberRouteFirstName},\n\n${userNameContext} (${firstNameContext}) is requesting feedback from you.\n\nClick the link below to provide feedback:\n${feedbackLink}`
+    );
+
+    const emailURL = `mailto:${teammember.teamMemberRouteEmail}?subject=${subject}&body=${body}`;
+
+    Linking.openURL(emailURL).catch((err) =>
+      console.error("Error opening email:", err)
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
@@ -183,7 +248,14 @@ export default function FeedbackRequestScreen() {
                     color="black"
                     style={styles.iconSend}
                     onPress={() => {
-                      console.log("Navigating with params:", {
+                      console.log("Sending Email with params:", {
+                        teamMemberRouteId: teammember.teamMember_id,
+                        teamMemberRouteFirstName: teammember.firstName,
+                        teamMemberRouteLastName: teammember.lastName,
+                        teamMemberRouteEmail: teammember.email,
+                        teamMemberRouteProfilePic: teammember.profilePic,
+                      });
+                      sendEmail({
                         teamMemberRouteId: teammember.teamMember_id,
                         teamMemberRouteFirstName: teammember.firstName,
                         teamMemberRouteLastName: teammember.lastName,
@@ -191,13 +263,13 @@ export default function FeedbackRequestScreen() {
                         teamMemberRouteProfilePic: teammember.profilePic,
                       });
 
-                      navigation.navigate("FeedbackRequestWelcomeScreen", {
-                        teamMemberRouteId: teammember.teamMember_id,
-                        teamMemberRouteFirstName: teammember.firstName,
-                        teamMemberRouteLastName: teammember.lastName,
-                        teamMemberRouteEmail: teammember.email,
-                        teamMemberRouteProfilePic: teammember.profilePic,
-                      });
+                      // navigation.navigate("FeedbackRequestWelcomeScreen", {
+                      //   teamMemberRouteId: teammember.teamMember_id,
+                      //   teamMemberRouteFirstName: teammember.firstName,
+                      //   teamMemberRouteLastName: teammember.lastName,
+                      //   teamMemberRouteEmail: teammember.email,
+                      //   teamMemberRouteProfilePic: teammember.profilePic,
+                      // });
                     }}
                   />
                 </View>
@@ -206,6 +278,11 @@ export default function FeedbackRequestScreen() {
           ))}
 
           <View style={styles.buttonRow}>
+            {/* <TouchableOpacity style={styles.sendButton} onPress={sendRequest}>
+              <Text style={styles.sendButtonText} title="Back">
+                SEND Email to Team
+              </Text>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.navigate("ReviewScreen")}>
@@ -310,6 +387,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 15,
     marginTop: 50,
+  },
+  sendButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 300,
+    height: 45,
+    justifyContent: "center",
+  },
+  sendButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
   },
   backButton: {
     backgroundColor: "#D3D3D3",
