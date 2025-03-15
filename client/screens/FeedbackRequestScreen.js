@@ -111,71 +111,33 @@ export default function FeedbackRequestScreen() {
     fetchTeamMembersData();
   }, [userContext]);
 
-  const handlePress = (selectedTeamMember) => {
-    navigation.navigate("FeedbackRequestWelcomeScreen", {
-      teamMember: selectedTeamMember,
-    });
-  };
+  const [selectedTeamMember, setSelectedTeamMember] = useState("");
 
-  const sendRequest = () => {
-    if (
-      !userNameContext ||
-      !firstNameContext ||
-      !contactData.teammembers.length
-    ) {
-      console.error("Missing required data for email.");
-      return;
-    }
+  const [teammemberId, setTeammemberId] = useState("");
 
-    contactData.teammembers.forEach((teammember) => {
-      if (!teammember.email || !teammember.teamMember_id) {
-        console.warn(
-          `Skipping team member due to missing email or ID:`,
-          teammember
-        );
-        return;
-      }
-
-      const subject = encodeURIComponent("Feedback Request");
-      const deepLink = __DEV__
-        ? `http://localhost:8081/feedback-request/${teamMemberContextId}`
-        : `myapp://feedback-request/${teamMemberContextId}`;
-
-      const body = encodeURIComponent(
-        `Hello Team,\n\n${userNameContext} (${firstNameContext}) is requesting feedback.\n\nClick the link below to provide feedback:\n${deepLink}`
-      );
-
-      const emailAddresses = contactData.teammembers
-        .map((member) => member.email)
-        .join(",");
-
-      const emailURL = `mailto:${emailAddresses}?subject=${subject}&body=${body}`;
-
-      Linking.openURL(emailURL).catch((err) =>
-        console.error("Error opening email:", err)
-      );
-    });
-
-    console.log("Emails triggered for all team members.");
-  };
-
-  const sendEmail = (teammember) => {
-    if (!teammember.teamMemberRouteEmail || !teammember.teamMemberRouteId) {
-      console.warn("Missing team member email or ID.");
+  const sendEmail = (teammember_id, firstName, email) => {
+    if (!teammember_id) {
+      console.warn("Missing team member.");
       return;
     }
 
     const subject = encodeURIComponent("Feedback Request");
 
     const feedbackLink = __DEV__
-      ? `http://localhost:8081/feedback-request/${teammember.teamMemberRouteId}`
-      : `https://your-live-app.com/feedback-request/${teammember.teamMemberRouteId}`;
+      ? `http://localhost:8081/feedback-request/${teammember_id}/${token}`
+      : `https://your-live-app.com/feedback-request/${teammember_id}/${token}`;
 
     const body = encodeURIComponent(
-      `Hello ${teammember.teamMemberRouteFirstName},\n\n${userNameContext} (${firstNameContext}) is requesting feedback from you.\n\nClick the link below to provide feedback:\n${feedbackLink}`
+      `Hello ${firstName},\n\n
+      ${firstNameContext} wants to ${habitContextInput}.\n
+      They would like your feedback regarding their progress.\n\n
+      Click the link below to provide feedback:\n
+      ${feedbackLink}\n\n
+      Thank you for considering this request!
+      Your Habit Formation Team`
     );
 
-    const emailURL = `mailto:${teammember.teamMemberRouteEmail}?subject=${subject}&body=${body}`;
+    const emailURL = `mailto:${email}?subject=${subject}&body=${body}`;
 
     Linking.openURL(emailURL).catch((err) =>
       console.error("Error opening email:", err)
@@ -212,17 +174,7 @@ export default function FeedbackRequestScreen() {
         <View style={styles.dataContainer}>
           {contactData.teammembers.map((teammember, index) => (
             <View style={styles.contactPersonButtonContainer} key={index}>
-              <TouchableOpacity
-                style={styles.contactPersonButton}
-                onPress={() => {
-                  console.log("Navigating with params:", {
-                    teamMember: teammember,
-                  });
-
-                  navigation.navigate("FeedbackRequestWelcomeScreen", {
-                    teamMember: teammember,
-                  });
-                }}>
+              <TouchableOpacity style={styles.contactPersonButton}>
                 <View style={styles.contactPersonNameColumn}>
                   {teammember.profilePic ? (
                     <Image
@@ -248,28 +200,23 @@ export default function FeedbackRequestScreen() {
                     color="black"
                     style={styles.iconSend}
                     onPress={() => {
-                      console.log("Sending Email with params:", {
-                        teamMemberRouteId: teammember.teamMember_id,
-                        teamMemberRouteFirstName: teammember.firstName,
-                        teamMemberRouteLastName: teammember.lastName,
-                        teamMemberRouteEmail: teammember.email,
-                        teamMemberRouteProfilePic: teammember.profilePic,
+                      setSelectedTeamMember(teammember);
+                      console.log("Sending team member with params:", {
+                        teammember,
                       });
-                      sendEmail({
-                        teamMemberRouteId: teammember.teamMember_id,
-                        teamMemberRouteFirstName: teammember.firstName,
-                        teamMemberRouteLastName: teammember.lastName,
-                        teamMemberRouteEmail: teammember.email,
-                        teamMemberRouteProfilePic: teammember.profilePic,
-                      });
-
-                      // navigation.navigate("FeedbackRequestWelcomeScreen", {
-                      //   teamMemberRouteId: teammember.teamMember_id,
-                      //   teamMemberRouteFirstName: teammember.firstName,
-                      //   teamMemberRouteLastName: teammember.lastName,
-                      //   teamMemberRouteEmail: teammember.email,
-                      //   teamMemberRouteProfilePic: teammember.profilePic,
-                      // });
+                      console.log("Selected Team Member", selectedTeamMember);
+                      const teammember_id = String(teammember.teamMember_id);
+                      const firstName = String(teammember.firstName);
+                      const email = String(teammember.email);
+                      console.log(
+                        "Sending with params of Team Member ID:",
+                        teammember_id,
+                        "firstName",
+                        firstName,
+                        "email",
+                        email
+                      );
+                      sendEmail(teammember_id, firstName, email);
                     }}
                   />
                 </View>
@@ -278,11 +225,6 @@ export default function FeedbackRequestScreen() {
           ))}
 
           <View style={styles.buttonRow}>
-            {/* <TouchableOpacity style={styles.sendButton} onPress={sendRequest}>
-              <Text style={styles.sendButtonText} title="Back">
-                SEND Email to Team
-              </Text>
-            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.navigate("ReviewScreen")}>

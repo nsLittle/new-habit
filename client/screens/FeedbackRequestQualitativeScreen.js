@@ -114,20 +114,7 @@ export default function FeedbackRequestQualitativeScreen() {
 
       setDialogMessage("Feedback text updated successfully.");
       setShowDialog(true);
-      console.log("Navigating with params:", {
-        teamMemberRouteId,
-        teamMemberRouteFirstName,
-        teamMemberRouteLastName,
-        teamMemberRouteEmail,
-        teamMemberRouteProfilePic,
-      });
-      navigation.navigate("FeedbackDataScreen", {
-        teamMemberRouteId,
-        teamMemberRouteFirstName,
-        teamMemberRouteLastName,
-        teamMemberRouteEmail,
-        teamMemberRouteProfilePic,
-      });
+      navigation.navigate("NoThankYouScreen");
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");
       setShowDialog(true);

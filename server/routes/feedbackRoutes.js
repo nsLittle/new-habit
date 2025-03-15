@@ -10,7 +10,7 @@ const {
 const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
-router.post("/:username", protect, submitFeedback);
+router.post("/:username/:habit_id/:teammemberId", protect, submitFeedback);
 router.get("/:username/:habit_id", protect, getFeedback);
 router.patch("/:username/:habit_id/rating", editFeedbackRating);
 router.patch("/:username/:habit_id/thanks-rating", editFeedbackThanksRating);

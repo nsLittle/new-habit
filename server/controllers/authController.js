@@ -125,7 +125,7 @@ exports.passwordResetRequest = async (req, res) => {
     user.passwordResetExpires = Date.now() + 3600000;
     await user.save();
 
-    const resetLink = `habitapp://password-reset/${resetToken}`;
+    const resetLink = `habitapp://password-reset/${teammemberId}/${resetToken}`;
 
     res.json({
       message: "Password reset token generated",

@@ -380,11 +380,17 @@ export default function ReviewScreen() {
           </View>
         </View>
 
-        <View style={styles.buttonRow}>
+        <View style={styles.buttonColumn}>
           <TouchableOpacity
             style={styles.startButton}
             onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-            <Text style={styles.startButtonText}>Start Habit Formation ▶</Text>
+            <Text style={styles.startButtonText}>Request Feedback</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.viewButton}
+            onPress={() => navigation.navigate("FeedbackDataScreen")}>
+            <Text style={styles.viewButtonText}>Review Feedback</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -426,8 +432,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   teamMemberProfilePic: {
-    // borderWidth: 5,
-    // borderColor: "#FFD700",
     width: 40,
     height: 40,
     marginBottom: 15,
@@ -505,8 +509,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     alignItems: "right",
   },
-  buttonRow: {
-    flexDirection: "row",
+  buttonColumn: {
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -525,6 +529,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   startButtonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+  },
+  viewButton: {
+    backgroundColor: "#D3D3D3",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 300,
+    height: 45,
+    justifyContent: "center",
+  },
+  viewButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

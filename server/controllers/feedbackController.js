@@ -8,38 +8,23 @@ const Feedback = require("../models/Feedback");
 exports.submitFeedback = async (req, res) => {
   console.log("I'm here to submit feedback...");
   try {
-    const { habitContextId, teamMemberContextId, feedbackRating } = req.body;
+    const receivedData = req.params;
+    console.log("Received Data: ", receivedData);
+    const { feedbackRating } = req.body;
 
-    console.log("✅ Received Habit ID:", habitContextId);
-    console.log("✅ Received Team Member ID:", teamMemberContextId);
-    console.log("✅ Received Feedback Rating:", feedbackRating);
+    console.log("✅ Username:", receivedData.username);
+    console.log("✅ Habit ID:", receivedData.habit_id);
+    console.log("✅ Team Member ID:", receivedData.teammemberId);
+    console.log("✅ Feedback Rating:", feedbackRating);
+    const username = receivedData.username;
+    const habit_id = receivedData.habit_id;
+    const teammemberId = receivedData.teammemberId;
 
-    console.log("Full Request Body:", req.body);
-
-    if (!teamMemberContextId) {
-      console.error("Error: teamMemberContextId is missing in the request!");
-      return res.status(400).json({ error: "Team Member ID is required" });
-    }
-
-    console.log("Team Member Id (raw request):", req.body.teamMemberContextId);
-    console.log("Resolved Team Member Id:", teamMemberContextId);
-
-    const habitId = Array.isArray(habitContextId)
-      ? String(habitContextId.flat()[0])
-      : String(habitContextId);
-
-    const teamMemberId = teamMemberContextId;
-
-    console.log("Request Body:", req.body);
-    console.log("Habit Id: ", habitId);
-    console.log("Team Member Id: ", teamMemberId);
-    console.log("Feedback Rating: ", feedbackRating);
-
-    if (!habitId || !teamMemberId || !feedbackRating) {
+    if (!habit_id || !teammemberId || !feedbackRating) {
       return res.status(400).json({ error: "All fields are required." });
     }
 
-    const habit = await Habit.findById(habitContextId);
+    const habit = await Habit.findById(habit_id);
     console.log("Found habit: ", habit);
 
     if (!habit) {
@@ -56,15 +41,15 @@ exports.submitFeedback = async (req, res) => {
     cadenceEnd.setDate(cadenceStart.getDate() + cadenceLength);
 
     console.log(
-      "Checkign for exisgint feedback with habit id: ",
-      habitContextId,
+      "Checking for existing feedback with habit id: ",
+      habit_id,
       "and team member Id, ",
-      teamMemberContextId
+      teammemberId
     );
 
     const existingFeedback = await Feedback.findOne({
-      habitId,
-      teamMemberId,
+      habitId: habit_id,
+      teamMemberId: teammemberId,
     });
 
     console.log("Existing Feedback: ", existingFeedback);
@@ -86,8 +71,8 @@ exports.submitFeedback = async (req, res) => {
 
     const newFeedback = new Feedback({
       userId,
-      habitId,
-      teamMemberId,
+      habitId: habit_id,
+      teamMemberId: teammemberId,
       feedbackRating,
       feedbackDate,
       habitStartDate,
@@ -211,7 +196,7 @@ exports.editFeedbackTextRating = async (req, res) => {
     console.log("Req Body: ", req.body);
 
     const updatedFeedback = await Feedback.findOneAndUpdate(
-      { habitId: habit_id, teamMemberId },
+      { habitId: habit_id },
       { $set: { feedbackText } },
       { new: true }
     );

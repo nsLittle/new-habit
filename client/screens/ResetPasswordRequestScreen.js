@@ -50,10 +50,6 @@ export default function ResetPasswordRequestScreen() {
     }
   }, [userContext]);
 
-  // const routes = navigation.getState().routes;
-  // const currentRoute = routes[routes.length - 1]?.name;
-  // console.log("Current Route:", currentRoute);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 

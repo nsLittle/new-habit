@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { UserProvider } from "./context/UserContext";
 import { PaperProvider } from "react-native-paper";
@@ -43,9 +43,10 @@ import Header from "./component/Header";
 const Stack = createStackNavigator();
 
 const linking = {
-  prefixes: ["habitapp://", "http://localhost:8081"],
+  prefixes: ["habitapp://"],
   config: {
     screens: {
+      FeedbackRequestWelcomeScreen: "feedback-request/:teamMemberId/:token",
       ResetPasswordScreen: "password-reset/:token",
     },
   },
@@ -53,54 +54,6 @@ const linking = {
 
 export default function App() {
   const [appReady, setAppReady] = useState(false);
-  const [initialRoute, setInitialRoute] = useState("WelcomeScreen");
-
-  useEffect(() => {
-    const checkInitialURL = async () => {
-      const url = await Linking.getInitialURL();
-      console.log("URL to check: ", url);
-      if (url) {
-        const match = url.match(/password-reset\/([^/]+)/);
-        if (match) {
-          setInitialRoute("ResetPasswordScreen");
-        } else {
-          setInitialRoute("WelcomeScreen");
-        }
-      } else {
-        setInitialRoute("WelcomeScreen");
-      }
-    };
-    checkInitialURL();
-  }, []);
-
-  useEffect(() => {
-    const handleDeepLink = (event) => {
-      const url = event.url;
-      console.log("Deep Link URL: ", url);
-
-      if (url) {
-        const match = url.match(/password-reset\/([^/]+)/);
-        if (match) {
-          const token = match[1];
-          console.log("Navigating to ResetPasswordScreen with token:", token);
-          if (navigationRef.isReady()) {
-            navigationRef.navigate("ResetPasswordScreen", { token });
-          }
-        }
-      }
-    };
-
-    const subscription = Linking.addEventListener("url", handleDeepLink);
-    console.log("Subscription: ", subscription);
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
-  if (initialRoute === null) {
-    return <Text>Loading...</Text>;
-  }
 
   useEffect(() => {
     async function prepare() {
@@ -148,7 +101,7 @@ export default function App() {
           linking={linking}
           fallback={<Text>Loading...</Text>}>
           <Stack.Navigator
-            initialRouteName={initialRoute}
+            initialRouteName="WelcomeScreen"
             screenOptions={{
               header: (props) => <Header {...props} />,
             }}>

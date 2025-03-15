@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -16,19 +15,23 @@ import {
 } from "react-native-responsive-screen";
 import emailjs from "@emailjs/browser";
 import { MaterialIcons } from "@expo/vector-icons";
-import {
-  createNavigationContainerRef,
-  useNavigation,
-} from "@react-navigation/native";
-
-export const navigationRef = createNavigationContainerRef();
+import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext";
 
 export default function ResetPasswordScreen() {
+  const { resetUserContext } = useContext(UserContext);
+
+  useEffect(() => {
+    resetUserContext("ResetPasswordScreen");
+  }, []);
+
+  const url = new URL(window.location.href);
+  const token = url.pathname.split("/").pop(); // Extracts last segment
+  console.log("Token:", token);
+
   const navigation = useNavigation();
 
   const routes = navigation.getState().routes;
-  const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -75,8 +78,8 @@ export default function ResetPasswordScreen() {
       }
 
       const resetLink = __DEV__
-        ? `http://localhost:8081/password-reset/${token}`
-        : `myapp://password-reset/${token}`;
+        ? `http://localhost:3000/reset-password/${token}`
+        : `myapp://reset-password/${token}`;
 
       const subject = encodeURIComponent("Password Reset Request");
       const body = encodeURIComponent(
@@ -98,41 +101,6 @@ export default function ResetPasswordScreen() {
       console.log("Unable to send reset email.");
     }
   };
-
-  useEffect(() => {
-    const handleDeepLink = (event) => {
-      const url = event.url;
-      console.log("Deep Link URL:", url);
-
-      if (!url) return;
-
-      if (url) {
-        const tokenMatch = url.match(/token=([^&]+)/);
-        if (tokenMatch) {
-          const token = tokenMatch[1];
-          navigationRef.current?.navigate("ResetPasswordScreen", { token });
-        }
-      }
-
-      let token;
-      if (url.includes("password-reset/")) {
-        token = url.split("password-reset/")[1];
-      }
-
-      if (token) {
-        navigation.navigate("ResetPasswordScreen", { token });
-      }
-    };
-
-    Linking.getInitialURL().then((url) => {
-      if (url) handleDeepLink({ url });
-    });
-
-    const subscription = Linking.addEventListener("url", handleDeepLink);
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -171,6 +139,29 @@ export default function ResetPasswordScreen() {
               onChangeText={(text) => setEmail(text)}
               placeholderTextColor="gray"
             />
+          </View>
+
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Password"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              placeholderTextColor="gray"
+            />
+            <TouchableOpacity
+              style={styles.eyeIcon}
+              onPress={() => setShowPassword(!showPassword)}>
+              <MaterialIcons
+                name={showPassword ? "visibility" : "visibility-off"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.infoIcon}>
+              <MaterialIcons name="info-outline" size={20} color="gray" />
+            </TouchableOpacity>
           </View>
         </View>
 

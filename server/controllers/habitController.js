@@ -22,18 +22,23 @@ exports.createHabit = async (req, res) => {
     let user;
     if (userId) {
       user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found by userId" });
+      }
     } else {
       user = await User.findOne({ username });
+      if (!user) {
+        return res.status(404).json({ message: "User not found by username" });
+      }
+      userId = user._id;
     }
-    console.log("User: ", user);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    console.log("User: ", user);
+    console.log("Final User Id (ensured from User model):", userId);
 
     if (!completed) {
       const activeHabit = await Habit.findOne({
-        user: userId,
+        userId,
         completed: false,
       });
 
@@ -45,7 +50,7 @@ exports.createHabit = async (req, res) => {
     }
 
     const newHabit = await Habit.create({
-      userId: userId,
+      userId,
       habit,
       completed: completed ?? false,
     });

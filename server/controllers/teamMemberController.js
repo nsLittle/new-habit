@@ -49,7 +49,7 @@ exports.addTeamMember = async (req, res) => {
   }
 };
 
-exports.getTeamMembers = async (req, res) => {
+exports.getAllTeamMembers = async (req, res) => {
   console.log("I'm getting team members!");
   try {
     const { username } = req.params;
@@ -69,6 +69,41 @@ exports.getTeamMembers = async (req, res) => {
     });
   } catch (error) {
     console.error("Error retrieving team members:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.getTeamMember = async (req, res) => {
+  try {
+    const { username, teamMember_id } = req.params;
+
+    console.log(`Fetching team member ${teamMember_id} for user ${username}`);
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(teamMember_id)) {
+      return res.status(400).json({ message: "Invalid teamMember_id format" });
+    }
+
+    const teamMember = await TeamMember.findOne({
+      _id: teamMember_id,
+      user: user._id,
+    });
+
+    if (!teamMember) {
+      return res.status(404).json({ message: "Team member not found" });
+    }
+
+    res.status(200).json({
+      message: "Team member retrieved successfully",
+      teamMember,
+    });
+  } catch (error) {
+    console.error("Error retrieving team member:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

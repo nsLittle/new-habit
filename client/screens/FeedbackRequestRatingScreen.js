@@ -31,7 +31,6 @@ export default function FeedbackRequestRatingScreen() {
     habitContextInput,
     descriptionContextInput,
     teamMemberContextId,
-    token,
   } = userContext || {};
 
   useEffect(() => {
@@ -64,11 +63,12 @@ export default function FeedbackRequestRatingScreen() {
   } = route.params || {};
 
   console.log("Received from FeedbackWelcomeScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberRouteId);
-  console.log("Team Member First Name: ", teamMemberRouteFirstName);
-  console.log("Team Member Last Name: ", teamMemberRouteLastName);
-  console.log("Team Memeber Email: ", teamMemberRouteEmail);
-  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
+
+  const teammemberId = route.params.teamMemberData.teamMember.teamMemberId;
+  const token = route.params.token;
+
+  console.log("Team member ID: ", teammemberId);
+  console.log("Token: ", token);
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
@@ -132,16 +132,14 @@ export default function FeedbackRequestRatingScreen() {
         "Username: ",
         userNameContext,
         "and Habit Id: ",
-        habitContextId,
+        habitContextId[0],
         "from Team Member Id: ",
-        teamMemberRouteId
+        teammemberId
       );
       const feedbackRating = ratingValue;
       console.log("Feedback Rating :", feedbackRating);
 
-      const resolvedTeamMemberId = teamMemberRouteId;
-
-      if (!resolvedTeamMemberId) {
+      if (!teammemberId) {
         console.error(
           "❌ ERROR: `teamMemberContextId` is missing before sending request."
         );
@@ -150,10 +148,14 @@ export default function FeedbackRequestRatingScreen() {
         return;
       }
 
-      console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
+      console.log("✅ Using Team Member Id:", teammemberId);
+      const url = `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/${teammemberId}`;
+
+      console.log("Fetching from: ", url);
 
       const response = await fetch(
-        `http://localhost:8000/feedback/${userNameContext}`,
+        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/${teammemberId}`,
+
         {
           method: "POST",
           headers: {
@@ -161,8 +163,8 @@ export default function FeedbackRequestRatingScreen() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            habitContextId: [habitContextId],
-            teamMemberContextId: resolvedTeamMemberId,
+            habitContextId,
+            teammemberId,
             feedbackRating: feedbackRating,
           }),
         }
@@ -174,18 +176,10 @@ export default function FeedbackRequestRatingScreen() {
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
       console.log("Navigating with params:", {
-        teamMemberRouteId,
-        teamMemberRouteFirstName,
-        teamMemberRouteLastName,
-        teamMemberRouteEmail,
-        teamMemberRouteProfilePic,
+        teamMemberRouteId: teammemberId,
       });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
-        teamMemberRouteId,
-        teamMemberRouteFirstName,
-        teamMemberRouteLastName,
-        teamMemberRouteEmail,
-        teamMemberRouteProfilePic,
+        teamMemberRouteId: teammemberId,
       });
     } catch (error) {
       setDialogMessage("Failed to update rating. Please try again.");

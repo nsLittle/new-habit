@@ -88,6 +88,7 @@ export const UserProvider = ({ children }) => {
         "LoginScreen",
         "CreateAccountScreen",
         "Logout",
+        "ResetPasswordScreen",
       ].includes(caller)
     ) {
       console.log(

@@ -10,7 +10,11 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -45,6 +49,7 @@ export default function FeedbackDataScreenScreen() {
       console.log("Email Context: ", emailContext);
       console.log("Profile Pic Context: ", profilePicContext);
       console.log("Habit Id Context: ", habitContextId);
+
       console.log("Habit Input Context: ", habitContextInput);
       console.log("Description Input Context: ", descriptionContextInput);
       console.log("TeamMember Id Context: ", teamMemberContextId);
@@ -52,23 +57,17 @@ export default function FeedbackDataScreenScreen() {
     }
   }, [userContext]);
 
-  const route = useRoute();
-  const {
-    teamMemberRouteId,
-    teamMemberRouteFirstName,
-    teamMemberRouteLastName,
-    teamMemberRouteEmail,
-    teamMemberRouteProfilePic,
-  } = route.params || {};
-
-  console.log("Received from FeedbackWelcomeScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberRouteId);
-  console.log("Team Member First Name: ", teamMemberRouteFirstName);
-  console.log("Team Member Last Name: ", teamMemberRouteLastName);
-  console.log("Team Memeber Email: ", teamMemberRouteEmail);
-  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
+  const habitId = Array.isArray(habitContextId)
+    ? habitContextId[0]
+    : habitContextId;
+  const habitInput = Array.isArray(habitContextInput)
+    ? habitContextInput[0]
+    : habitContextInput;
+  console.log("HabitId: ", habitId);
+  console.log("Habit Input: ", habitInput);
 
   const [feedbackData, setFeedbackData] = useState([]);
+  const [teammemberData, setTeammemberData] = useState([]);
 
   const fetchFeedbackData = async () => {
     console.log("I'm here to fetch feedback request data...");
@@ -78,17 +77,20 @@ export default function FeedbackDataScreenScreen() {
         return;
       }
 
-      const [feedbackResponse] = await Promise.all([
-        fetch(
-          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
+      const [feedbackResponse, teammemberResponse] = await Promise.all([
+        fetch(`http://localhost:8000/feedback/${userNameContext}/${habitId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`http://localhost:8000/teammember/${userNameContext}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       if (!feedbackResponse.ok)
         throw new Error("Failed to fetch feedback data.");
 
       const feedbackData = await feedbackResponse.json();
+      console.log("Feedback Data: ", feedbackData);
 
       if (!Array.isArray(feedbackData.feedback)) {
         console.error("Unexpected API response format:", data);
@@ -97,7 +99,16 @@ export default function FeedbackDataScreenScreen() {
 
       setFeedbackData(feedbackData.feedback);
 
+      if (!teammemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
+
+      const teammemberData = await teammemberResponse.json();
+      console.log("TEam member Data: ", teammemberData);
+
+      setTeammemberData(teammemberData.teamMembers);
+
       console.log("Feedback Data: ", feedbackData);
+      console.log("Team Member Data: ", teammemberData);
     } catch (error) {
       console.error("Error with data retrieval:", error);
     }
@@ -108,10 +119,12 @@ export default function FeedbackDataScreenScreen() {
       fetchFeedbackData();
     }
   }, [userNameContext]);
+  getFocusedRouteNameFromRoute;
 
   useEffect(() => {
     console.log("Updated Feedback Data:", feedbackData);
-  }, [feedbackData]);
+    console.log("Updated Team Data:", teammemberData);
+  }, [feedbackData, teammemberData]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -121,37 +134,78 @@ export default function FeedbackDataScreenScreen() {
         </View>
 
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>Stuff and stuff</Text>
+          <Text style={styles.bodyIntroText}>{firstNameContext}:</Text>
+          <Text style={styles.bodyIntroText}>{habitInput}</Text>
+          <Text style={styles.bodyIntroText}>{descriptionContextInput}</Text>
 
           <View>
-            {feedbackData.length === 0 ? (
-              <Text>No feedback available.</Text>
+            <Text style={styles.bodyTitleText}>Team Members</Text>
+            {teammemberData.length === 0 ? (
+              <Text>No team members available.</Text>
             ) : (
               <FlatList
-                data={feedbackData}
+                data={teammemberData}
                 keyExtractor={(item) =>
-                  item._id?.toString() || Math.random().toString()
+                  item.teamMemberId?.toString() || Math.random().toString()
                 }
-                renderItem={({ item }) => (
-                  <View style={{ padding: 10, borderBottomWidth: 1 }}>
-                    <Text>Team Member ID: {item.teamMemberId}</Text>
-                    <Text>Feedback Rating: {item.feedbackRating}</Text>
-                    <Text>
-                      Feedback Thanks Rating:{" "}
-                      {item.feedbackThanksRating || "N/A"}
-                    </Text>
-                    <Text>
-                      Feedback Text: {item.feedbackText || "No text provided"}
-                    </Text>
-                    <Text>
-                      Feedback Date:{" "}
-                      {new Date(item.feedbackDate).toLocaleString()}
-                    </Text>
-                  </View>
-                )}
+                renderItem={({ item }) => {
+                  const teamMemberFeedback = feedbackData.filter(
+                    (feedback) => feedback.teamMemberId === item.teamMemberId
+                  );
+
+                  return (
+                    <View style={{ marginBottom: 20 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginBottom: 10,
+                        }}>
+                        <Image
+                          source={{ uri: item.teamMemberProfilePic }}
+                          style={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: 25,
+                            marginRight: 10,
+                          }}
+                        />
+                        <Text>
+                          {item.teamMemberFirstName} {item.teamMemberLastName}
+                        </Text>
+                      </View>
+
+                      {teamMemberFeedback.length > 0 ? (
+                        <View style={{ marginLeft: 60 }}>
+                          {teamMemberFeedback.map((feedback) => (
+                            <View
+                              key={feedback._id}
+                              style={{ marginBottom: 10 }}>
+                              <Text style={styles.bold}>
+                                {new Date(
+                                  feedback.feedbackDate
+                                ).toLocaleDateString()}
+                              </Text>
+                              <Text>Rating: {feedback.feedbackRating}</Text>
+                              <Text>
+                                Thanks Rating: {feedback.feedbackThanksRating}
+                              </Text>
+                              <Text>Comment: {feedback.feedbackText}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      ) : (
+                        <Text style={{ marginLeft: 60, fontStyle: "italic" }}>
+                          No feedback yet.
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
             )}
           </View>
+
           <View style={styles.buttonRow}></View>
         </View>
       </View>
@@ -189,7 +243,9 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     width: 225,
   },
-
+  bold: {
+    fontFamily: "bold",
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",

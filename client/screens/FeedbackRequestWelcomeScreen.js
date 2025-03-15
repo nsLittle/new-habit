@@ -33,7 +33,6 @@ export default function FeedbackRequestWelcomeScreen() {
     habitContextInput,
     descriptionContextInput,
     teamMemberContextId,
-    token,
   } = userContext || {};
 
   useEffect(() => {
@@ -56,21 +55,19 @@ export default function FeedbackRequestWelcomeScreen() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
-  const route = useRoute();
-  const {
-    teamMemberRouteId,
-    teamMemberRouteFirstName,
-    teamMemberRouteLastName,
-    teamMemberRouteEmail,
-    teamMemberRouteProfilePic,
-  } = route.params || {};
+  const [teamMemberData, setTeamMemberData] = useState(null);
 
-  console.log("Received from FeedbackRequestScreen:", route.params);
-  console.log("Team Member Id: ", teamMemberRouteId);
-  console.log("Team Member First Name: ", teamMemberRouteFirstName);
-  console.log("Team Member Last Name: ", teamMemberRouteLastName);
-  console.log("Team Memeber Email: ", teamMemberRouteEmail);
-  console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
+  const route = useRoute();
+
+  console.log("Route Params: ", route.params);
+  console.log(
+    "Received from Email Deeplink (route.params):",
+    route.params.teamMemberId
+  );
+  const token = route.params.token;
+  const teammemberId = route.params.teamMemberId;
+  console.log("Extracted Team Member ID:", teammemberId);
+  console.log("Extracted Token:", token);
 
   const fetchUserData = async () => {
     try {
@@ -82,8 +79,9 @@ export default function FeedbackRequestWelcomeScreen() {
       const [
         userResponse,
         habitsResponse,
-        teamMemberResponse,
+        teamMembersResponse,
         feedbackResponse,
+        teamMemberResponse,
       ] = await Promise.all([
         fetch(`http://localhost:8000/user/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -100,19 +98,30 @@ export default function FeedbackRequestWelcomeScreen() {
             headers: { Authorization: `Bearer ${token}` },
           }
         ),
+        fetch(
+          `http://localhost:8000/teammember/${userNameContext}/${teammemberId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        ),
       ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
-      if (!teamMemberResponse.ok)
-        throw new Error("Failed to fetch team member data.");
+      if (!teamMembersResponse.ok)
+        throw new Error("Failed to fetch team members data.");
       if (!feedbackResponse.ok)
         throw new Error("Failed to fetch feedback data.");
+      if (!teamMemberResponse.ok)
+        throw new Error("Failed to fetch team member data.");
 
       const userData = await userResponse.json();
       const habitData = await habitsResponse.json();
-      const teamMemberData = await teamMemberResponse.json();
+      const teamMembersData = await teamMembersResponse.json();
       const feedbackData = await feedbackResponse.json();
+      const teamMemberData = await teamMemberResponse.json();
+
+      setTeamMemberData(teamMemberData);
 
       console.log("User Data: ", userData);
       console.log("Profile Pic: ", userData[0].profilePic);
@@ -120,8 +129,9 @@ export default function FeedbackRequestWelcomeScreen() {
       console.log("Habit Id: ", habitData?.habits[0]._id);
       console.log("Habit: ", habitData?.habits[0].habit);
       console.log("Reminders: ", habitData?.habits[0].description);
-      console.log("Team Member Data: ", teamMemberData);
+      console.log("Team Members Data: ", teamMembersData);
       console.log("Feedback Data: ", feedbackData);
+      console.log("Team Member Data: ", teamMemberData);
 
       setUserContext((prev) => ({
         ...prev,
@@ -151,9 +161,6 @@ export default function FeedbackRequestWelcomeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyTitleText}>
-            Hi {teamMemberRouteFirstName},
-          </Text>
           <View>
             <Image
               source={{ uri: profilePicContext }}
@@ -177,20 +184,10 @@ export default function FeedbackRequestWelcomeScreen() {
             <TouchableOpacity
               style={styles.feedbackButton}
               onPress={() => {
-                console.log("Navigating with params:", {
-                  teamMemberRouteId,
-                  teamMemberRouteFirstName,
-                  teamMemberRouteLastName,
-                  teamMemberRouteEmail,
-                  teamMemberRouteProfilePic,
-                });
-
+                console.log("Navigating with teamMember Data:", teamMemberData); // Debug log
                 navigation.navigate("FeedbackRequestRatingScreen", {
-                  teamMemberRouteId,
-                  teamMemberRouteFirstName,
-                  teamMemberRouteLastName,
-                  teamMemberRouteEmail,
-                  teamMemberRouteProfilePic,
+                  teamMemberData,
+                  token,
                 });
               }}>
               <Text style={styles.feedbackButtonText} title="Give Feedback">
