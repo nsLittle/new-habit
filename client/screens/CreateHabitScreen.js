@@ -157,13 +157,23 @@ export default function CreateHabitScreen() {
       let url;
       let method;
 
-      if (habitContextId) {
+      if (Array.isArray(habitContextId) && habitContextId.length === 0) {
+        url = `http://localhost:8000/habit/${userNameContext}`;
+        method = "POST";
+      } else if (habitContextId) {
         url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/habit`;
         method = "PATCH";
       } else {
         url = `http://localhost:8000/habit/${userNameContext}`;
         method = "POST";
       }
+      // if (habitContextId) {
+      //   url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}`;
+      //   method = "PATCH";
+      // } else {
+      //   url = `http://localhost:8000/habit/${userNameContext}`;
+      //   method = "POST";
+      // }
 
       console.log(`Sending ${method} request to:`, url);
 
@@ -198,6 +208,7 @@ export default function CreateHabitScreen() {
 
       setHabitInput("");
       setDialogMessage("Habit successfully saved");
+      setDialogAction("success");
       setShowDialog(true);
 
       setTimeout(() => {
@@ -235,7 +246,7 @@ export default function CreateHabitScreen() {
                 <Button
                   onPress={() => setShowDialog(false)}
                   labelStyle={styles.dialogButtonNo}>
-                  KEEP
+                  EDIT
                 </Button>
                 <Button
                   onPress={() => {
@@ -243,7 +254,7 @@ export default function CreateHabitScreen() {
                     navigation.navigate("HabitDescriptionScreen");
                   }}
                   labelStyle={styles.dialogButton}>
-                  EDIT
+                  KEEP
                 </Button>
               </>
             ) : dialogAction === "editOrSkip" ? (
@@ -260,6 +271,17 @@ export default function CreateHabitScreen() {
                   onPress={() => setShowDialog(false)}
                   labelStyle={styles.dialogButton}>
                   YES
+                </Button>
+              </>
+            ) : dialogAction === "success" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    navigation.navigate("HabitDescriptionScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  OK
                 </Button>
               </>
             ) : (

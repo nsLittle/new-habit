@@ -110,12 +110,21 @@ const crypto = require("crypto");
 exports.passwordResetRequest = async (req, res) => {
   console.log("I'm in the back requesting password reset ...");
   const { email } = req.body;
+  console.log("Email: ", email);
 
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
+    console.log("User: ", user);
+
+    if (user) {
+      console.log(user.username);
+    } else {
+      console.log("User is undefined or null");
+    }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
+    console.log("Reset TOken? : ", resetToken);
     const hashedToken = crypto
       .createHash("sha256")
       .update(resetToken)
@@ -125,7 +134,7 @@ exports.passwordResetRequest = async (req, res) => {
     user.passwordResetExpires = Date.now() + 3600000;
     await user.save();
 
-    const resetLink = `habitapp://password-reset/${teammemberId}/${resetToken}`;
+    const resetLink = `habitapp://password-reset/${user.username}/${resetToken}`;
 
     res.json({
       message: "Password reset token generated",

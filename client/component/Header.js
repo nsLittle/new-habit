@@ -192,6 +192,17 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Review</Text>
             </TouchableOpacity>
           )}
+          {currentRoute !== "FeedbackDataScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("FeedbackDataScreen", {
+                  userName: userContext.userName,
+                  habitId: userContext.habitId,
+                })
+              }>
+              <Text style={styles.menuItem}>Review</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 

@@ -169,7 +169,7 @@ export default function ResetPasswordScreen() {
           <TouchableOpacity
             style={styles.resetButton}
             onPress={handlePasswordReset}>
-            <Text style={styles.resetButtonText}>Send Me Validation Email</Text>
+            <Text style={styles.resetButtonText}>Reset Password</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -153,7 +153,7 @@ export default function ResetPasswordRequestScreen() {
 
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Reset Password</Text>
+          <Text style={styles.bodyTitleText}>Reset Password Request</Text>
         </View>
 
         <View style={styles.inputContainer}>

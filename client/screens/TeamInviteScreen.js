@@ -109,30 +109,6 @@ export default function TeamInviteScreen() {
     fetchTeamMembersData();
   }, [token, userNameContext]);
 
-  // const sendEmail = (email) => {
-  //   if (!email) {
-  //     console.error("No email address provided");
-  //     setDialogMessage("No email address provided");
-  //     setShowDialog(true);
-  //     return;
-  //   }
-
-  //   const subject = encodeURIComponent(`Help ${firstNameContext}`);
-  //   const requestUrl = "habit-app://feedback";
-  //   const body = encodeURIComponent(
-  //     `Hello,\n\nThis is ${firstNameContext}. I am working to ${habitinput}. I'd love your help by getting your feedback. Please go to ${requestUrl}`
-  //   );
-
-  //   const mailtoURL = `mailto:${emailContext}?subject=${subject}&body=${body}`;
-  //   console.log("Mail To: ", mailtoURL);
-
-  //   Linking.openURL(mailtoURL).catch((err) => {
-  //     console.error("Failed to open email client", err);
-  //     setDialogMessage("Failed to open email client.");
-  //     setShowDialog(true);
-  //   });
-  // };
-
   const handleDelete = async (teamMember_id) => {
     if (!token) {
       setDialogMessage("No authentication token found.");
@@ -179,14 +155,9 @@ export default function TeamInviteScreen() {
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>
-            Confirm Deletion
-          </Dialog.Title>
+          <Dialog.Title style={styles.dialogTitle}>Confirmation</Dialog.Title>
           <Dialog.Content>
-            <Text>
-              Are you sure you want to delete {selectedTeamMember?.firstName}{" "}
-              {selectedTeamMember?.lastName}?
-            </Text>
+            <Text>{"Are you sure?"}</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button

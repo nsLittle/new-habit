@@ -39,9 +39,9 @@ export default function CreateAccountScreen() {
     setUserContext(null);
   };
 
-  useEffect(() => {
-    resetUserContext();
-  }, []);
+  // useEffect(() => {
+  //   resetUserContext();
+  // }, []);
 
   useEffect(() => {
     if (userContext) {
@@ -185,25 +185,23 @@ export default function CreateAccountScreen() {
 
       console.log("Saved Data: ", data);
 
-      setUserContext((prevContext) => {
-        const updatedContext = {
-          ...prevContext,
-          userNameContext: data.user.username,
-          userIdContext: data.user._id,
-          token: data.token,
-          firstNameContext: data.user.firstName,
-          lastNameContext: data.user.lastName,
-          emailContext: data.user.email,
-          profilePicContext: data.user.profilePic,
-        };
+      setUserContext((prevContext) => ({
+        ...prevContext,
+        userNameContext: data.user.username,
+        userIdContext: data.user._id,
+        token: data.token,
+        firstNameContext: data.user.firstName,
+        lastNameContext: data.user.lastName,
+        emailContext: data.user.email,
+        profilePicContext: data.user.profilePic,
+      }));
 
-        console.log("Saved User Context: ", updatedContext);
-        setDialogMessage("Account created successfully!");
-        setShowDialog(true);
-        setTimeout(() => {
-          navigation.navigate("CreateHabitScreen");
-        }, 500);
-      });
+      console.log("Updated User Context:", userContext);
+      setDialogMessage("Account created successfully!");
+      setShowDialog(true);
+      setTimeout(() => {
+        navigation.navigate("CreateHabitScreen");
+      }, 500);
     } catch (error) {
       setDialogMessage("Signup error. Please try again.");
       setShowDialog(true);
@@ -212,7 +210,9 @@ export default function CreateAccountScreen() {
   };
 
   useEffect(() => {
-    console.log("Updated UserContext in CreateAccountScreen:", userContext);
+    if (userContext) {
+      console.log("Updated UserContext:", JSON.stringify(userContext, null, 2));
+    }
   }, [userContext]);
 
   return (
