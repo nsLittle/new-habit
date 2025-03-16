@@ -33,7 +33,7 @@ export const UserProvider = ({ children }) => {
       const userInfo = Object.fromEntries(
         storedData.map(([key, value]) => [
           key,
-          value ? JSON.parse(value) : null,
+          value ? JSON.parse(value) : defaultUserState[key],
         ])
       );
 
@@ -43,7 +43,7 @@ export const UserProvider = ({ children }) => {
       setUserContext({
         ...defaultUserState,
         ...userInfo,
-        token: storedToken || null,
+        token: storedToken ?? "",
       });
     } catch (error) {
       console.error("Error retrieving user context:", error);
@@ -62,7 +62,7 @@ export const UserProvider = ({ children }) => {
         await AsyncStorage.multiSet(
           Object.entries(userContext).map(([key, value]) => [
             key,
-            JSON.stringify(value ?? ""),
+            JSON.stringify(value !== null ? value : ""),
           ])
         );
 

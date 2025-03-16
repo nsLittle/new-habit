@@ -200,7 +200,7 @@ export default function Header(props) {
                   habitId: userContext.habitId,
                 })
               }>
-              <Text style={styles.menuItem}>Review</Text>
+              <Text style={styles.menuItem}>Feedback Data</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -212,6 +212,14 @@ export default function Header(props) {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
+          <TouchableOpacity
+            onPress={() =>
+              navigateToScreen("DefaultScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Default</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("ProfileScreen", {

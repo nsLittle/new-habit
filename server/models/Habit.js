@@ -38,19 +38,6 @@ const HabitSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-HabitSchema.pre("save", function (next) {
-  const cadenceMapping = {
-    Weekly: 7,
-    "Every Other Week": 14,
-    Monthly: 30,
-    Quarterly: 90,
-  };
-
-  this.cadenceLength = cadenceMapping[this.cadence] || 30; // Default to 30 (Monthly) if null/invalid
-
-  next();
-});
-
 HabitSchema.pre("save", async function (next) {
   const cadenceMapping = {
     Weekly: 7,

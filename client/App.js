@@ -38,6 +38,7 @@ import FeedbackRequestQualitativeScreen from "./screens/FeedbackRequestQualitati
 import FeedbackDataScreen from "./screens/FeedbackDataScreen";
 import NoThankYouScreen from "./screens/NoThankYouScreen";
 import EndingCreditsScreen from "./screens/EndingCreditsScreen";
+import DefaultScreen from "./screens/DefaultScreen";
 import Header from "./component/Header";
 
 const Stack = createStackNavigator();
@@ -180,6 +181,7 @@ export default function App() {
               name="NoThankYouScreen"
               component={NoThankYouScreen}
             />
+            <Stack.Screen name="DefaultScreen" component={DefaultScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </UserProvider>

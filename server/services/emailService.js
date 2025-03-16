@@ -12,8 +12,8 @@ const sendEmail = async (toEmail) => {
   const msg = {
     to: toEmail,
     from: {
-      email: "notsolittle88@gmail.com", // Verified sender email
-      name: "Your Name", // Optional: Name of the sender
+      email: SENDGRID_SENDER_EMAIL, // Verified sender email
+      name: "Your Name",
     },
     subject: "Test Email from SendGrid",
     text: "This is a test email to confirm SendGrid works.",
@@ -22,12 +22,11 @@ const sendEmail = async (toEmail) => {
 
   try {
     console.log(`📨 Sending email to ${toEmail}...`);
-    await sgMail.send(msg); // Send the email once using await
+    await sgMail.send(msg);
     console.log(`✅ Email successfully sent to ${toEmail}`);
   } catch (error) {
     console.error("❌ SendGrid Error:", error.response?.body || error.message);
   }
 };
 
-// Ensure function is available for use
-sendEmail("notsolittle88@gmail.com");
+sendEmail("notsolittle88@gmail.com"); // Test the email

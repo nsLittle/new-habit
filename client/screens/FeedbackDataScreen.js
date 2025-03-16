@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import {
   FlatList,
   Image,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
@@ -127,7 +128,9 @@ export default function FeedbackDataScreenScreen() {
   }, [feedbackData, teammemberData]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={true}>
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
           <Text style={styles.bodyTitleText}>Feedback Data</Text>
@@ -143,18 +146,14 @@ export default function FeedbackDataScreenScreen() {
             {teammemberData.length === 0 ? (
               <Text>No team members available.</Text>
             ) : (
-              <FlatList
-                data={teammemberData}
-                keyExtractor={(item) =>
-                  item.teamMemberId?.toString() || Math.random().toString()
-                }
-                renderItem={({ item }) => {
+              <View>
+                {teammemberData.map((item) => {
                   const teamMemberFeedback = feedbackData.filter(
                     (feedback) => feedback.teamMemberId === item.teamMemberId
                   );
 
                   return (
-                    <View style={{ marginBottom: 20 }}>
+                    <View key={item.teamMemberId} style={{ marginBottom: 20 }}>
                       <View
                         style={{
                           flexDirection: "row",
@@ -201,12 +200,12 @@ export default function FeedbackDataScreenScreen() {
                       )}
                     </View>
                   );
-                }}
-              />
+                })}
+              </View>
             )}
           </View>
 
-          <View style={styles.buttonRow}></View>
+          <View style={{ height: 200 }}></View>
         </View>
       </View>
     </ScrollView>
@@ -216,15 +215,20 @@ export default function FeedbackDataScreenScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
+    paddingBottom: 5000,
   },
   body: {
-    flexGrow: 1,
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "web" ? hp("30%") : hp("3%"),
+  },
+  bodyTitleContainer: {
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+    marginBottom: 10, // Add spacing
+    color: "black",
   },
   bodyTitleText: {
     fontSize: 26,
@@ -246,6 +250,18 @@ const styles = StyleSheet.create({
   bold: {
     fontFamily: "bold",
   },
+
+  teamMemberContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -254,5 +270,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 15,
     marginTop: 50,
+    marginBottom: 200,
   },
 });
