@@ -22,7 +22,7 @@ import {
 } from "react-native-responsive-screen";
 import { UserContext } from "../context/UserContext";
 
-export default function FeedbackDataScreenScreen() {
+export default function FeedbackDataScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
