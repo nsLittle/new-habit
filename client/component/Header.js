@@ -203,6 +203,17 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Feedback Data</Text>
             </TouchableOpacity>
           )}
+          {currentRoute !== "FinalReviewScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("FinalReviewScreen", {
+                  userName: userContext.userName,
+                  habitId: userContext.habitId,
+                })
+              }>
+              <Text style={styles.menuItem}>Final Review</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 

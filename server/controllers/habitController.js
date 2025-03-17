@@ -359,3 +359,47 @@ exports.saveCadence = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+exports.saveReflection = async (req, res) => {
+  console.log("Saving user reflection...");
+  try {
+    const { username, habit_id } = req.params;
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ message: "Reflection text is required" });
+    }
+
+    const habit = await Habit.findById(habit_id);
+    if (!habit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    habit.reflections.push({ text, createdAt: new Date() });
+    await habit.save();
+
+    res.status(201).json({ message: "Reflection saved!", habit });
+  } catch (error) {
+    console.error("Error saving reflection:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.getReflections = async (req, res) => {
+  try {
+    const { habit_id } = req.params;
+
+    const habit = await Habit.findById(habit_id);
+    if (!habit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    res.status(200).json({
+      habit,
+      habitEndDate: habit.habitEndDate,
+    });
+  } catch (error) {
+    console.error("Error fetching reflections:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

@@ -27,13 +27,20 @@ const HabitSchema = new mongoose.Schema(
     },
     cadenceLength: { type: Number, required: true, default: 30 },
     completed: { type: Boolean, default: false },
-    start_date: { type: Date, default: Date.now }, // Default to now
+    start_date: { type: Date, default: Date.now },
+    habitEndDate: { type: Date, required: true },
     review_due_date: {
       type: Date,
       default: function () {
         return new Date(this.start_date.getTime() + 90 * 24 * 60 * 60 * 1000);
       },
     },
+    reflections: [
+      {
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -48,7 +55,6 @@ HabitSchema.pre("save", async function (next) {
 
   this.cadenceLength = cadenceMapping[this.cadence] || 30;
 
-  // Prevent user from creating a new habit if an incomplete habit exists
   if (!this.completed) {
     const existingHabit = await Habit.findOne({
       userId: this.userId,

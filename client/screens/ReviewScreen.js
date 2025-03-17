@@ -196,8 +196,9 @@ export default function ReviewScreen() {
           lastNameContext: user.lastName || "",
           profilePicContext: user.profilePic || "",
           emailContext: user.email || "",
-          habitsContext: habitsArray,
+          habitsContext: habitsArray || [],
           descriptionContextInput: habitData.habits[0].description,
+          habitEndDate: habitData.habits[0]?.habitEndDate || null, // ✅ Store habitEndDate
           teamMembersContext: teamMembersArray,
         };
         console.log("Updated UserContext:", newContext);

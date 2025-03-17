@@ -1,7 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { Platform } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const UserContext = createContext();
 
@@ -15,6 +14,7 @@ const defaultUserState = {
   habitContextId: "",
   habitContextInput: "",
   descriptionContextInput: "",
+  habitEndDate: "",
   teamMemberContextId: "",
   teamMemberContextFirstName: "",
   teamMemberContextProfilePic: "",
@@ -23,33 +23,11 @@ const defaultUserState = {
 
 export const UserProvider = ({ children }) => {
   const [userContext, setUserContext] = useState(defaultUserState);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // No async storage = No initial loading state
 
-  const loadUserInfo = useCallback(async () => {
-    try {
-      const storedData = await AsyncStorage.multiGet(
-        Object.keys(defaultUserState)
-      );
-      const userInfo = Object.fromEntries(
-        storedData.map(([key, value]) => [
-          key,
-          value ? JSON.parse(value) : defaultUserState[key],
-        ])
-      );
-
-      let storedToken =
-        Platform.OS !== "web" ? await SecureStore.getItemAsync("token") : null;
-
-      setUserContext({
-        ...defaultUserState,
-        ...userInfo,
-        token: storedToken ?? "",
-      });
-    } catch (error) {
-      console.error("Error retrieving user context:", error);
-    } finally {
-      setLoading(false);
-    }
+  // No longer loading user context from AsyncStorage
+  useEffect(() => {
+    console.log("🚀 User context initialized in memory only (not persisted)");
   }, []);
 
   useEffect(() => {
@@ -57,15 +35,9 @@ export const UserProvider = ({ children }) => {
       if (!userContext || !userContext.userIdContext) return;
 
       try {
-        console.log("User Context: ", userContext);
+        console.log("User Context Updated: ", userContext);
 
-        await AsyncStorage.multiSet(
-          Object.entries(userContext).map(([key, value]) => [
-            key,
-            JSON.stringify(value !== null ? value : ""),
-          ])
-        );
-
+        // ✅ Save token securely on mobile (optional)
         if (Platform.OS !== "web") {
           if (userContext.token) {
             await SecureStore.setItemAsync("token", userContext.token);
@@ -74,12 +46,12 @@ export const UserProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error("Error saving user context:", error);
+        console.error("Error saving user token:", error);
       }
     };
 
-    if (!loading) saveUserInfo();
-  }, [userContext, loading]);
+    saveUserInfo();
+  }, [userContext]);
 
   const resetUserContext = useCallback(async (caller = "Unknown") => {
     if (
@@ -100,7 +72,6 @@ export const UserProvider = ({ children }) => {
     console.log(`✅ resetUserContext allowed: called by ${caller}`);
 
     try {
-      await AsyncStorage.clear();
       if (Platform.OS !== "web") await SecureStore.deleteItemAsync("token");
       setUserContext({ ...defaultUserState });
     } catch (error) {
@@ -108,14 +79,10 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    loadUserInfo();
-  }, [loadUserInfo]);
-
   return (
     <UserContext.Provider
       value={{ userContext, setUserContext, resetUserContext }}>
-      {!loading && children}
+      {children}
     </UserContext.Provider>
   );
 };

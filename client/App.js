@@ -38,6 +38,7 @@ import FeedbackRequestQualitativeScreen from "./screens/FeedbackRequestQualitati
 import FeedbackDataScreen from "./screens/FeedbackDataScreen";
 import NoThankYouScreen from "./screens/NoThankYouScreen";
 import EndingCreditsScreen from "./screens/EndingCreditsScreen";
+import FinalReviewScreen from "./screens/FinalReviewScreen";
 import DefaultScreen from "./screens/DefaultScreen";
 import Header from "./component/Header";
 
@@ -180,6 +181,10 @@ export default function App() {
             <Stack.Screen
               name="NoThankYouScreen"
               component={NoThankYouScreen}
+            />
+            <Stack.Screen
+              name="FinalReviewScreen"
+              component={FinalReviewScreen}
             />
             <Stack.Screen name="DefaultScreen" component={DefaultScreen} />
           </Stack.Navigator>
