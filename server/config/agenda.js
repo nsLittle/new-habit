@@ -28,7 +28,9 @@ const scheduleUserReminders = async () => {
   console.log("Checking for reminders to schedule...");
 
   try {
-    const habits = await Habit.find({ "reminders.isReminderEnabled": true });
+    const habits = await Habit.find({
+      "reminders.isReminderEnabled": true,
+    }).populate("userId");
 
     for (const habit of habits) {
       const { cadence, cadenceLength, reminders, userId } = habit;

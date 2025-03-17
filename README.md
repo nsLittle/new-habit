@@ -2,7 +2,7 @@ in# Habit-App - Community-Driven Habit Formation
 
 ## 🚀 Overview
 
-**Habit-App** is a **habit formation tool** that reinforces behavior change through **community engagement**. Designed for **corporate teams**, it allows users to set personal habits and receive **real-time feedback** from their selected support network.
+**Habit-App** is a **habit formation tool** that reinforces behavior change through **community engagement**. Designed for **corporate teams**, it allows users to set personal habits and receive **feedback** from their selected support network.
 
 The application is developed for **Westwood International** and **Greg Zlevor**, with **design leadership from Image Makers and Dan Holmgren**.
 

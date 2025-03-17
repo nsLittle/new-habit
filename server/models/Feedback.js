@@ -37,6 +37,7 @@ const FeedbackSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    cadenceLength: { type: Number, required: true },
     requestSentAt: {
       type: Date,
       default: Date.now,

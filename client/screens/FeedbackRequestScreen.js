@@ -58,6 +58,8 @@ export default function FeedbackRequestScreen() {
 
   const [contactData, setContactData] = useState({ teammembers: [] });
 
+  const [isLoading, setIsLoading] = useState("");
+
   useEffect(() => {
     console.log("Fetching team membmer data");
     const fetchTeamMembersData = async () => {
@@ -144,6 +146,47 @@ export default function FeedbackRequestScreen() {
     );
   };
 
+  const activateFeedbackRequests = async () => {
+    console.log("Button clicked, triggering feedback request...");
+    setIsLoading(true);
+
+    const habitIdToSend = Array.isArray(habitContextId)
+      ? habitContextId[0]
+      : habitContextId;
+    console.log("habitContextId:", habitContextId);
+    console.log("userId:", userContext.userIdContext);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/trigger-feedback-request`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Make sure token is passed if needed
+          },
+          body: JSON.stringify({
+            habitId: habitIdToSend,
+            userId: userContext.userIdContext,
+          }),
+        }
+      );
+
+      console.log("Raw Response:", response);
+
+      const data = await response.json();
+      console.log("Response Data", data);
+      setDialogMessage("Success", data.message);
+      setShowDialog(true);
+    } catch (error) {
+      console.log("Error:", error);
+      setDialogMessage("Error", "Failed to send feedback request.");
+      setShowDialog(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
@@ -194,7 +237,7 @@ export default function FeedbackRequestScreen() {
                     {teammember._id}
                   </Text>
                   <Text style={styles.contactName}>{teammember.email}</Text>
-                  <MaterialIcons
+                  {/* <MaterialIcons
                     name="send"
                     size={24}
                     color="black"
@@ -218,13 +261,21 @@ export default function FeedbackRequestScreen() {
                       );
                       sendEmail(teammember_id, firstName, email);
                     }}
-                  />
+                  /> */}
                 </View>
               </TouchableOpacity>
             </View>
           ))}
 
           <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.sendFeedbackRequestButton}
+              onPress={activateFeedbackRequests}>
+              <Text style={styles.sendFeedbackRequestButtonText} title="Send">
+                Activate Feedback Requests
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.navigate("ReviewScreen")}>
@@ -330,7 +381,7 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  sendButton: {
+  sendFeedbackRequestButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
@@ -340,7 +391,7 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: "center",
   },
-  sendButtonText: {
+  sendFeedbackRequestButtonText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",

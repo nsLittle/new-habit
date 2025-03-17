@@ -1,57 +1,37 @@
-const cron = require("node-cron");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const { sendEmail } = require("../services/emailService");
-const { Habit } = require("../models/Habit");
+const cron = require("node-cron");
+const { connectDB, dbConnected } = require("../config/db");
+const { sendEmail } = require("./emailService");
 const { Feedback } = require("../models/Feedback");
+const { Habit } = require("../models/Habit");
 const User = require("../models/User");
 
 dotenv.config();
 
-const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/new-habit";
+console.log("✅ Feedback email scheduler is loading...");
 
-console.log("⏳ Feedback email scheduler is loading...");
-
-// ✅ Ensure MongoDB is connected before running the scheduler
-const connectToDB = async () => {
-  try {
-    if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      console.log("✅ MongoDB connected for scheduler");
-    } else {
-      console.log("🔄 MongoDB already connected");
-    }
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error);
-    process.exit(1); // Prevent scheduler from running without DB connection
-  }
-};
-
-// **Run the scheduler job**
 const runScheduler = async () => {
-  await connectToDB(); // Ensure DB is connected before executing
+  if (!dbConnected) {
+    console.log(
+      "🔄 Waiting for MongoDB connection before running scheduler..."
+    );
+    await connectDB();
+  }
 
   console.log("🔄 Running scheduled feedback email check...");
 
   try {
     const habits = await Habit.find({ completed: false });
-    console.log(`📋 Found ${habits.length} active habits`);
+    console.log(`👀 Found ${habits.length} active habits`);
 
     for (const habit of habits) {
-      console.log(`🟡 Checking habit: ${habit.habit} (User: ${habit.userId})`);
+      console.log(`👀 Checking habit: ${habit.habit} (User: ${habit.userId})`);
 
       const user = await User.findById(habit.userId);
-      if (!user) {
-        console.log(`⚠️ No user found for habit ${habit.habit}, skipping.`);
-        continue;
-      }
-
+      console.log("User: ", user);
+      if (!user || !user.email) continue;
       console.log(
-        `👤 User found: ${user.firstName} ${user.lastName}, Email: ${user.email}`
+        `👀  User: ${user.firstName} ${user.lastName}, Email: ${user.email}`
       );
 
       const today = new Date();
@@ -73,12 +53,12 @@ const runScheduler = async () => {
           });
 
           if (existingRequest) {
-            console.log(`🚫 Feedback request already exists, skipping email.`);
+            console.log(`❌  Feedback request already exists, skipping email.`);
             continue;
           }
 
-          console.log(`📧 Sending feedback request email to ${user.email}`);
-          const feedbackLink = `https://your-app.com/feedback-request/${habit._id}`;
+          console.log(`✅ Sending feedback request email to ${user.email}`);
+          const feedbackLink = `http://localhost:8081/feedback-request/${habit._id}`;
           await sendEmail(
             user.email,
             habit.habit,
@@ -106,7 +86,6 @@ const runScheduler = async () => {
   }
 };
 
-// Function to calculate feedback request dates based on habit cadence
 const getScheduleDates = (startDate, cadence) => {
   const cadenceMapping = {
     Weekly: 7,
@@ -114,7 +93,7 @@ const getScheduleDates = (startDate, cadence) => {
     Monthly: 30,
     Quarterly: 90,
   };
-  const interval = cadenceMapping[cadence] || 30; // Default to 30 days
+  const interval = cadenceMapping[cadence] || 30;
 
   let dates = [];
   let currentDate = new Date(startDate);
@@ -127,15 +106,14 @@ const getScheduleDates = (startDate, cadence) => {
   return dates;
 };
 
-// **Run scheduler every day at 9 AM**
 cron.schedule("0 9 * * *", async () => {
   await runScheduler();
 });
 
-console.log("✅ Scheduler is now integrated into the main app.");
-module.exports = runScheduler; // Export function for controlled execution
+console.log("✅ Scheduler integrated into main app...");
+module.exports = runScheduler;
 
 (async () => {
-  console.log("🚀 Manually triggering scheduler for testing...");
+  console.log("✅ Manually triggering scheduler for testing...");
   await runScheduler();
 })();

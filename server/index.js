@@ -11,16 +11,9 @@ console.log("BASE_URL:", process.env.BASE_URL);
 const express = require("express");
 const cors = require("cors");
 
-const connectDB = require("./config/db");
-connectDB().then(() => {
-  console.log("✅ MongoDB connected. Starting the server...");
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+const { connectDB } = require("./config/db");
 
-    const runScheduler = require("./services/scheduler");
-    runScheduler();
-  });
-});
+const runScheduler = require("./services/scheduler");
 
 const app = express();
 
@@ -31,15 +24,13 @@ if (!process.env.PORT) {
   process.exit(1);
 }
 
-const PORT = process.env.PORT; // No fallback port
+const PORT = process.env.PORT;
 
-// ✅ Ensure MongoDB connects before running the server & scheduler
 const startServer = async () => {
   try {
-    await connectDB(); // Connect to MongoDB
+    await connectDB();
     console.log("✅ MongoDB connected successfully");
 
-    // ✅ Run the scheduler **only after** MongoDB is connected
     require("./services/scheduler");
 
     app.options("*", cors());
@@ -83,7 +74,9 @@ const startServer = async () => {
     const reminderRoutes = require("./routes/reminderRoutes");
     app.use("/reminders", reminderRoutes);
 
-    // Logging registered routes
+    const emailRoutes = require("./routes/emailRoutes");
+    app.use("/api/emails", emailRoutes);
+
     app._router.stack.forEach((r) => {
       if (r.route && r.route.path) {
         console.log(
@@ -94,9 +87,8 @@ const startServer = async () => {
       }
     });
 
-    // ✅ Start the server only after DB connection is successful
     app.listen(PORT, "0.0.0.0", () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`✅ Server is running on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("❌ Error starting server:", error);
@@ -104,5 +96,4 @@ const startServer = async () => {
   }
 };
 
-// ✅ Run the `startServer()` function
 startServer();

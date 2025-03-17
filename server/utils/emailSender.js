@@ -7,11 +7,9 @@ if (useSendGrid) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
-// Function to send emails
 const sendEmail = async (to, subject, text) => {
   try {
     if (useSendGrid) {
-      // Use SendGrid API
       const msg = {
         to,
         from: process.env.EMAIL_FROM, // Example: "noreply@westsood.com"
@@ -21,11 +19,10 @@ const sendEmail = async (to, subject, text) => {
       await sgMail.send(msg);
       console.log(`Email sent via SendGrid to ${to}`);
     } else {
-      // Use SMTP
       const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
-        secure: process.env.EMAIL_SECURE === "true", // Convert string to boolean
+        secure: process.env.EMAIL_SECURE === "true",
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
