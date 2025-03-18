@@ -6,17 +6,11 @@ const {
   editFeedbackThanksRating,
   editFeedbackTextRating,
   deleteFeedback,
-  triggerFeedbackRequest,
   getAggregateFeedback,
 } = require("../controllers/feedbackController");
 const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
-router.post(
-  "/:username/:habit_id/trigger-feedback-request",
-  protect,
-  triggerFeedbackRequest
-);
 router.get("/aggregate/:habit_id", protect, getAggregateFeedback);
 router.post("/:username/:habit_id/:teammemberId", protect, submitFeedback);
 router.get("/:username/:habit_id", protect, getFeedback);

@@ -52,6 +52,10 @@ const startServer = async () => {
       next();
     });
 
+    app.get("/", (req, res) => {
+      res.send("Server is running!");
+    });
+
     // API Routes
     const authRoutes = require("./routes/authRoutes");
     app.use("/auth", authRoutes);
@@ -75,7 +79,7 @@ const startServer = async () => {
     app.use("/reminders", reminderRoutes);
 
     const emailRoutes = require("./routes/emailRoutes");
-    app.use("/api/emails", emailRoutes);
+    app.use("/email", emailRoutes);
 
     app._router.stack.forEach((r) => {
       if (r.route && r.route.path) {

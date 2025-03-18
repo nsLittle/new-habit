@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+const feedbackController = require("../controllers/feedbackController");
 const { Habit } = require("../models/Habit");
 const User = require("../models/User");
-const feedbackController = require("../controllers/feedbackController");
+const sendEmail = require("../utils/emailSender");
 console.log("Habit Model:", Habit);
 
 const Feedback = require("../models/Feedback");
@@ -264,138 +265,6 @@ exports.deleteFeedback = async (req, res) => {
     res.status(200).json({ message: "Feedback deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete feedback" });
-  }
-};
-
-exports.triggerFeedbackRequest = async (req, res) => {
-  console.log("🔄 Triggering feedback request...");
-
-  try {
-    console.log("🟢 Received Request Body:", req.body);
-
-    const { habitId, userId } = req.body;
-
-    if (!habitId || !userId) {
-      return res.status(400).json({ message: "Missing habitId or userId." });
-    }
-
-    console.log(`✅ Habit ID: ${habitId}`);
-    console.log(`✅ User ID: ${userId}`);
-
-    const habit = await Habit.findById(habitId);
-    if (!habit) {
-      console.log("❌ Habit not found.");
-      return res.status(404).json({ message: "Habit not found." });
-    }
-    console.log("✅ Habit found:", habit);
-
-    const user = await User.findById(userId).populate("teamMember");
-    if (!user) {
-      console.log("❌ User not found.");
-      return res.status(404).json({ message: "User not found." });
-    }
-    console.log("✅ User found:", user);
-
-    const teamMembersList = user.teamMember;
-    if (!teamMembersList || teamMembersList.length === 0) {
-      console.log("❌ No team members found.");
-      return res.status(404).json({ message: "No team members found." });
-    }
-    console.log(`✅ Found ${teamMembersList.length} team members.`);
-
-    const getScheduleDates = (startDate, cadence) => {
-      const dates = [];
-      let currentDate = new Date(startDate);
-
-      if (cadence === "Weekly") {
-        for (let i = 0; i < 12; i++) {
-          dates.push(new Date(currentDate));
-          currentDate.setDate(currentDate.getDate() + 7);
-        }
-      } else if (cadence === "Monthly") {
-        for (let i = 0; i < 6; i++) {
-          dates.push(new Date(currentDate));
-          currentDate.setMonth(currentDate.getMonth() + 1);
-        }
-      }
-
-      return dates;
-    };
-
-    const scheduleDates = getScheduleDates(habit.start_date, habit.cadence);
-    console.log("📅 Scheduled email dates for this habit:", scheduleDates);
-
-    const today = new Date();
-    console.log("Today: ", today);
-    today.setHours(0, 0, 0, 0);
-
-    for (const teamMember of teamMembersList) {
-      console.log("Team member: ", teamMember);
-      for (const cadenceStart of scheduleDates) {
-        let cadenceEnd = new Date(cadenceStart);
-        console.log("Cadence Start: ", cadenceStart);
-
-        // Add the cadence length to the cadence end date
-        cadenceEnd.setDate(cadenceEnd.getDate() + habit.cadenceLength); // Adding cadence length to the end date
-        console.log("Cadence End after adding cadence length: ", cadenceEnd);
-        console.log("Today get Time: ", today.getTime());
-        console.log("Cadence Start getTime: ", cadenceStart.getTime());
-
-        if (today.getTime() === cadenceStart.getTime()) {
-          console.log("Today get Time: ", today.getTime());
-          console.log("Cadence Start getTime: ", cadenceStart.getTime());
-          console.log(`✅ Today matches cadence start date: ${cadenceStart}`);
-
-          const existingRequest = await Feedback.findOne({
-            habitId: habit._id,
-            teamMemberId: teamMember._id,
-            cadenceStart,
-            cadenceEnd,
-          });
-
-          if (existingRequest) {
-            console.log(
-              `🚫 Feedback request already exists for this period, skipping email.`
-            );
-            continue;
-          }
-
-          // Construct feedback link and send email
-          const feedbackLink = `http://localhost:8081/feedback-request/${habit._id}`;
-          const emailSent = await sendEmail(
-            teamMember.teamMemberEmail, // Send email to team member
-            habit.habit,
-            teamMember.teamMemberFirstName,
-            feedbackLink
-          );
-
-          console.log(`📨 Email send function returned:`, emailSent);
-
-          // Log the feedback request in the database
-          await Feedback.create({
-            habitId: habit._id,
-            teamMemberId: teamMember._id,
-            habitStartDate: habit.start_date,
-            cadenceStart,
-            cadenceEnd,
-            requestSentAt: new Date(),
-            feedbackDate: new Date(),
-            feedbackStatus: "pending",
-          });
-
-          console.log(`✅ Feedback request sent and logged.`);
-        }
-      }
-    }
-
-    return res
-      .status(200)
-      .json({ message: "Feedback request triggered successfully." });
-  } catch (error) {
-    console.error("❌ Error in triggering feedback request:", error);
-    return res
-      .status(500)
-      .json({ message: "Failed to trigger feedback request." });
   }
 };
 

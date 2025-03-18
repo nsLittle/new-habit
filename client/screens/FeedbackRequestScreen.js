@@ -155,10 +155,19 @@ export default function FeedbackRequestScreen() {
       : habitContextId;
     console.log("habitContextId:", habitContextId);
     console.log("userId:", userContext.userIdContext);
+    console.log("User Name COntext: ", userNameContext);
+    console.log("Habit Context ID: ", habitContextId);
 
     try {
+      const teamMembersData = contactData.teammembers.map((member) => ({
+        firstName: member.firstName,
+        lastName: member.lastName,
+        email: member.email,
+      }));
+      console.log("Team Members: ", teamMembersData);
+
       const response = await fetch(
-        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/trigger-feedback-request`,
+        `http://localhost:8000/email/${userNameContext}/${habitContextId}/trigger-email-request`,
         {
           method: "POST",
           headers: {
@@ -168,6 +177,7 @@ export default function FeedbackRequestScreen() {
           body: JSON.stringify({
             habitId: habitIdToSend,
             userId: userContext.userIdContext,
+            teamMembers: teamMembersData,
           }),
         }
       );
@@ -176,7 +186,11 @@ export default function FeedbackRequestScreen() {
 
       const data = await response.json();
       console.log("Response Data", data);
-      setDialogMessage("Success", data.message);
+      if (response.ok) {
+        setDialogMessage(`Success: ${data.message}`);
+      } else {
+        setDialogMessage(`Failure: ${data.message}`);
+      }
       setShowDialog(true);
     } catch (error) {
       console.log("Error:", error);
@@ -237,31 +251,6 @@ export default function FeedbackRequestScreen() {
                     {teammember._id}
                   </Text>
                   <Text style={styles.contactName}>{teammember.email}</Text>
-                  {/* <MaterialIcons
-                    name="send"
-                    size={24}
-                    color="black"
-                    style={styles.iconSend}
-                    onPress={() => {
-                      setSelectedTeamMember(teammember);
-                      console.log("Sending team member with params:", {
-                        teammember,
-                      });
-                      console.log("Selected Team Member", selectedTeamMember);
-                      const teammember_id = String(teammember.teamMember_id);
-                      const firstName = String(teammember.firstName);
-                      const email = String(teammember.email);
-                      console.log(
-                        "Sending with params of Team Member ID:",
-                        teammember_id,
-                        "firstName",
-                        firstName,
-                        "email",
-                        email
-                      );
-                      sendEmail(teammember_id, firstName, email);
-                    }}
-                  /> */}
                 </View>
               </TouchableOpacity>
             </View>

@@ -27,9 +27,9 @@ const HabitSchema = new mongoose.Schema(
     },
     cadenceLength: { type: Number, required: true, default: 30 },
     completed: { type: Boolean, default: false },
-    start_date: { type: Date, default: Date.now },
-    habitEndDate: { type: Date, required: true },
-    review_due_date: {
+    startDate: { type: Date, default: Date.now },
+    endDate: { type: Date, required: true },
+    reviewDate: {
       type: Date,
       default: function () {
         return new Date(this.start_date.getTime() + 90 * 24 * 60 * 60 * 1000);

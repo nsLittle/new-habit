@@ -28,7 +28,6 @@ const FeedbackSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    habitStartDate: { type: Date, required: true },
     cadenceStart: {
       type: Date,
       required: true,
@@ -37,12 +36,11 @@ const FeedbackSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    cadenceLength: { type: Number, required: true },
-    requestSentAt: {
+    requestSent: {
       type: Date,
       default: Date.now,
     },
-    lastReminderSentAt: {
+    lastReminderSent: {
       type: Date,
     },
     feedbackStatus: {
