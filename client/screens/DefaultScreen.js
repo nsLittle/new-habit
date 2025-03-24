@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Platform,
 } from "react-native";
+import { BASE_URL } from "../constants/config";
 
 const DATA = [...Array(50)].map((_, index) => ({
   id: index.toString(),
@@ -29,8 +30,8 @@ export default function DefaultScreen() {
           renderItem={({ item }) => <Item title={item.title} />}
           contentContainerStyle={styles.listContainer}
           scrollEnabled={true}
-          style={styles.flatList} // ✅ Forces scrolling on Web
-          showsVerticalScrollIndicator={true} // ✅ Makes scrollbar visible
+          style={styles.flatList}
+          showsVerticalScrollIndicator={true}
         />
       </View>
     </SafeAreaView>
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    overflow: Platform.OS === "web" ? "auto" : "visible", // ✅ Fixes Web scrolling
+    overflow: Platform.OS === "web" ? "auto" : "visible",
   },
   flatList: {
     flexGrow: 1,

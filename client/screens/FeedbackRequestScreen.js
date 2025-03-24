@@ -17,6 +17,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import DefaultProfiler from "../component/DefaultProfiler";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestScreen() {
@@ -70,7 +71,7 @@ export default function FeedbackRequestScreen() {
         if (!userNameContext) throw new Error("Username is missing.");
 
         const response = await fetch(
-          `http://localhost:8000/teammember/${userNameContext}`,
+          `${BASE_URL}/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,
@@ -168,7 +169,7 @@ export default function FeedbackRequestScreen() {
       console.log("Team Members: ", teamMembersData);
 
       const response = await fetch(
-        `http://localhost:8000/email/${userNameContext}/${habitContextId}/trigger-email-request`,
+        `${BASE_URL}/email/${userNameContext}/${habitContextId}/trigger-email-request`,
         {
           method: "POST",
           headers: {

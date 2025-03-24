@@ -13,6 +13,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function EndingCreditsScreen() {

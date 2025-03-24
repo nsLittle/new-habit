@@ -15,6 +15,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function AddTeammemberScreen() {
@@ -103,7 +104,7 @@ export default function AddTeammemberScreen() {
       }
 
       const response = await fetch(
-        `http://localhost:8000/teammember/${userNameContext}`,
+        `${BASE_URL}/teammember/${userNameContext}`,
         {
           method: "POST",
           headers: {

@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function LoginScreen() {
@@ -85,7 +86,7 @@ export default function LoginScreen() {
       console.log("Username: ", username);
       console.log("Password: ", password);
 
-      const response = await fetch("http://localhost:8000/auth/login", {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +124,7 @@ export default function LoginScreen() {
       }));
 
       setTimeout(() => {
-        console.log("UserContext Updated! Navigating...");
+        console.log("UserContext Updated! Navigating to ProfileScreen...");
         navigation.navigate("ProfileScreen");
       }, 200);
     } catch (error) {

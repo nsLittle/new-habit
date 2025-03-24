@@ -1,4 +1,4 @@
-import React from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Linking,
   Platform,
@@ -14,8 +14,51 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { Button, Dialog, Portal } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
+import { UserContext } from "../context/UserContext";
 
 export default function SuccessfulHabitCompletionScreen() {
+  const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
+  const {
+    userIdContext,
+    userNameContext,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
+    habitContextId,
+    habitContextInput,
+    habitContextEndDate,
+    descriptionContextInput,
+    teamMemberContextId,
+    token,
+  } = userContext || {};
+
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Habit End Date Context: ", habitContextEndDate);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
@@ -63,7 +106,7 @@ export default function SuccessfulHabitCompletionScreen() {
         <Text style={styles.bodyTitleText}>SUCCESS!!!!!</Text>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.saveButton} onPress={saveHabit}>
+          <TouchableOpacity style={styles.saveButton}>
             <Text style={styles.buttonText}>WOW</Text>
           </TouchableOpacity>
         </View>
@@ -81,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    overflow: Platform.OS === "web" ? "auto" : "visible", // ✅ Fixes Web scrolling
+    overflow: Platform.OS === "web" ? "auto" : "visible",
   },
   flatList: {
     flexGrow: 1,
@@ -98,5 +141,58 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
+  },
+  container: {
+    flexGrow: 1,
+    backgroundColor: "white",
+    paddingHorizontal: wp("5%"),
+  },
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  body: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: hp("10%"),
+    backgroundColor: "white",
+  },
+  bodyTitleText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#4CAF50",
+    marginBottom: 30,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+  },
+  saveButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "black",
+    fontWeight: "bold",
   },
 });

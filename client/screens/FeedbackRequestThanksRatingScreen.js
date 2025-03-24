@@ -13,6 +13,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestThanksRatingScreen() {
@@ -87,7 +88,7 @@ export default function FeedbackRequestThanksRatingScreen() {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
+          `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
           {
             method: "GET",
             headers: {
@@ -149,7 +150,7 @@ export default function FeedbackRequestThanksRatingScreen() {
       console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
 
       const response = await fetch(
-        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/thanks-rating`,
+        `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/thanks-rating`,
         {
           method: "PATCH",
           headers: {

@@ -170,15 +170,15 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Reminder Cadence</Text>
             </TouchableOpacity>
           )}
-          {currentRoute !== "TeamInviteScreen" && (
+          {currentRoute !== "SuccessfulHabitCompletionScreen" && (
             <TouchableOpacity
               onPress={() =>
-                navigateToScreen("TeamInviteScreen", {
+                navigateToScreen("SuccessfulHabitCompletionScreen", {
                   userName: userContext.userName,
                   habitContextId,
                 })
               }>
-              <Text style={styles.menuItem}>Team Invite</Text>
+              <Text style={styles.menuItem}>Habit Completion!</Text>
             </TouchableOpacity>
           )}
           {currentRoute !== "ReviewScreen" && (
@@ -212,6 +212,17 @@ export default function Header(props) {
                 })
               }>
               <Text style={styles.menuItem}>Final Review</Text>
+            </TouchableOpacity>
+          )}
+          {currentRoute !== "SuccessfulHabitCompletionScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("SuccessfulHabitCompletionScreen", {
+                  userName: userContext.userName,
+                  habitContextId,
+                })
+              }>
+              <Text style={styles.menuItem}>Successful Habit Completion</Text>
             </TouchableOpacity>
           )}
         </View>

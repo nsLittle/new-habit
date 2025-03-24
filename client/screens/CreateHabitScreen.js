@@ -14,6 +14,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function CreateHabitScreen() {
@@ -74,16 +75,13 @@ export default function CreateHabitScreen() {
       console.log(`Checking for existing habit...`);
 
       try {
-        const response = await fetch(
-          `http://localhost:8000/habit/${userNameContext}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           console.error("No existing habit found.");
@@ -162,22 +160,15 @@ export default function CreateHabitScreen() {
       let method;
 
       if (Array.isArray(habitContextId) && habitContextId.length === 0) {
-        url = `http://localhost:8000/habit/${userNameContext}`;
+        url = `${BASE_URL}/habit/${userNameContext}`;
         method = "POST";
       } else if (habitContextId) {
-        url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/habit`;
+        url = `${BASE_URL}/habit/${userNameContext}/${habitContextId}/habit`;
         method = "PATCH";
       } else {
-        url = `http://localhost:8000/habit/${userNameContext}`;
+        url = `${BASE_URL}/habit/${userNameContext}`;
         method = "POST";
       }
-      // if (habitContextId) {
-      //   url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}`;
-      //   method = "PATCH";
-      // } else {
-      //   url = `http://localhost:8000/habit/${userNameContext}`;
-      //   method = "POST";
-      // }
 
       console.log(`Sending ${method} request to:`, url);
 

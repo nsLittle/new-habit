@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function TeamInviteScreen() {
@@ -67,7 +68,7 @@ export default function TeamInviteScreen() {
         if (!token || !userNameContext) return;
 
         const response = await fetch(
-          `http://localhost:8000/teammember/${userNameContext}`,
+          `${BASE_URL}/teammember/${userNameContext}`,
           {
             headers: {
               "Content-Type": `application/json`,
@@ -118,7 +119,7 @@ export default function TeamInviteScreen() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/teammember/${userNameContext}/${teamMember_id}`,
+        `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`,
         {
           method: "DELETE",
           headers: {

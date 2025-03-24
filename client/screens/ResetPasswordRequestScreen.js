@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function ResetPasswordRequestScreen() {
@@ -66,7 +67,7 @@ export default function ResetPasswordRequestScreen() {
 
     try {
       const checkResponse = await fetch(
-        `http://localhost:8000/user/check-email/${email}`
+        `${BASE_URL}/user/check-email/${email}`
       );
       const checkData = await checkResponse.json();
 
@@ -76,16 +77,13 @@ export default function ResetPasswordRequestScreen() {
         return;
       }
 
-      const response = await fetch(
-        "http://localhost:8000/auth/password-reset-request",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch("${BASE_URL}/auth/password-reset-request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
       const data = await response.json();
       if (!data) {

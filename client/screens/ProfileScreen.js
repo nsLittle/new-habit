@@ -146,7 +146,7 @@ export default function ProfileScreen() {
   const profilePicUrl = isValidUrl(profilePicContext)
     ? profilePicContext
     : profilePicContext
-    ? `http://192.168.1.174:8000/data/${profilePicContext.trim()}`
+    ? `${BASE_URL}/data/${profilePicContext.trim()}`
     : "default-image-url-here";
 
   const testImage =
@@ -167,13 +167,33 @@ export default function ProfileScreen() {
     }
   };
 
+  useEffect(() => {
+    const checkFeedbacks = async () => {
+      if (!habitContextId) return;
+
+      try {
+        const response = await fetch(
+          `${BASE_URL}/feedbacks/habit/${habitContextId}`
+        );
+        const feedbacks = await response.json();
+
+        if (Array.isArray(feedbacks) && feedbacks.length > 0) {
+          console.log("Feedback found. Navigating to FeedbackDataScreen...");
+          navigation.navigate("FeedbackDataScreen");
+        } else {
+          console.log("No feedback yet. Staying on ProfileScreen.");
+        }
+      } catch (error) {
+        console.error("Error checking feedbacks:", error);
+      }
+    };
+
+    checkFeedbacks();
+  }, [habitContextId]);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        {/* <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Profile</Text>
-        </View> */}
-
         <View style={styles.profileDataBox}>
           {profilePicContext ? (
             <Image
@@ -219,12 +239,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
   bodyTitleTextSub: {
     fontSize: 18,
     textAlign: "center",

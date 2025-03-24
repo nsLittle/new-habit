@@ -16,6 +16,7 @@ import {
 import emailjs from "@emailjs/browser";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function ResetPasswordScreen() {
@@ -48,16 +49,13 @@ export default function ResetPasswordScreen() {
         return;
       }
 
-      const response = await fetch(
-        "http://localhost:8000/auth/request-password-reset",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch("${BASE_URL}/auth/request-password-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
       const data = await response.json();
       console.log("Response: ", response);

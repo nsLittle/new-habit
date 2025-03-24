@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestWelcomeScreen() {
@@ -83,27 +84,21 @@ export default function FeedbackRequestWelcomeScreen() {
         feedbackResponse,
         teamMemberResponse,
       ] = await Promise.all([
-        fetch(`http://localhost:8000/user/${userNameContext}`, {
+        fetch(`${BASE_URL}/user/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`http://localhost:8000/habit/${userNameContext}`, {
+        fetch(`${BASE_URL}/habit/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`http://localhost:8000/teammember/${userNameContext}`, {
+        fetch(`${BASE_URL}teammember/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(
-          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        ),
-        fetch(
-          `http://localhost:8000/teammember/${userNameContext}/${teammemberId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        ),
+        fetch(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`${BASE_URL}/teammember/${userNameContext}/${teammemberId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");

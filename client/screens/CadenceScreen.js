@@ -13,6 +13,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function CadenceScreen() {
@@ -67,16 +68,13 @@ export default function CadenceScreen() {
       console.log(`Checking for existing cadence...`);
 
       try {
-        const response = await fetch(
-          `http://localhost:8000/habit/${userNameContext}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           console.error("No existing habit found.");
@@ -128,7 +126,7 @@ export default function CadenceScreen() {
     try {
       console.log("Saving cadence...");
       const response = await fetch(
-        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/cadence`,
+        `${BASE_URL}/habit/${userNameContext}/${habitContextId}/cadence`,
         {
           method: "PATCH",
           headers: {

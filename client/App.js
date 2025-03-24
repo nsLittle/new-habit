@@ -204,5 +204,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 24,
     marginBottom: 30,
+    justifyContent: "center",
+    textAlign: "center",
   },
 });

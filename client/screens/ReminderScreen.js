@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function ReminderScreen() {
@@ -167,16 +168,13 @@ export default function ReminderScreen() {
       console.log(`Fetching existing reminder for ${userNameContext}...`);
 
       try {
-        const response = await fetch(
-          `http://localhost:8000/habit/${userNameContext}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           console.error("No existing reminder found.");
@@ -291,7 +289,7 @@ export default function ReminderScreen() {
       );
 
       const response = await fetch(
-        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/reminder`,
+        `${BASE_URL}/habit/${userNameContext}/${habitContextId}/reminder`,
         {
           method: "PATCH",
           headers: {

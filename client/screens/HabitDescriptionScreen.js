@@ -14,6 +14,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function HabitDescriptionScreen() {
@@ -61,20 +62,15 @@ export default function HabitDescriptionScreen() {
       console.log(`Checking for existing description...`);
 
       try {
-        console.log(
-          `Fetching URL: http://localhost:8000/habit/${userNameContext}`
-        );
+        console.log(`Fetching URL: ${BASE_URL}/habit/${userNameContext}`);
 
-        const response = await fetch(
-          `http://localhost:8000/habit/${userNameContext}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           console.error("No existing habit found.");
@@ -155,11 +151,11 @@ export default function HabitDescriptionScreen() {
 
     try {
       let response;
-      let url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/description`;
+      let url = `${BASE_URL}/habit/${userNameContext}/${habitContextId}/description`;
       let method = "PATCH";
 
       if (habitContextId) {
-        url = `http://localhost:8000/habit/${userNameContext}/${habitContextId}/description`;
+        url = `${BASE_URL}/habit/${userNameContext}/${habitContextId}/description`;
         method = "PATCH";
       }
 

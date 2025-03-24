@@ -14,6 +14,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestRatingScreen() {
@@ -91,7 +92,7 @@ export default function FeedbackRequestRatingScreen() {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
+          `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
           {
             method: "GET",
             headers: {
@@ -149,12 +150,12 @@ export default function FeedbackRequestRatingScreen() {
       }
 
       console.log("✅ Using Team Member Id:", teammemberId);
-      const url = `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/${teammemberId}`;
+      const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`;
 
       console.log("Fetching from: ", url);
 
       const response = await fetch(
-        `http://localhost:8000/feedback/${userNameContext}/${habitContextId}/${teammemberId}`,
+        `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`,
 
         {
           method: "POST",

@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function EditTeammemberScreen() {
@@ -105,11 +106,11 @@ export default function EditTeammemberScreen() {
       if (!token) throw new Error("Authentication token is missing.");
 
       console.log("Team Member Id: ", teamMember_id);
-      const routeCheck = `http://localhost:8000/teammember/${userNameContext}/${teamMember_id}`;
+      const routeCheck = `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`;
       console.log("Route Check: ", routeCheck);
 
       const response = await fetch(
-        `http://localhost:8000/teammember/${userNameContext}/${teamMember_id}`,
+        `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`,
         {
           method: "PATCH",
           headers: {

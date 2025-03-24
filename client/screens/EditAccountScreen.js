@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function EditAccountScreen() {
@@ -106,17 +107,14 @@ export default function EditAccountScreen() {
 
       if (!token) throw new Error("Authentication token is missing.");
 
-      const response = await fetch(
-        `http://localhost:8000/user/${userNameContext}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updates),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/user/${userNameContext}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      });
 
       const data = await response.json();
       console.log("Edit Response:", data);

@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function CreateAccountScreen() {
@@ -83,15 +84,12 @@ export default function CreateAccountScreen() {
       console.log("Checking for duplicate username...");
       console.log("Username: ", username);
 
-      const response = await fetch(
-        `http://localhost:8000/user/check/${username}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/user/check/${username}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
       console.log("Data: ", data);
@@ -171,7 +169,7 @@ export default function CreateAccountScreen() {
     console.log("Sending signup request:", JSON.stringify(userData));
 
     try {
-      const response = await fetch("http://localhost:8000/auth/signup", {
+      const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

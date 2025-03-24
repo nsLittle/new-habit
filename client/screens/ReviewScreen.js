@@ -16,6 +16,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import DefaultProfiler from "../component/DefaultProfiler";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function ReviewScreen() {
@@ -97,16 +98,13 @@ export default function ReviewScreen() {
       console.log("Sending Request with Token:", token);
 
       try {
-        const response = await fetch(
-          `http://localhost:8000/user/${userNameContext}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${BASE_URL}/user/${userNameContext}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -135,13 +133,13 @@ export default function ReviewScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://localhost:8000/user/${userNameContext}`, {
+          fetch(`${BASE_URL}/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:8000/habit/${userNameContext}`, {
+          fetch(`${BASE_URL}/habit/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:8000/teammember/${userNameContext}`, {
+          fetch(`${BASE_URL}/teammember/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -254,7 +252,7 @@ export default function ReviewScreen() {
   const profilePicUrl = isValidUrl(profilePic)
     ? profilePic
     : profilePic
-    ? `http://localhost:8000/data/${profilePic.trim()}`
+    ? `${BASE_URL}/data/${profilePic.trim()}`
     : "default-image-url-here";
 
   const testImage =

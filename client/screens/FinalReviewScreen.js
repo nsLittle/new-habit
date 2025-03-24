@@ -15,6 +15,7 @@ import {
 } from "react-native-responsive-screen";
 import { Button, Dialog, Portal } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function FinalReviewScreen() {
@@ -54,6 +55,38 @@ export default function FinalReviewScreen() {
     }
   }, [userContext]);
 
+  const [habitMetaData, setHabitMetaData] = useState(null);
+
+  console.log(
+    "Fetching habit metadata with URL:",
+    `${BASE_URL}/habit/${userNameContext}/${habitContextId}`
+  );
+  console.log("Token:", token);
+
+  useEffect(() => {
+    const fetchHabitMetaData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch habit metadata.");
+        const data = await response.json();
+        console.log("Habit metadata:", data);
+        setHabitMetaData(data);
+      } catch (error) {
+        console.error("Error fetching habit metadata:", error);
+        if (error.response) {
+          console.error("Server response:", await error.response.text());
+        }
+      }
+    };
+
+    if (userNameContext && habitContextId && token) {
+      fetchHabitMetaData();
+    }
+  }, [userNameContext, habitContextId, token]);
+
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [dialogAction, setDialogAction] = useState(null);
@@ -61,22 +94,6 @@ export default function FinalReviewScreen() {
   const [feedbackData, setFeedbackData] = useState([]);
   const [reflection, setReflection] = useState("");
   const [isLastDay, setIsLastDay] = useState(false);
-
-  useEffect(() => {
-    if (habitContextEndDate) {
-      const today = new Date().toISOString().split("T")[0];
-      console.log("Today's Date:", today);
-      console.log("Habit End Date:", habitContextEndDate);
-      const convertedHabitContextEndDate = new Date(habitContextEndDate)
-        .toISOString()
-        .split("T")[0];
-      console.log("Converted Habit End Date: ", convertedHabitContextEndDate);
-
-      setIsLastDay(today >= convertedHabitContextEndDate);
-    }
-  }, [habitContextEndDate]);
-
-  console.log("Habit End Date from UserContext:", habitContextEndDate);
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
@@ -89,7 +106,7 @@ export default function FinalReviewScreen() {
           habitContextId
         );
         const response = await fetch(
-          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
+          `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -104,6 +121,31 @@ export default function FinalReviewScreen() {
 
     if (isLastDay && userNameContext) fetchFeedbackData();
   }, [isLastDay, userNameContext]);
+
+  useEffect(() => {
+    if (!habitMetaData) {
+      console.warn("Skipping useEffect due to missing habitMetaData values.");
+      return;
+    }
+
+    const { startDate, habitLength } = habitMetaData.habits[0] || {};
+    const today = new Date();
+
+    const feedbackUnlockDate = new Date(startDate);
+    feedbackUnlockDate.setDate(feedbackUnlockDate.getDate() + habitLength);
+
+    console.log("Today:", today);
+    console.log("Feedback unlock date:", feedbackUnlockDate);
+
+    setIsLastDay(today >= feedbackUnlockDate);
+    console.log("isLastDay:", today >= feedbackUnlockDate);
+    // Prepopulate reflection from the latest one if it exists
+    const latestReflection =
+      habitMetaData.habits[0]?.reflections?.slice(-1)[0]?.text;
+    if (latestReflection) {
+      setReflection(latestReflection);
+    }
+  }, [habitMetaData]);
 
   const processFeedback = () => {
     if (!feedbackData.length) return null;
@@ -139,7 +181,7 @@ export default function FinalReviewScreen() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/save-reflection`,
+        `${BASE_URL}/habit/${userNameContext}/${habitContextId}/save-reflection`,
         {
           method: "POST",
           headers: {
@@ -174,7 +216,7 @@ export default function FinalReviewScreen() {
   const updateHabitCycle = async (markComplete) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/complete-cycle`,
+        `${BASE_URL}/habit/${userNameContext}/${habitContextId}/complete-cycle`,
         {
           method: "POST",
           headers: {
@@ -185,38 +227,26 @@ export default function FinalReviewScreen() {
         }
       );
 
-      console.log("Response: ", response);
       const data = await response.json();
-      console.log("Data: ", data);
+      console.log("Cycle update response:", data);
 
-      if (!response) throw new Error("Failed to update habit cycle.");
-      const updatedHabit = await response.json();
+      if (!response.ok) throw new Error("Failed to update habit cycle.");
 
-      if (data) {
-        console.log("Successful habit completion!");
+      if (markComplete) {
+        // ✅ User is done with this habit
         navigation.navigate("SuccessfulHabitCompletionScreen");
       } else {
-        if (updatedHabit.currentCycle >= 3) {
-          setDialogMessage(
-            "Cycle Limit Reached",
-            "You have completed all habit cycles."
-          );
-          setShowDialog(true);
-          navigation.navigate("SuccessfulHabitCompletionScreen");
-        } else {
-          setDialogMessage("Habit Extended", "Your habit has been extended.");
-          setShowDialog(true);
-          navigation.goBack();
-        }
+        // 🔁 User wants to repeat the habit
+        navigation.navigate("CreateHabitScreen");
       }
     } catch (error) {
       console.error("Error updating habit cycle:", error);
-      setDialogMessage("Error", "Could not update habit cycle.");
+      setDialogMessage("Something went wrong updating the habit cycle.");
       setShowDialog(true);
     }
   };
 
-  return isLastDay ? (
+  return (
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
         <Dialog
@@ -258,39 +288,6 @@ export default function FinalReviewScreen() {
 
       <View style={styles.body}>
         <Text style={styles.title}>Final Review</Text>
-        <Text style={styles.subtitle}>{habitContextInput}</Text>
-        <Text style={styles.description}>{descriptionContextInput}</Text>
-
-        {feedbackSummary ? (
-          <View style={styles.feedbackSection}>
-            <Text style={styles.header}>Feedback Summary</Text>
-            <Text>Average Rating: {feedbackSummary.avgRating}</Text>
-
-            <Text style={styles.subHeader}>Best Feedback:</Text>
-            {feedbackSummary.bestFeedback.length ? (
-              feedbackSummary.bestFeedback.map((text, index) => (
-                <Text key={index} style={styles.feedbackText}>
-                  - {text}
-                </Text>
-              ))
-            ) : (
-              <Text>No positive feedback recorded.</Text>
-            )}
-
-            <Text style={styles.subHeader}>Areas for Improvement:</Text>
-            {feedbackSummary.worstFeedback.length ? (
-              feedbackSummary.worstFeedback.map((text, index) => (
-                <Text key={index} style={styles.feedbackText}>
-                  - {text}
-                </Text>
-              ))
-            ) : (
-              <Text>No critical feedback recorded.</Text>
-            )}
-          </View>
-        ) : (
-          <Text>No feedback available.</Text>
-        )}
 
         <Text style={styles.subHeader}>Your Reflection:</Text>
         <TextInput
@@ -308,7 +305,7 @@ export default function FinalReviewScreen() {
         </View>
       </View>
     </ScrollView>
-  ) : null;
+  );
 }
 
 const styles = StyleSheet.create({
