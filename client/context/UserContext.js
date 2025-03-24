@@ -14,7 +14,7 @@ const defaultUserState = {
   habitContextId: "",
   habitContextInput: "",
   descriptionContextInput: "",
-  habitEndDate: "",
+  endDate: "",
   teamMemberContextId: "",
   teamMemberContextFirstName: "",
   teamMemberContextProfilePic: "",
@@ -23,9 +23,8 @@ const defaultUserState = {
 
 export const UserProvider = ({ children }) => {
   const [userContext, setUserContext] = useState(defaultUserState);
-  const [loading, setLoading] = useState(false); // No async storage = No initial loading state
+  const [loading, setLoading] = useState(false);
 
-  // No longer loading user context from AsyncStorage
   useEffect(() => {
     console.log("🚀 User context initialized in memory only (not persisted)");
   }, []);

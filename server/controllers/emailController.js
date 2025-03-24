@@ -2,7 +2,6 @@ const Emails = require("../models/Email");
 const sendgrid = require("@sendgrid/mail");
 const sendEmail = require("../utils/emailSender");
 
-// Ensure SendGrid API key is set
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.getScheduledEmails = async (req, res) => {
@@ -28,27 +27,35 @@ exports.triggerEmailRequest = async (req, res) => {
     for (const member of teamMembers) {
       const { firstName, lastName, email } = member;
 
-      const recipientEmail = `${email}`; // Replace with member.email when available
+      const recipientEmail = email;
       const subject = `Feedback Request for Habit ${habit_id}`;
       const body = `Hi ${firstName} ${lastName},\n\n
-      ${username} is working on their habit and would love to get your feedback!\n
-      Click the link below to provide your thoughts:\n
-      http://localhost:8081/FeedbackRequestWelcomeScreen\n\n
-      Thank you!\nYour Habit Formation Team`;
+${username} is working on their habit and would love to get your feedback!\n
+Click the link below to provide your thoughts:\n
+http://localhost:8081/FeedbackRequestWelcomeScreen\n\n
+Thank you!\nYour Habit Formation Team`;
 
       const msg = {
         to: recipientEmail,
-        from: "notsolittle88@gmail.com", // Must be a verified SendGrid sender
-        subject: subject,
+        from: "notsolittle88@gmail.com",
+        subject,
         text: body,
       };
 
       try {
         await sendgrid.send(msg);
-        console.log(`Email sent successfully to ${firstName} ${lastName}`);
+        console.log(`✅ Email sent to ${firstName} ${lastName}`);
+
+        await Emails.create({
+          recipient: recipientEmail,
+          subject,
+          body,
+          sendAt: new Date(),
+          status: "sent",
+        });
       } catch (error) {
         console.error(
-          `Error sending email to ${firstName} ${lastName}:`,
+          `❌ Error sending email to ${firstName} ${lastName}:`,
           error.response?.body?.errors || error
         );
         failedEmails.push({ firstName, lastName, error: error.response?.body });
@@ -62,7 +69,7 @@ exports.triggerEmailRequest = async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       message: "Feedback requests sent successfully to all team members",
     });
   } catch (err) {

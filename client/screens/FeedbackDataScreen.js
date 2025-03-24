@@ -1,12 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Platform,
-} from "react-native";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -17,140 +10,115 @@ import { UserContext } from "../context/UserContext";
 export default function FeedbackDataScreen() {
   const navigation = useNavigation();
   const { userContext } = useContext(UserContext) || {};
-  const {
-    userNameContext,
-    token,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-  } = userContext || {};
+  const { userNameContext, token, habitContextId } = userContext || {};
 
   const [feedbackData, setFeedbackData] = useState([]);
-  const [teammemberData, setTeammemberData] = useState([]);
-
-  const [habitEndDate, setHabitEndDate] = useState(null);
-  const [isLastDay, setIsLastDay] = useState(false);
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
       if (!token) return;
       try {
-        const [feedbackResponse, teammemberResponse] = await Promise.all([
-          fetch(
-            `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          ),
-          fetch(`http://localhost:8000/teammember/${userNameContext}`, {
+        const response = await fetch(
+          `http://localhost:8000/feedback/${userNameContext}/${habitContextId}`,
+          {
             headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+          }
+        );
 
-        if (!feedbackResponse.ok)
-          throw new Error("Failed to fetch feedback data.");
-        const feedbackJson = await feedbackResponse.json();
-        setFeedbackData(feedbackJson.feedback || []);
-
-        if (!teammemberResponse.ok)
-          throw new Error("Failed to fetch team member data.");
-        const teammemberJson = await teammemberResponse.json();
-        setTeammemberData(teammemberJson.teamMembers || []);
+        if (!response.ok) throw new Error("Failed to fetch feedback data.");
+        const data = await response.json();
+        setFeedbackData(data.feedback || []);
       } catch (error) {
-        console.error("Error with data retrieval:", error);
+        console.error("Error fetching feedback data:", error);
       }
     };
 
     if (userNameContext) fetchFeedbackData();
   }, [userNameContext]);
 
+  const getOrdinalSuffix = (n) => {
+    const j = n % 10,
+      k = n % 100;
+    if (j === 1 && k !== 11) return `${n}st`;
+    if (j === 2 && k !== 12) return `${n}nd`;
+    if (j === 3 && k !== 13) return `${n}rd`;
+    return `${n}th`;
+  };
+
   const processFeedback = () => {
-    const periods = {};
+    if (!feedbackData.length) return [];
 
-    feedbackData.forEach((feedback) => {
-      const periodKey = new Date(feedback.feedbackDate)
-        .toISOString()
-        .slice(0, 10);
-      if (!periods[periodKey])
-        periods[periodKey] = { ratings: [], thanksRatings: [], texts: [] };
-
-      periods[periodKey].ratings.push(feedback.feedbackRating);
-      periods[periodKey].thanksRatings.push(feedback.feedbackThanksRating);
-      periods[periodKey].texts.push(feedback.feedbackText);
+    const grouped = {};
+    feedbackData.forEach((fb) => {
+      const key = `${fb.cadenceStart}-${fb.cadenceEnd}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          feedbacks: [],
+          ratingTotal: 0,
+          thanksTotal: 0,
+          cadenceStart: new Date(fb.cadenceStart),
+          cadenceEnd: new Date(fb.cadenceEnd),
+        };
+      }
+      grouped[key].feedbacks.push(fb);
+      grouped[key].ratingTotal += fb.rating;
+      grouped[key].thanksTotal += fb.thanksRating;
     });
 
-    const sortedKeys = Object.keys(periods).sort();
+    const sortedGroups = Object.values(grouped).sort(
+      (a, b) => a.cadenceStart - b.cadenceStart
+    );
 
-    return sortedKeys.map((key, index) => {
-      const avgRating = (
-        periods[key].ratings.reduce((a, b) => a + b, 0) /
-        periods[key].ratings.length
-      ).toFixed(1);
+    return sortedGroups.map((group, index) => {
+      const count = group.feedbacks.length;
+      const averageRating = (group.ratingTotal / count).toFixed(1);
+      const averageThanksRating = (group.thanksTotal / count).toFixed(1);
 
-      const avgThanks = (
-        periods[key].thanksRatings.reduce((a, b) => a + b, 0) /
-        periods[key].thanksRatings.length
-      ).toFixed(1);
-
-      // Fix: Instead of referencing 'processed', use sortedKeys[index - 1] safely
-      const prevKey = sortedKeys[index - 1];
-      const prevRating = prevKey
-        ? parseFloat(
-            periods[prevKey].ratings.reduce((a, b) => a + b, 0) /
-              periods[prevKey].ratings.length
-          )
-        : null;
-
-      const trendIcon =
-        index === 0
-          ? "➖"
-          : avgRating > prevRating
-          ? "✅"
-          : avgRating < prevRating
-          ? "🆘"
-          : "⚖️";
+      const start = group.cadenceStart.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
+      const end = group.cadenceEnd.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      const cycle = getOrdinalSuffix(index + 1);
 
       return {
-        period: key,
-        avgRating,
-        avgThanks,
-        trendIcon,
-        texts: periods[key].texts,
+        dateRange: `${start} – ${end} (${cycle} set of feedbacks)`,
+        averageRating,
+        averageThanksRating,
+        feedbackTexts: group.feedbacks.map((fb) => fb.text),
       };
     });
   };
 
-  const processed = processFeedback();
+  const processedFeedback = processFeedback();
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      style={{ flex: 1 }}
-      showsVerticalScrollIndicator={true}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
       <View style={styles.body}>
         <Text style={styles.title}>Feedback Data</Text>
-        {/* <Text style={styles.subtitle}>{habitContextInput}</Text>
-        <Text style={styles.subtitle}>{descriptionContextInput}</Text> */}
-
-        {processed.length === 0 ? (
-          <Text>No feedback available.</Text>
-        ) : (
-          processed.map(
-            ({ period, avgRating, avgThanks, trendIcon, texts }) => (
-              <View key={period} style={styles.feedbackPeriod}>
-                <Text style={styles.feedbackHeader}>
-                  {period} {trendIcon}
+        {processedFeedback.length ? (
+          processedFeedback.map((entry, idx) => (
+            <View key={idx} style={styles.feedbackPeriod}>
+              <Text style={styles.feedbackHeader}>{entry.dateRange}</Text>
+              <Text style={styles.prominentMetric}>
+                Avg Rating: {entry.averageRating}
+              </Text>
+              <Text style={styles.prominentMetric}>
+                Avg Thanks: {entry.averageThanksRating}
+              </Text>
+              {entry.feedbackTexts.map((text, i) => (
+                <Text key={i} style={styles.feedbackText}>
+                  "{text}"
                 </Text>
-                <Text>Average Rating: {avgRating}</Text>
-                <Text>Average Thanks Rating: {avgThanks}</Text>
-                {texts.map((text, i) => (
-                  <Text key={i} style={styles.feedbackText}>
-                    - {text}
-                  </Text>
-                ))}
-              </View>
-            )
-          )
+              ))}
+            </View>
+          ))
+        ) : (
+          <Text>No feedback available.</Text>
         )}
       </View>
     </ScrollView>
@@ -164,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     backgroundColor: "white",
-    paddingTop: 250,
+    paddingTop: 100,
   },
   title: {
     fontSize: 26,
@@ -172,14 +140,29 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontWeight: "bold",
   },
-  subtitle: { fontSize: 16, textAlign: "center", paddingBottom: 5 },
   feedbackPeriod: {
     marginTop: 20,
     padding: 10,
     borderWidth: 1,
     borderRadius: 5,
     width: "90%",
+    borderColor: "#ccc",
+    backgroundColor: "#f9f9f9",
   },
-  feedbackHeader: { fontSize: 18, fontWeight: "bold" },
-  feedbackText: { marginLeft: 10, fontStyle: "italic" },
+  feedbackHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  prominentMetric: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 5,
+    color: "#4B0082",
+  },
+  feedbackText: {
+    textAlign: "center",
+    fontStyle: "italic",
+    marginVertical: 3,
+  },
 });

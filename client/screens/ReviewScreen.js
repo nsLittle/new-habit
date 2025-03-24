@@ -15,6 +15,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import DefaultProfiler from "../component/DefaultProfiler";
 import { UserContext } from "../context/UserContext";
 
 export default function ReviewScreen() {
@@ -25,6 +26,7 @@ export default function ReviewScreen() {
   console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
+  const { lastFeedbackRequestDateContext } = userContext || {};
   const {
     userIdContext,
     userNameContext,
@@ -57,6 +59,8 @@ export default function ReviewScreen() {
   }, [userContext]);
 
   const [userData, setUserData] = useState("");
+
+  const [validImage, setValidImage] = useState(true);
 
   const [profileData, setProfileData] = useState({
     firstname: "",
@@ -152,54 +156,65 @@ export default function ReviewScreen() {
       const teamMemberData = await teamMemberResponse.json();
 
       console.log("User Data: ", userData);
+      console.log("Habit Data:", habitData);
+      console.log("Team Memeber Data: ", teamMemberData);
+      // console.log("✅ END DATE: ", habitData.habits[0].endDate);
 
-      const user =
-        Array.isArray(userData) && userData.length > 0 ? userData[0] : {};
-
-      const habitsArray = Array.isArray(habitData.habits)
-        ? habitData.habits
-        : [];
-
-      const teamMembersArray = Array.isArray(teamMemberData.teamMembers)
-        ? teamMemberData.teamMembers
-        : [];
-
-      console.log("Habit Data: ", habitData);
-      console.log(
-        "Habit Data - Description Input: ",
-        habitData.habits[0].description
+      const incompleteHabits = habitData.habits.filter(
+        (habit) => !habit.completed
       );
-      console.log("Team Member Data: ", teamMemberData);
+
+      console.log("🟡 Incomplete Habits:", incompleteHabits);
+      console.log("Incomplete Cadence: ", incompleteHabits[0].cadence);
+      console.log(
+        "Incomplete Reminders Day: ",
+        incompleteHabits[0].reminders.selectedDays
+      );
+      console.log(
+        "Incomplete Reminders: ",
+        incompleteHabits[0].reminders.selectedTime
+      );
 
       setProfileData({
-        firstname: user.firstName || "",
-        lastName: user.lastName || "",
-        profilePic: user.profilePic || "",
-        email: user.email || "",
-        habits: habitsArray,
-        teammembers: teamMembersArray,
+        username: userData[0].username,
+        userId: userData[0]._id,
+        firstName: userData[0].firstName,
+        lastName: userData[0].lastName,
+        email: userData[0].email,
+        profilePic: userData[0].profilePic,
+        habits: incompleteHabits,
+        teammembers: Array.isArray(teamMemberData.teamMembers)
+          ? teamMemberData.teamMembers
+          : [],
       });
 
       console.log("Updated Profile Data:", {
-        firstname: user.firstName || "",
-        lastName: user.lastName || "",
-        profilePic: user.profilePic || "",
-        email: user.email || "",
-        habits: habitsArray,
-        teammembers: teamMembersArray,
+        firstname: userData[0]?.firstName || "",
+        lastName: userData[0]?.lastName || "",
+        profilePic: userData[0]?.profilePic || "",
+        email: userData[0]?.email || "",
+        habits: incompleteHabits,
+        habitsId: incompleteHabits[0]._id,
+        habitsInput: incompleteHabits[0].habit,
+        habitsDescription: incompleteHabits[0].description,
+        teammembers: teamMemberData.teamMembers || [],
       });
 
       setUserContext((prev) => {
         const newContext = {
           ...prev,
-          firstNameContext: user.firstName || "",
-          lastNameContext: user.lastName || "",
-          profilePicContext: user.profilePic || "",
-          emailContext: user.email || "",
-          habitsContext: habitsArray || [],
-          descriptionContextInput: habitData.habits[0].description,
-          habitEndDate: habitData.habits[0]?.habitEndDate || null, // ✅ Store habitEndDate
-          teamMembersContext: teamMembersArray,
+          userNameContext: userData[0].username,
+          userIdContext: userData[0]._id,
+          firstNameContext: userData[0].firstName,
+          lastNameContext: userData[0].lastName,
+          emailContext: userData[0].email,
+          profilePicContext: userData[0].profilePic,
+
+          habitContextInput: incompleteHabits[0].habit,
+          descriptionContextInput: incompleteHabits[0].description,
+          habitContextId: incompleteHabits[0]._id,
+          habitContextEndDate: incompleteHabits[0].endDate,
+          teammembers: teamMemberData.teamMembers || [],
         };
         console.log("Updated UserContext:", newContext);
         return newContext;
@@ -223,13 +238,18 @@ export default function ReviewScreen() {
     }
   }, [userNameContext]);
 
-  const { firstname, lastName, profilePic, email, habits, teammembers } =
-    profileData;
+  const {
+    firstname,
+    lastName,
+    username,
+    userId,
+    profilePic,
+    email,
+    habits,
+    teammembers,
+  } = profileData;
 
-  console.log("Profile Data: ", profileData);
-  console.log("Habits: ", habits);
-
-  console.log("ProfilePic: ", profileData.profilePic);
+  console.log("ProfilePic: ", profileData.profilePicContext);
 
   const profilePicUrl = isValidUrl(profilePic)
     ? profilePic
@@ -264,19 +284,20 @@ export default function ReviewScreen() {
 
         <View style={styles.reviewBox}>
           <View style={styles.reviewHabit}>
-            {Array.isArray(habits) && habits.length > 0 ? (
-              habits.map((habit) => (
+            {Array.isArray(profileData.habits) &&
+            profileData.habits.length > 0 ? (
+              profileData.habits.map((habit) => (
                 <View key={habit._id} style={styles.sectionTitle}>
                   <View style={styles.habitBox}>
                     <Text style={styles.sectionTitle}>Your Habit:</Text>
                     <Text style={styles.habitData}>
-                      {habit.habit || "No Habit Available"}
+                      {habitContextInput || "No Habit Available"}
                     </Text>
                     <Text style={styles.sectionTitle}>
                       What that looks like:
                     </Text>
                     <Text style={styles.habitData}>
-                      {habit.description || "No Description Available"}
+                      {descriptionContextInput || "No Description Available"}
                     </Text>
                   </View>
                 </View>
@@ -342,26 +363,16 @@ export default function ReviewScreen() {
           <View style={styles.teamMemberDataBox}>
             <Text style={styles.sectionTitle}>Your feedback circle:</Text>
 
-            {Array.isArray(teammembers) && teammembers.length > 0 ? (
-              teammembers.map((teammember) => (
+            {profileData.teammembers && profileData.teammembers.length > 0 ? (
+              profileData.teammembers.map((teammember, index) => (
                 <View
                   key={teammember.teamMemberId}
                   style={styles.contactPersonNameColumn}>
                   <TouchableOpacity style={styles.contactPersonButton}>
-                    {teammember.teamMemberProfilePic ? (
-                      <Image
-                        source={{ uri: teammember.teamMemberProfilePic }}
-                        style={styles.teamMemberProfilePic}
-                        onError={(error) =>
-                          console.error("Image Load Error:", error?.nativeEvent)
-                        }
-                      />
-                    ) : (
-                      <Text style={styles.profileData}>
-                        No profile picture available.
-                      </Text>
-                    )}
-                    {/* <View style={styles.contactPersonNameColumn}> */}
+                    <DefaultProfiler
+                      uri={teammember.teamMemberProfilePic}
+                      style={styles.teamMemberProfilePic}
+                    />
                     <Text style={styles.contactName}>
                       {teammember.teamMemberFirstName || "No First Name"}{" "}
                       {teammember.teamMemberLastName || "No Last Name"}
@@ -369,7 +380,6 @@ export default function ReviewScreen() {
                     <Text style={styles.contactEmail}>
                       {teammember.teamMemberEmail || "No Email"}
                     </Text>
-                    {/* </View> */}
                   </TouchableOpacity>
                 </View>
               ))
@@ -378,6 +388,15 @@ export default function ReviewScreen() {
                 No team members available.
               </Text>
             )}
+          </View>
+
+          <View style={styles.reviewBox}>
+            {lastFeedbackRequestDateContext && (
+              <Text style={styles.sectionTitle}>
+                Last feedback request sent: {lastFeedbackRequestDateContext}
+              </Text>
+            )}
+            {/* ... other sections */}
           </View>
         </View>
 
@@ -433,10 +452,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   teamMemberProfilePic: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     marginBottom: 15,
     borderRadius: 50,
+    color: "light gray",
   },
   reviewHabit: {
     borderColor: "#D3D3D3",

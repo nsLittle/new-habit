@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import DefaultProfiler from "../component/DefaultProfiler";
 import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestScreen() {
@@ -104,7 +105,7 @@ export default function FeedbackRequestScreen() {
           teammembers[0].firstName
         );
 
-        setDialogMessage("Teammember fetched.");
+        setDialogMessage("Team member feedback requests sent.");
       } catch (err) {
         console.error("Error fetching teammembers.", err);
         setDialogMessage("Error fetching teammembers.");
@@ -172,7 +173,7 @@ export default function FeedbackRequestScreen() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Make sure token is passed if needed
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             habitId: habitIdToSend,
@@ -186,11 +187,28 @@ export default function FeedbackRequestScreen() {
 
       const data = await response.json();
       console.log("Response Data", data);
+
       if (response.ok) {
-        setDialogMessage(`Success: ${data.message}`);
+        const formattedDate = new Date(data.lastRequestDate).toLocaleDateString(
+          undefined,
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }
+        );
+
+        setUserContext((prev) => ({
+          ...prev,
+          lastFeedbackRequestDateContext: formattedDate,
+        }));
+
+        navigation.navigate("ReviewScreen");
       } else {
         setDialogMessage(`Failure: ${data.message}`);
+        setShowDialog(true);
       }
+
       setShowDialog(true);
     } catch (error) {
       console.log("Error:", error);
@@ -233,19 +251,10 @@ export default function FeedbackRequestScreen() {
             <View style={styles.contactPersonButtonContainer} key={index}>
               <TouchableOpacity style={styles.contactPersonButton}>
                 <View style={styles.contactPersonNameColumn}>
-                  {teammember.profilePic ? (
-                    <Image
-                      source={{ uri: teammember.profilePic }}
-                      style={styles.profileImage}
-                      onError={(error) =>
-                        console.error("Image Load Error:", error?.nativeEvent)
-                      }
-                    />
-                  ) : (
-                    <Text style={styles.profileData}>
-                      No profile picture available.
-                    </Text>
-                  )}
+                  <DefaultProfiler
+                    uri={teammember.profilePic}
+                    style={styles.teamMemberProfilePic}
+                  />
                   <Text style={styles.contactName}>
                     {teammember.firstName} {teammember.lastName}{" "}
                     {teammember._id}
@@ -256,7 +265,7 @@ export default function FeedbackRequestScreen() {
             </View>
           ))}
 
-          <View style={styles.buttonRow}>
+          <View style={styles.buttonColumn}>
             <TouchableOpacity
               style={styles.sendFeedbackRequestButton}
               onPress={activateFeedbackRequests}>
@@ -361,8 +370,15 @@ const styles = StyleSheet.create({
   iconSend: {
     marginLeft: 5,
   },
-  buttonRow: {
-    flexDirection: "row",
+  teamMemberProfilePic: {
+    width: 30,
+    height: 30,
+    marginBottom: 15,
+    borderRadius: 50,
+    color: "light gray",
+  },
+  buttonColumn: {
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",

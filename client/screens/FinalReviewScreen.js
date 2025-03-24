@@ -1,44 +1,82 @@
 import { useContext, useEffect, useState } from "react";
 import {
+  Linking,
+  Platform,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
-  Button,
-  Alert,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+import { Button, Dialog, Portal } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
 export default function FinalReviewScreen() {
-  const { userContext } = useContext(UserContext) || {};
+  const navigation = useNavigation();
+
+  const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
+    userIdContext,
     userNameContext,
-    token,
+    firstNameContext,
+    lastNameContext,
+    emailContext,
+    profilePicContext,
     habitContextId,
     habitContextInput,
     descriptionContextInput,
-    habitEndDate,
+    habitContextEndDate,
+    teamMemberContextId,
+    token,
   } = userContext || {};
+
+  useEffect(() => {
+    if (userContext) {
+      console.log("UserContext:", userContext);
+      console.log("User Id Context: ", userIdContext);
+      console.log("UserName Context: ", userNameContext);
+      console.log("First Name Context: ", firstNameContext);
+      console.log("Last Name Context: ", lastNameContext);
+      console.log("Email Context: ", emailContext);
+      console.log("Profile Pic Context: ", profilePicContext);
+      console.log("Habit Id Context: ", habitContextId);
+      console.log("Habit Input Context: ", habitContextInput);
+      console.log("Habit End Date: ", habitContextEndDate);
+      console.log("Description Input Context: ", descriptionContextInput);
+      console.log("TeamMember Id Context: ", teamMemberContextId);
+      console.log("Token: ", token);
+    }
+  }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
 
   const [feedbackData, setFeedbackData] = useState([]);
   const [reflection, setReflection] = useState("");
   const [isLastDay, setIsLastDay] = useState(false);
 
   useEffect(() => {
-    if (habitEndDate) {
+    if (habitContextEndDate) {
       const today = new Date().toISOString().split("T")[0];
       console.log("Today's Date:", today);
-      console.log("Habit End Date:", habitEndDate);
+      console.log("Habit End Date:", habitContextEndDate);
+      const convertedHabitContextEndDate = new Date(habitContextEndDate)
+        .toISOString()
+        .split("T")[0];
+      console.log("Converted Habit End Date: ", convertedHabitContextEndDate);
 
-      setIsLastDay(today === habitEndDate);
+      setIsLastDay(today >= convertedHabitContextEndDate);
     }
-  }, [habitEndDate]);
+  }, [habitContextEndDate]);
 
-  console.log("Habit End Date from UserContext:", habitEndDate);
+  console.log("Habit End Date from UserContext:", habitContextEndDate);
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
@@ -71,17 +109,21 @@ export default function FinalReviewScreen() {
     if (!feedbackData.length) return null;
 
     const avgRating = (
-      feedbackData.reduce((sum, fb) => sum + fb.feedbackRating, 0) /
+      feedbackData.reduce((sum, fb) => sum + fb.rating, 0) / feedbackData.length
+    ).toFixed(1);
+
+    const avgThanksRating = (
+      feedbackData.reduce((sum, fb) => sum + fb.thanksRating, 0) /
       feedbackData.length
     ).toFixed(1);
 
     const bestFeedback = feedbackData
-      .filter((fb) => fb.feedbackRating >= 4)
-      .map((fb) => fb.feedbackText);
+      .filter((fb) => fb.rating <= 2)
+      .map((fb) => fb.text);
 
     const worstFeedback = feedbackData
-      .filter((fb) => fb.feedbackRating <= 2)
-      .map((fb) => fb.feedbackText);
+      .filter((fb) => fb.rating >= 2)
+      .map((fb) => fb.text);
 
     return { avgRating, bestFeedback, worstFeedback };
   };
@@ -90,13 +132,14 @@ export default function FinalReviewScreen() {
 
   const saveReflection = async () => {
     if (!reflection.trim()) {
-      Alert.alert("Reflection is empty", "Please write something.");
+      setDialogMessage("Reflection is empty. Please write something.");
+      setShowDialog(true);
       return;
     }
 
     try {
       const response = await fetch(
-        `http://localhost:8000/habits/${userNameContext}/${habitContextId}/reflection`,
+        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/save-reflection`,
         {
           method: "POST",
           headers: {
@@ -109,72 +152,194 @@ export default function FinalReviewScreen() {
 
       if (!response.ok) throw new Error("Failed to save reflection.");
 
-      setDialogMessage("Saved!", "Your self-reflection has been recorded.");
+      console.log("Response: ", response);
+
+      const data = await response.json();
+      console.log("Data: ", data);
+
+      if (data.message === "Duplicate reflection detected") {
+        setDialogMessage("Reflection already exists.");
+        setShowDialog(true);
+        return;
+      }
+
+      setDialogMessage("Do you feel like you have mastered this habit?");
       setShowDialog(true);
-      setReflection("");
+      setDialogAction("masteryCheck");
     } catch (error) {
       console.error("Error saving reflection:", error);
     }
   };
 
+  const updateHabitCycle = async (markComplete) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/habit/${userNameContext}/${habitContextId}/complete-cycle`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ markComplete }),
+        }
+      );
+
+      console.log("Response: ", response);
+      const data = await response.json();
+      console.log("Data: ", data);
+
+      if (!response) throw new Error("Failed to update habit cycle.");
+      const updatedHabit = await response.json();
+
+      if (data) {
+        console.log("Successful habit completion!");
+        navigation.navigate("SuccessfulHabitCompletionScreen");
+      } else {
+        if (updatedHabit.currentCycle >= 3) {
+          setDialogMessage(
+            "Cycle Limit Reached",
+            "You have completed all habit cycles."
+          );
+          setShowDialog(true);
+          navigation.navigate("SuccessfulHabitCompletionScreen");
+        } else {
+          setDialogMessage("Habit Extended", "Your habit has been extended.");
+          setShowDialog(true);
+          navigation.goBack();
+        }
+      }
+    } catch (error) {
+      console.error("Error updating habit cycle:", error);
+      setDialogMessage("Error", "Could not update habit cycle.");
+      setShowDialog(true);
+    }
+  };
+
   return isLastDay ? (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Final Review</Text>
-      <Text style={styles.subtitle}>{habitContextInput}</Text>
-      <Text style={styles.description}>{descriptionContextInput}</Text>
+      <Portal>
+        <Dialog
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
+          style={styles.dialog}>
+          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+          <Dialog.Content>
+            <Text>{dialogMessage || "Are you sure?"}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            {dialogAction === "masteryCheck" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    console.log("YES pressed");
+                    updateHabitCycle(true);
+                  }}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
 
-      {feedbackSummary ? (
-        <View style={styles.feedbackSection}>
-          <Text style={styles.header}>Feedback Summary</Text>
-          <Text>Average Rating: {feedbackSummary.avgRating}</Text>
+                <Button
+                  onPress={() => updateHabitCycle(false)}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+              </>
+            ) : (
+              <Button
+                onPress={() => setShowDialog(false)}
+                labelStyle={styles.dialogButton}>
+                OK
+              </Button>
+            )}
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
 
-          <Text style={styles.subHeader}>Best Feedback:</Text>
-          {feedbackSummary.bestFeedback.length ? (
-            feedbackSummary.bestFeedback.map((text, index) => (
-              <Text key={index} style={styles.feedbackText}>
-                - {text}
-              </Text>
-            ))
-          ) : (
-            <Text>No positive feedback recorded.</Text>
-          )}
+      <View style={styles.body}>
+        <Text style={styles.title}>Final Review</Text>
+        <Text style={styles.subtitle}>{habitContextInput}</Text>
+        <Text style={styles.description}>{descriptionContextInput}</Text>
 
-          <Text style={styles.subHeader}>Areas for Improvement:</Text>
-          {feedbackSummary.worstFeedback.length ? (
-            feedbackSummary.worstFeedback.map((text, index) => (
-              <Text key={index} style={styles.feedbackText}>
-                - {text}
-              </Text>
-            ))
-          ) : (
-            <Text>No critical feedback recorded.</Text>
-          )}
+        {feedbackSummary ? (
+          <View style={styles.feedbackSection}>
+            <Text style={styles.header}>Feedback Summary</Text>
+            <Text>Average Rating: {feedbackSummary.avgRating}</Text>
+
+            <Text style={styles.subHeader}>Best Feedback:</Text>
+            {feedbackSummary.bestFeedback.length ? (
+              feedbackSummary.bestFeedback.map((text, index) => (
+                <Text key={index} style={styles.feedbackText}>
+                  - {text}
+                </Text>
+              ))
+            ) : (
+              <Text>No positive feedback recorded.</Text>
+            )}
+
+            <Text style={styles.subHeader}>Areas for Improvement:</Text>
+            {feedbackSummary.worstFeedback.length ? (
+              feedbackSummary.worstFeedback.map((text, index) => (
+                <Text key={index} style={styles.feedbackText}>
+                  - {text}
+                </Text>
+              ))
+            ) : (
+              <Text>No critical feedback recorded.</Text>
+            )}
+          </View>
+        ) : (
+          <Text>No feedback available.</Text>
+        )}
+
+        <Text style={styles.subHeader}>Your Reflection:</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Write your reflection here..."
+          multiline
+          value={reflection}
+          onChangeText={setReflection}
+        />
+
+        <View style={styles.buttonColumn}>
+          <TouchableOpacity style={styles.button} onPress={saveReflection}>
+            <Text style={styles.buttonText}>Save ▶</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <Text>No feedback available.</Text>
-      )}
-
-      <Text style={styles.subHeader}>Your Reflection:</Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Write your reflection here..."
-        multiline
-        value={reflection}
-        onChangeText={setReflection}
-      />
-
-      <Button title="Save Reflection" onPress={saveReflection} />
-
-      <View style={{ height: 50 }} />
+      </View>
     </ScrollView>
   ) : null;
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
-    padding: 20,
+    paddingHorizontal: wp("5%"),
+  },
+  body: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
   title: {
     fontSize: 26,
@@ -214,9 +379,34 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 100,
+    width: "85%",
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
     marginTop: 10,
+  },
+  buttonColumn: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    gap: 15,
+    marginTop: 50,
+  },
+  button: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: 300,
+    height: 45,
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
   },
 });

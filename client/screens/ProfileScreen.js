@@ -14,6 +14,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function ProfileScreen() {
@@ -34,6 +35,7 @@ export default function ProfileScreen() {
     habitContextId,
     habitContextInput,
     descriptionContextInput,
+    habitContextEndDate,
     teamMemberContextId,
     token,
   } = userContext || {};
@@ -49,6 +51,7 @@ export default function ProfileScreen() {
       console.log("Profile Pic Context: ", profilePicContext);
       console.log("Habit Id Context: ", habitContextId);
       console.log("Habit Input Context: ", habitContextInput);
+      console.log("Habit End Date: ", habitContextEndDate);
       console.log("Description Input Context: ", descriptionContextInput);
       console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
@@ -76,13 +79,14 @@ export default function ProfileScreen() {
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([
-          fetch(`http://localhost:8000/user/${userNameContext}`, {
+          fetch(`${BASE_URL}/user/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:8000/habit/${userNameContext}`, {
+
+          fetch(`${BASE_URL}/habit/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:8000/teammember/${userNameContext}`, {
+          fetch(`${BASE_URL}/teammember/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -106,6 +110,7 @@ export default function ProfileScreen() {
         habitData.habits[0]?.description
       );
       console.log("Habit Data - Habit Id: ", habitData.habits[0]?._id);
+      console.log("Habit End Dte: ", habitData.habits[0]?.endDate);
       console.log("Team Member Data: ", teamMemberData);
 
       const incompleteHabits = habitData.habits.filter(
@@ -120,11 +125,10 @@ export default function ProfileScreen() {
         lastNameContext: userData[0].lastName,
         emailContext: userData[0].email,
         profilePicContext: userData[0].profilePic,
-        habitContextInput: incompleteHabits.map((habit) => habit.habit), // Array of habit names
-        descriptionContextInput: incompleteHabits.map(
-          (habit) => habit.description
-        ),
-        habitContextId: incompleteHabits.map((habit) => habit._id), // Array of habit IDs
+        habitContextInput: habitData.habits[0]?.habit,
+        descriptionContextInput: habitData.habits[0]?.description,
+        habitContextId: habitData.habits[0]?._id,
+        habitContextEndDate: habitData.habits[0]?.endDate,
         teammembers: teamMemberData.teamMembers || [],
       }));
     } catch (error) {
@@ -135,6 +139,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     if (userNameContext) {
       fetchUserData();
+      console.log(userNameContext);
     }
   }, []);
 

@@ -65,6 +65,13 @@ export default function EndingCreditsScreen() {
             by Awicon - Flaticon
           </a>
 
+          <Text>Default icon by:</Text>
+          <a
+            href="https://uxwing.com/default-profile-picture-female-icon/"
+            title="default profile">
+            by UXWing
+          </a>
+
           <View style={styles.buttonRow}></View>
         </View>
       </View>

@@ -1,174 +1,50 @@
-const sgMail = require("@sendgrid/mail");
-require("dotenv").config();
-
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const SENDGRID_SENDER_EMAIL = process.env.SENDGRID_SENDER_EMAIL;
-
-sgMail.setApiKey(SENDGRID_API_KEY);
-
-const sendEmail = async (toEmail) => {
-  console.log(const cron = require("node-cron");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const { sendEmail } = require("../services/emailService");
-const { Habit } = require("../models/Habit");
-const { Feedback } = require("../models/Feedback");
-const User = require("../models/User");
+const { Habit } = require("./models/Habit"); // Adjust path if needed
 
-dotenv.config();
+const habitId = "67d70ee46dc1ab2bd2ecddf7"; // Replace with this valid ID from your database
+const markComplete = false; // Change to true if testing completion
 
-const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/new-habit";
-
-console.log("⏳ Feedback email scheduler is loading...");
-
-// ✅ Ensure MongoDB is connected before running the scheduler
-const connectToDB = async () => {
+async function testProgressHabit() {
   try {
-    if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+    await mongoose.connect("mongodb://localhost:27017/new-habit"); // Ensure database name is correct
+
+    const habit = await Habit.findById(habitId);
+    if (!habit) {
+      console.log("❌ Habit not found. Check the ID.");
+      return;
+    }
+
+    console.log("Before update:", habit);
+
+    if (markComplete) {
+      // Mark habit as complete
+      habit.completed = true;
+      habit.habitCycles.push({
+        cycleNumber: habit.currentCycle,
+        startDate: habit.startDate,
+        completionDate: new Date(),
       });
-      console.log("✅ MongoDB connected for scheduler");
     } else {
-      console.log("🔄 MongoDB already connected");
-    }
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error);
-    process.exit(1); // Prevent scheduler from running without DB connection
-  }
-};
-
-// **Run the scheduler job**
-const runScheduler = async () => {
-  await connectToDB(); // Ensure DB is connected before executing
-
-  console.log("🔄 Running scheduled feedback email check...");
-
-  try {
-    const habits = await Habit.find({ completed: false });
-    console.log(`📋 Found ${habits.length} active habits`);
-
-    for (const habit of habits) {
-      console.log(`🟡 Checking habit: ${habit.habit} (User: ${habit.userId})`);
-
-      const user = await User.findById(habit.userId);
-      if (!user) {
-        console.log(`⚠️ No user found for habit ${habit.habit}, skipping.`);
-        continue;
-      }
-
-      console.log(
-        `👤 User found: ${user.firstName} ${user.lastName}, Email: ${user.email}`
-      );
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const scheduleDates = getScheduleDates(habit.start_date, habit.cadence);
-      for (const cadenceStart of scheduleDates) {
-        let cadenceEnd = new Date(cadenceStart);
-        cadenceEnd.setDate(cadenceEnd.getDate() + habit.cadenceLength);
-
-        if (today.getTime() === cadenceStart.getTime()) {
-          console.log(`✅ Today matches cadence start date: ${cadenceStart}`);
-
-          const existingRequest = await Feedback.findOne({
-            habitId: habit._id,
-            teamMemberId: user._id,
-            cadenceStart,
-            cadenceEnd,
-          });
-
-          if (existingRequest) {
-            console.log(`🚫 Feedback request already exists, skipping email.`);
-            continue;
-          }
-
-          console.log(`📧 Sending feedback request email to ${user.email}`);
-          const feedbackLink = `https://your-app.com/feedback-request/${habit._id}`;
-          await sendEmail(
-            user.email,
-            habit.habit,
-            user.firstName,
-            feedbackLink
-          );
-
-          await Feedback.create({
-            habitId: habit._id,
-            teamMemberId: user._id,
-            habitStartDate: habit.start_date,
-            cadenceStart,
-            cadenceEnd,
-            requestSentAt: new Date(),
-            feedbackDate: new Date(),
-            feedbackStatus: "pending",
-          });
-
-          console.log(`✅ Feedback request sent and logged.`);
-        }
+      // Extend cycle if not completed
+      if (habit.currentCycle < 3) {
+        habit.habitCycles.push({
+          cycleNumber: habit.currentCycle,
+          startDate: new Date(),
+        });
+        habit.currentCycle += 1;
+      } else {
+        console.log("Max cycle limit reached. Consider marking complete.");
+        return;
       }
     }
+
+    await habit.save();
+    console.log("After update:", habit);
   } catch (error) {
-    console.error("❌ Error in scheduler:", error);
+    console.error("❌ Error:", error);
+  } finally {
+    mongoose.disconnect();
   }
-};
+}
 
-// Function to calculate feedback request dates based on habit cadence
-const getScheduleDates = (startDate, cadence) => {
-  const cadenceMapping = {
-    Weekly: 7,
-    "Every Other Week": 14,
-    Monthly: 30,
-    Quarterly: 90,
-  };
-  const interval = cadenceMapping[cadence] || 30; // Default to 30 days
-
-  let dates = [];
-  let currentDate = new Date(startDate);
-
-  for (let i = 0; i < 90 / interval; i++) {
-    dates.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + interval);
-  }
-
-  return dates;
-};
-
-// **Run scheduler every day at 9 AM**
-cron.schedule("0 9 * * *", async () => {
-  await runScheduler();
-});
-
-console.log("✅ Scheduler is now integrated into the main app.");
-module.exports = runScheduler; // Export function for controlled execution
-
-(async () => {
-  console.log("🚀 Manually triggering scheduler for testing...");
-  await runScheduler();
-})();
-"📧 Sending a test email via SendGrid...");
-
-  const msg = {
-    to: toEmail,
-    from: {
-      email: "notsolittle88@gmail.com", // Verified sender email
-      name: "Your Name", // Optional: Name of the sender
-    },
-    subject: "Test Email from SendGrid",
-    text: "This is a test email to confirm SendGrid works.",
-    html: "<p>This is a test email to confirm SendGrid works.</p>",
-  };
-
-  try {
-    console.log(`📨 Sending email to ${toEmail}...`);
-    await sgMail.send(msg); // Send the email once using await
-    console.log(`✅ Email successfully sent to ${toEmail}`);
-  } catch (error) {
-    console.error("❌ SendGrid Error:", error.response?.body || error.message);
-  }
-};
-
-// Ensure function is available for use
-sendEmail("notsolittle88@gmail.com");
+testProgressHabit();

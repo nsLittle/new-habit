@@ -29,6 +29,7 @@ export default function CreateHabitScreen() {
     profilePicContext,
     habitContextId,
     habitContextInput,
+    habitContextEndDate,
     descriptionContextInput,
     teamMemberContextId,
     token,
@@ -53,6 +54,7 @@ export default function CreateHabitScreen() {
       console.log("Profile Pic Context: ", profilePicContext);
       console.log("Habit Id Context: ", habitContextId);
       console.log("Habit Input Context: ", habitContextInput);
+      console.log("Habit End Date Context: ", habitContextEndDate);
       console.log("Description Input Context: ", descriptionContextInput);
       console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
@@ -108,6 +110,7 @@ export default function CreateHabitScreen() {
             ...prevContext,
             habitContextId: incompleteHabit._id,
             habitContextInput: incompleteHabit.habit,
+            habitContextEndDate: incompleteHabit.endDate,
           }));
 
           if (incompleteHabit.habit.trim().length > 0) {
@@ -130,6 +133,7 @@ export default function CreateHabitScreen() {
     console.log("User Id:", userIdContext);
     console.log("Habit Id:", habitContextId);
     console.log("Username: ", userNameContext);
+    console.log("End Date: ", habitContextEndDate);
 
     if (!habitInput.trim()) {
       setDialogMessage("You must enter a habit.");

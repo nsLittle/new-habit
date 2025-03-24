@@ -11,7 +11,7 @@ exports.createHabit = async (req, res) => {
     const { username } = req.params;
     console.log("Username:", username);
 
-    const { habit, userId, completed } = req.body;
+    let { habit, userId, completed } = req.body;
     console.log("Habit: ", habit);
     console.log("User Id: ", userId);
 
@@ -36,17 +36,11 @@ exports.createHabit = async (req, res) => {
     console.log("User: ", user);
     console.log("Final User Id (ensured from User model):", userId);
 
-    if (!completed) {
-      const activeHabit = await Habit.findOne({
-        userId,
-        completed: false,
-      });
-
-      if (activeHabit) {
-        return res
-          .status(400)
-          .json({ message: "Only one active habit is allowed at a time." });
-      }
+    const existingHabit = await Habit.findOne({ userId, completed: false });
+    if (existingHabit) {
+      return res
+        .status(400)
+        .json({ message: "Only one active habit is allowed at a time." });
     }
 
     const newHabit = await Habit.create({
@@ -60,6 +54,7 @@ exports.createHabit = async (req, res) => {
     res.status(201).json({
       habit: newHabit.habit,
       habitId: newHabit._id,
+      endDate: newHabit.endDate,
       message: "Habit created successfully",
     });
   } catch (error) {
@@ -74,6 +69,7 @@ exports.getUserHabits = async (req, res) => {
     console.log("Fetching habits for: ", username);
 
     const user = await User.findOne({ username });
+    console.log("User: ", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -81,16 +77,9 @@ exports.getUserHabits = async (req, res) => {
 
     const habits = await Habit.find({ userId: user._id });
 
-    console.log("User ID from User Model:", user._id);
-    console.log(
-      "User ID stored in Habit:",
-      habits.map((h) => h.userId)
-    );
+    console.log("Habit: ", habits);
 
-    res.status(200).json({
-      message: "Habits retrieved successfully",
-      habits,
-    });
+    res.status(200).json({ habits });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -102,21 +91,29 @@ exports.getDetailedHabit = async (req, res) => {
       "Incoming request to get description for:",
       req.params.username
     );
-    console.log("Incoming request to get description for:", req.params.habitId);
+    console.log(
+      "Incoming request to get description for:",
+      req.params.habit_id
+    );
+    console.log("Req Params: ", req.params);
     const { username, habitId } = req.params;
     console.log("Fetching descriptions for: ", username);
 
     const user = await User.findOne({ username });
+    console.log("User: ", user);
+    console.log("User Id: ", user._id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    const descriptions = await Habit.find({ user: user._id });
+    const habits = await Habit.find({ user: user._id });
+    console.log("Habits: ", habits);
 
+    console.log("Habit successfully retrieved...");
     res.status(200).json({
-      message: "Descpription retrieved successfully",
-      descriptions,
+      message: "Habit retrieved successfully",
+      habits,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -364,18 +361,58 @@ exports.saveReflection = async (req, res) => {
   console.log("Saving user reflection...");
   try {
     const { username, habit_id } = req.params;
-    const { text } = req.body;
+    console.log("Req Params", req.params);
+    const { text, mastered } = req.body;
+    console.log("Req Body: ", req.body);
 
     if (!text) {
       return res.status(400).json({ message: "Reflection text is required" });
     }
 
     const habit = await Habit.findById(habit_id);
+    console.log("Found Habit: ", habit);
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
+    const lastCycle = habit.habitCycles.length
+      ? habit.habitCycles[habit.habitCycles.length - 1]
+      : null;
+
+    console.log("Last Cycle: ", lastCycle);
+    console.log("habit Cycle Length:", habit.habitCycles.length);
+    console.log("Last Cycle Completion Date: ", lastCycle.completionDate);
+
+    if (lastCycle && !lastCycle.completionDate) {
+      return res
+        .status(400)
+        .json({ message: "Only one habit cycle can be open at a time." });
+    }
+
     habit.reflections.push({ text, createdAt: new Date() });
+
+    console.log("Mastered: ", mastered);
+
+    if (mastered) {
+      habit.completed = true;
+      habit.currentCycle = 1;
+      habit.habitCycles.push({
+        cycleNumber: 1,
+        startDate: habit.startDate,
+        completionDate: new Date(),
+      });
+    } else {
+      if (habit.currentCycle < 3) {
+        habit.currentCycle += 1;
+        habit.habitCycles.push({
+          cycleNumber: habit.currentCycle,
+          startDate: new Date(),
+        });
+      } else {
+        habit.completed = true;
+      }
+    }
+
     await habit.save();
 
     res.status(201).json({ message: "Reflection saved!", habit });
@@ -386,11 +423,13 @@ exports.saveReflection = async (req, res) => {
 };
 
 exports.getReflections = async (req, res) => {
+  console.log("I'm here in teh back getting reflecdtions...");
   try {
     const { habit_id } = req.params;
 
     const habit = await Habit.findById(habit_id);
     if (!habit) {
+      f;
       return res.status(404).json({ message: "Habit not found" });
     }
 
@@ -401,5 +440,52 @@ exports.getReflections = async (req, res) => {
   } catch (error) {
     console.error("Error fetching reflections:", error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.completeCycle = async (req, res) => {
+  console.log("🔄 Completing habit cycle...");
+  try {
+    const { username, habit_id } = req.params;
+    console.log("REq Param: ", req.params);
+
+    const habit = await Habit.findById(habit_id);
+    console.log("Habit Retreived: ", habit);
+
+    if (!habit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    if (habit.currentCycle < 3) {
+      habit.habitCycles.push({
+        cycleNumber: habit.currentCycle,
+        startDate: new Date(),
+      });
+      habit.currentCycle += 1;
+    } else {
+      habit.completed = true;
+      habit.habitCycles.push({
+        cycleNumber: habit.currentCycle,
+        startDate: new Date(),
+        completionDate: new Date(),
+      });
+    }
+
+    if (habit.completed) {
+      console.log("Habit successbully complete in back ednd..");
+      return res
+        .status(400)
+        .json({ message: "Habit is already marked as complete." });
+    }
+
+    await habit.save();
+    console.log("✅ Habit cycle updated successfully.");
+
+    res
+      .status(200)
+      .json({ message: "Habit cycle updated successfully", habit });
+  } catch (error) {
+    console.error("❌ Error updating habit cycle:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

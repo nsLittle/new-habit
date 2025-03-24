@@ -6,13 +6,13 @@ const SENDGRID_SENDER_EMAIL = process.env.SENDGRID_SENDER_EMAIL;
 
 sgMail.setApiKey(SENDGRID_API_KEY);
 
-const sendEmail = async (toEmail) => {
+const sendEmail = async (toEmail, firstName, habitName, feedbackLink) => {
   console.log("Sending a test email via SendGrid...");
 
   const msg = {
     to: toEmail,
     from: {
-      email: process.env.SENDGRID_SENDER_EMAIL,
+      email: SENDGRID_SENDER_EMAIL,
       name: "Your Habit App Team",
     },
     subject: `Feedback Request for ${habitName}`,
