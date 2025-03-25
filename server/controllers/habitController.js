@@ -98,8 +98,13 @@ exports.getDetailedHabit = async (req, res) => {
       req.params.habit_id
     );
     console.log("Req Params: ", req.params);
-    const { username, habitId } = req.params;
-    console.log("Fetching descriptions for: ", username);
+    const { username, habit_id } = req.params;
+    console.log(
+      "Fetching descriptions for: ",
+      username,
+      "with habit id: ",
+      habit_id
+    );
 
     const user = await User.findOne({ username });
     console.log("User: ", user);
@@ -109,7 +114,7 @@ exports.getDetailedHabit = async (req, res) => {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    const habit = await Habit.findOne({ _id: habitId, userId: user._id });
+    const habit = await Habit.findOne({ _id: habit_id, userId: user._id });
     if (!habit) {
       return res.status(404).json({ message: "Habit not found!" });
     }

@@ -103,11 +103,16 @@ export default function SuccessfulHabitCompletionScreen() {
         </Dialog>
       </Portal>
       <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>SUCCESS!!!!!</Text>
+        <Text style={styles.bodyTitleText}>SUCCESS!!!</Text>
+        <Text style={styles.bodyTitleText}>
+          Your habit is now a part of your life
+        </Text>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.buttonText}>WOW</Text>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={navigation.navigate("CreateNewHabitScreen")}>
+            <Text style={styles.buttonText}>NEW HABIT</Text>
           </TouchableOpacity>
         </View>
       </View>

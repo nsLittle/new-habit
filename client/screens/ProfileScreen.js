@@ -168,28 +168,37 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
-    const checkFeedbacks = async () => {
-      if (!habitContextId) return;
+    const checkData = async () => {
+      if (!habitContextId || !userNameContext || !token) return;
 
       try {
-        const response = await fetch(
-          `${BASE_URL}/feedbacks/habit/${habitContextId}`
+        const feedbackResponse = await fetch(
+          `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        const feedbacks = await response.json();
+        const feedbacks = await feedbackResponse.json();
+        console.log("Feedback: ", feedbacks);
 
-        if (Array.isArray(feedbacks) && feedbacks.length > 0) {
+        if (feedbacks) {
           console.log("Feedback found. Navigating to FeedbackDataScreen...");
           navigation.navigate("FeedbackDataScreen");
         } else {
-          console.log("No feedback yet. Staying on ProfileScreen.");
+          console.log("No feedback. Navigating to ReviewScreen...");
+          navigation.navigate("ReviewScreen");
         }
       } catch (error) {
-        console.error("Error checking feedbacks:", error);
+        console.error("Error during login check:", error);
       }
     };
 
-    checkFeedbacks();
-  }, [habitContextId]);
+    checkData();
+  }, [userContext]); // instead of [habitContextId]
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

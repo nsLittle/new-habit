@@ -72,11 +72,13 @@ export default function FeedbackDataScreen() {
       grouped[key].thanksTotal += fb.thanksRating;
     });
 
+    // Step 1: sort oldest to newest
     const sortedGroups = Object.values(grouped).sort(
-      (a, b) => b.cadenceStart - a.cadenceStart
+      (a, b) => a.cadenceStart - b.cadenceStart
     );
 
-    return sortedGroups.map((group, index, arr) => {
+    // Step 2: assign correct ordinal labels
+    const labeled = sortedGroups.map((group, index, arr) => {
       const count = group.feedbacks.length;
       const averageRating = (group.ratingTotal / count).toFixed(1);
       const averageThanksRating = (group.thanksTotal / count).toFixed(1);
@@ -114,6 +116,9 @@ export default function FeedbackDataScreen() {
         ratingTrend,
       };
     });
+
+    // Step 3: reverse again for display (most recent first)
+    return labeled.reverse();
   };
 
   const processedFeedback = processFeedback();

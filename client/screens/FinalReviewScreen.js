@@ -37,6 +37,16 @@ export default function FinalReviewScreen() {
     token,
   } = userContext || {};
 
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState(null);
+
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [reflection, setReflection] = useState("");
+  const [isLastDay, setIsLastDay] = useState(false);
+
+  const [habitMetaData, setHabitMetaData] = useState(null);
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
@@ -55,13 +65,49 @@ export default function FinalReviewScreen() {
     }
   }, [userContext]);
 
-  const [habitMetaData, setHabitMetaData] = useState(null);
-
   console.log(
     "Fetching habit metadata with URL:",
     `${BASE_URL}/habit/${userNameContext}/${habitContextId}`
   );
   console.log("Token:", token);
+
+  useEffect(() => {
+    const fetchReflection = async () => {
+      if (!habitContextId || !userNameContext || !token) return;
+
+      try {
+        const response = await fetch(
+          `${BASE_URL}/habit/${userNameContext}/${habitContextId}/get-reflection`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!response.ok) {
+          console.log("No existing reflection found.");
+          return;
+        }
+
+        const data = await response.json();
+        console.log("DATA: ", data);
+
+        if (data?.habit?.reflections?.length > 0) {
+          const latest = data.habit.reflections.slice(-1)[0];
+          if (latest?.text?.trim()) {
+            setDialogMessage(
+              "Do you want to edit your existing final reflection?"
+            );
+            setDialogAction("editOrSkip");
+            setShowDialog(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching reflection:", error);
+      }
+    };
+
+    fetchReflection();
+  }, []);
 
   useEffect(() => {
     const fetchHabitMetaData = async () => {
@@ -86,14 +132,6 @@ export default function FinalReviewScreen() {
       fetchHabitMetaData();
     }
   }, [userNameContext, habitContextId, token]);
-
-  const [dialogMessage, setDialogMessage] = useState("");
-  const [showDialog, setShowDialog] = useState(false);
-  const [dialogAction, setDialogAction] = useState(null);
-
-  const [feedbackData, setFeedbackData] = useState([]);
-  const [reflection, setReflection] = useState("");
-  const [isLastDay, setIsLastDay] = useState(false);
 
   useEffect(() => {
     const fetchFeedbackData = async () => {
@@ -255,24 +293,25 @@ export default function FinalReviewScreen() {
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage || "Are you sure?"}</Text>
+            <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            {dialogAction === "masteryCheck" ? (
+            {dialogAction === "editOrSkip" ? (
               <>
                 <Button
                   onPress={() => {
-                    console.log("YES pressed");
-                    updateHabitCycle(true);
+                    setShowDialog(false);
+                    navigation.navigate("SuccessfulHabitCompletionScreen");
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
                   }}
                   labelStyle={styles.dialogButton}>
                   YES
-                </Button>
-
-                <Button
-                  onPress={() => updateHabitCycle(false)}
-                  labelStyle={styles.dialogButtonNo}>
-                  NO
                 </Button>
               </>
             ) : (
