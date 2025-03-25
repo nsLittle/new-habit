@@ -27,7 +27,7 @@ export default function ReviewScreen() {
   console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const { lastFeedbackRequestDateContext } = userContext || {};
+
   const {
     userIdContext,
     userNameContext,
@@ -40,6 +40,7 @@ export default function ReviewScreen() {
     descriptionContextInput,
     teamMemberContextId,
     token,
+    lastFeedbackRequestDateContext,
   } = userContext || {};
 
   useEffect(() => {
@@ -56,6 +57,10 @@ export default function ReviewScreen() {
       console.log("Description Input Context: ", descriptionContextInput);
       console.log("TeamMember Id Context: ", teamMemberContextId);
       console.log("Token: ", token);
+      console.log(
+        "Last Feedback Reqeuest Date:",
+        lastFeedbackRequestDateContext
+      );
     }
   }, [userContext]);
 
@@ -140,6 +145,9 @@ export default function ReviewScreen() {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch(`${BASE_URL}/teammember/${userNameContext}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${BASE_URL}/feedback/${userNameContext}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -318,7 +326,9 @@ export default function ReviewScreen() {
                 </View>
               ))
             ) : (
-              <Text style={styles.noProfileData}>No habits available.</Text>
+              <Text style={styles.noProfileData}>
+                No feedback cadence available.
+              </Text>
             )}
           </View>
 
@@ -354,12 +364,14 @@ export default function ReviewScreen() {
                 </View>
               ))
             ) : (
-              <Text style={styles.noProfileData}>No habits available.</Text>
+              <Text style={styles.noProfileData}>
+                No reminder schedule available.
+              </Text>
             )}
           </View>
 
           <View style={styles.teamMemberDataBox}>
-            <Text style={styles.sectionTitle}>Your feedback circle:</Text>
+            {/* <Text style={styles.sectionTitle}>Your feedback circle:</Text> */}
 
             {profileData.teammembers && profileData.teammembers.length > 0 ? (
               profileData.teammembers.map((teammember, index) => (
@@ -391,16 +403,24 @@ export default function ReviewScreen() {
           <View style={styles.reviewBox}>
             {lastFeedbackRequestDateContext && (
               <Text style={styles.sectionTitle}>
-                Last feedback request sent: {lastFeedbackRequestDateContext}
+                Last feedback request sent:{" "}
+                {new Date(
+                  lastFeedbackRequestDateContext
+                ).toLocaleDateString() || "Invalid Date"}
               </Text>
             )}
-            {/* ... other sections */}
           </View>
         </View>
 
         <View style={styles.buttonColumn}>
           <TouchableOpacity
             style={styles.startButton}
+            onPress={() => navigation.navigate("CreateHabitScreen")}>
+            <Text style={styles.startButtonText}>Create Your Habit</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.viewButton}
             onPress={() => navigation.navigate("FeedbackRequestScreen")}>
             <Text style={styles.startButtonText}>Request Feedback</Text>
           </TouchableOpacity>
@@ -501,7 +521,11 @@ const styles = StyleSheet.create({
     marginLeft: 100,
     borderRadius: 50,
   },
-
+  noProfileData: {
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+  },
   habitBox: {
     justifyContent: "center",
     alignItems: "center",

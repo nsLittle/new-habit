@@ -79,6 +79,7 @@ export default function Header(props) {
           currentRoute !== "EndingCreditsScreen" &&
           currentRoute !== "ResetPasswordRequestScreen" &&
           currentRoute !== "ResetPasswordScreen" &&
+          currentRoute !== "FeedbackDataScreen" &&
           currentRoute !== "SuccessfulHabitCompletionScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
@@ -172,15 +173,15 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Reminder Cadence</Text>
             </TouchableOpacity>
           )}
-          {currentRoute !== "SuccessfulHabitCompletionScreen" && (
+          {currentRoute !== "TeamInviteScreen" && (
             <TouchableOpacity
               onPress={() =>
-                navigateToScreen("SuccessfulHabitCompletionScreen", {
+                navigateToScreen("TeamInviteScreen", {
                   userName: userContext.userName,
-                  habitContextId,
+                  habitId: userContext.habitId,
                 })
               }>
-              <Text style={styles.menuItem}>Habit Completion!</Text>
+              <Text style={styles.menuItem}>Team Invite</Text>
             </TouchableOpacity>
           )}
           {currentRoute !== "ReviewScreen" && (
@@ -216,17 +217,6 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Final Review</Text>
             </TouchableOpacity>
           )}
-          {currentRoute !== "SuccessfulHabitCompletionScreen" && (
-            <TouchableOpacity
-              onPress={() =>
-                navigateToScreen("SuccessfulHabitCompletionScreen", {
-                  userName: userContext.userName,
-                  habitContextId,
-                })
-              }>
-              <Text style={styles.menuItem}>Successful Habit Completion</Text>
-            </TouchableOpacity>
-          )}
         </View>
       )}
 
@@ -236,22 +226,16 @@ export default function Header(props) {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("DefaultScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Default</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("ProfileScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Profile</Text>
-          </TouchableOpacity>
+          {currentRoute !== "ProfileScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("ProfileScreen", {
+                  userName: userContext.userName,
+                })
+              }>
+              <Text style={styles.menuItem}>Profile</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("EditAccountScreen", {

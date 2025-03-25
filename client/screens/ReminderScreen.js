@@ -110,7 +110,7 @@ export default function ReminderScreen() {
   const toggleEmailSwitch = (value) => {
     if (!reminderProfile.isReminderEnabled) {
       if (!showDialog) {
-        setDialogMessage("Would you like to enable reminders first?");
+        setDialogMessage("Would you like to enable reminders?");
         setShowDialog(true);
       }
       return;
@@ -322,7 +322,6 @@ export default function ReminderScreen() {
       setDialogMessage("Reminder settings updated successfully.");
       setDialogAction("successfulUpdate");
       setShowDialog(true);
-      navigation.navigate("TeamInviteScreen");
       navigation.navigate("TeamInviteScreen");
     } catch (error) {
       console.error("Error updating reminder settings:", error);

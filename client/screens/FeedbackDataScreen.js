@@ -1,5 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, View, Text } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
 import {
   heightPercentageToDP as hp,
@@ -34,6 +42,7 @@ export default function FeedbackDataScreen() {
 
         if (!response.ok) throw new Error("Failed to fetch feedback data.");
         const data = await response.json();
+        console.log("Data: ", data);
         setFeedbackData(data.feedback || []);
       } catch (error) {
         console.error("Error fetching feedback data:", error);
@@ -68,8 +77,8 @@ export default function FeedbackDataScreen() {
         };
       }
       grouped[key].feedbacks.push(fb);
-      grouped[key].ratingTotal += fb.rating;
-      grouped[key].thanksTotal += fb.thanksRating;
+      grouped[key].ratingTotal += fb.feedbackRating;
+      grouped[key].thanksTotal += fb.feedbackThanksRating;
     });
 
     // Step 1: sort oldest to newest
@@ -112,7 +121,7 @@ export default function FeedbackDataScreen() {
         dateRange: `${start} – ${end} (${cycle} set of feedbacks)`,
         averageRating,
         averageThanksRating,
-        feedbackTexts: group.feedbacks.map((fb) => fb.text),
+        feedbackTexts: group.feedbacks.map((fb) => fb.feedbackText),
         ratingTrend,
       };
     });
@@ -133,9 +142,7 @@ export default function FeedbackDataScreen() {
             visible={showDialog}
             onDismiss={() => setShowDialog(false)}
             style={styles.dialog}>
-            <Dialog.Title style={styles.dialogTitle}>
-              Ready to Review?
-            </Dialog.Title>
+            <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
             <Dialog.Content>
               <Text>
                 {dialogMessage ||
@@ -143,19 +150,29 @@ export default function FeedbackDataScreen() {
               </Text>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button
-                onPress={() => setShowDialog(false)}
-                labelStyle={styles.dialogButtonNo}>
-                No
-              </Button>
-              <Button
-                onPress={() => {
-                  setShowDialog(false);
-                  navigation.navigate("FinalReviewScreen");
-                }}
-                labelStyle={styles.dialogButton}>
-                Yes
-              </Button>
+              {dialogAction === "completeHabit" ? (
+                <>
+                  <Button
+                    onPress={() => setShowDialog(false)}
+                    labelStyle={styles.dialogButtonNo}>
+                    No
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      setShowDialog(false);
+                      navigation.navigate("FinalReviewScreen");
+                    }}
+                    labelStyle={styles.dialogButton}>
+                    Yes
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onPress={() => setShowDialog(false)}
+                  labelStyle={styles.dialogButton}>
+                  OK
+                </Button>
+              )}
             </Dialog.Actions>
           </Dialog>
         </Portal>
@@ -190,18 +207,18 @@ export default function FeedbackDataScreen() {
         )}
 
         {processedFeedback.length >= 1 && (
-          <View style={styles.buttonWrapper}>
-            <Button
-              mode="contained"
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.saveButton}
               onPress={() => {
                 setDialogMessage(
                   "Do you want to complete your habit and view the final review?"
                 );
-                setDialogAction("review");
+                setDialogAction("completeHabit");
                 setShowDialog(true);
               }}>
-              Ready to Review and complete habit?
-            </Button>
+              <Text style={styles.buttonText}>Review & Complete Habit</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -210,11 +227,28 @@ export default function FeedbackDataScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButtonNo: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flex: 1,
     backgroundColor: "white",
   },
-  buttonWrapper: {
+  button: {
     marginTop: 40,
     width: "90%",
   },
@@ -222,13 +256,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    paddingTop: 220,
     paddingBottom: 100,
   },
   title: {
     fontSize: 26,
     textAlign: "center",
     fontWeight: "bold",
-    marginVertical: 100,
+    marginTop: 100,
   },
   feedbackPeriod: {
     marginTop: 20,
@@ -263,5 +298,20 @@ const styles = StyleSheet.create({
   downArrow: {
     color: "red",
     fontSize: 28,
+  },
+  buttonRow: {
+    marginTop: 40,
+    alignItems: "center",
+  },
+  saveButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 14,
+    textAlign: "center",
   },
 });

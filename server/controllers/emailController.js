@@ -1,4 +1,5 @@
 const Emails = require("../models/Email");
+const User = require("../models/User");
 const sendgrid = require("@sendgrid/mail");
 const sendEmail = require("../utils/emailSender");
 
@@ -24,16 +25,14 @@ exports.triggerEmailRequest = async (req, res) => {
   try {
     let failedEmails = [];
 
+    const baseUrl = process.env.BASE_URL || "http://localhost:8081";
+
     for (const member of teamMembers) {
       const { firstName, lastName, email } = member;
 
       const recipientEmail = email;
       const subject = `Feedback Request for Habit ${habit_id}`;
-      const body = `Hi ${firstName} ${lastName},\n\n
-${username} is working on their habit and would love to get your feedback!\n
-Click the link below to provide your thoughts:\n
-http://localhost:8081/FeedbackRequestWelcomeScreen\n\n
-Thank you!\nYour Habit Formation Team`;
+      const body = `Hi ${firstName} ${lastName},\n\n${username} is working on their habit and would love to get your feedback!\nClick the link below to provide your thoughts:\n${baseUrl}/FeedbackRequestWelcomeScreen\n\nThank you!\nYour Habit Formation Team`;
 
       const msg = {
         to: recipientEmail,
@@ -53,6 +52,16 @@ Thank you!\nYour Habit Formation Team`;
           sendAt: new Date(),
           status: "sent",
         });
+
+        await User.findOneAndUpdate(
+          { username },
+          {
+            $set: {
+              lastFeedbackRequestDate: new Date(),
+            },
+          },
+          { new: true }
+        );
       } catch (error) {
         console.error(
           `❌ Error sending email to ${firstName} ${lastName}:`,
@@ -68,9 +77,12 @@ Thank you!\nYour Habit Formation Team`;
         failedEmails,
       });
     }
+    lastFeedbackRequestDate = new Date();
+    console.log("Last Feedback Reqeust End Date: ", lastFeedbackRequestDate);
 
     return res.json({
       message: "Feedback requests sent successfully to all team members",
+      lastFeedbackRequestDate: new Date(),
     });
   } catch (err) {
     console.error("Unexpected error:", err);

@@ -377,7 +377,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
   backButton: {
     backgroundColor: "#D3D3D3",
@@ -393,7 +392,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
   profilePicMain: {
     borderWidth: 5,

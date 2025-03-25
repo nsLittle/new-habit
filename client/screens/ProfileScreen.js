@@ -185,7 +185,7 @@ export default function ProfileScreen() {
         const feedbacks = await feedbackResponse.json();
         console.log("Feedback: ", feedbacks);
 
-        if (feedbacks) {
+        if (feedbacks.feedback && feedbacks.feedback.length > 0) {
           console.log("Feedback found. Navigating to FeedbackDataScreen...");
           navigation.navigate("FeedbackDataScreen");
         } else {

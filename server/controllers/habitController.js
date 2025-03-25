@@ -38,16 +38,24 @@ exports.createHabit = async (req, res) => {
     console.log("Final User Id (ensured from User model):", userId);
 
     const existingHabit = await Habit.findOne({ userId, completed: false });
+    console.log("Existing Habit: ", existingHabit);
+
     if (existingHabit) {
       return res
         .status(400)
         .json({ message: "Only one active habit is allowed at a time." });
     }
 
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 30);
+
     const newHabit = await Habit.create({
       userId,
       habit,
       completed: completed ?? false,
+      startDate,
+      endDate,
     });
 
     console.log("New Habit: ", newHabit);
@@ -59,6 +67,7 @@ exports.createHabit = async (req, res) => {
       message: "Habit created successfully",
     });
   } catch (error) {
+    console.error("🔥 Error in createHabit:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

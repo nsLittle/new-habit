@@ -190,14 +190,14 @@ export default function FeedbackRequestScreen() {
       console.log("Response Data", data);
 
       if (response.ok) {
-        const formattedDate = new Date(data.lastRequestDate).toLocaleDateString(
-          undefined,
-          {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }
-        );
+        const formattedDate = new Date(
+          data.lastFeedbackRequestDate
+        ).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        console.log("Formatted End Dtae: ", formattedDate);
 
         setUserContext((prev) => ({
           ...prev,
