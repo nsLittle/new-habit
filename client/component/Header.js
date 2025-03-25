@@ -78,7 +78,8 @@ export default function Header(props) {
           currentRoute !== "NoThankYouScreen" &&
           currentRoute !== "EndingCreditsScreen" &&
           currentRoute !== "ResetPasswordRequestScreen" &&
-          currentRoute !== "ResetPasswordScreen" && (
+          currentRoute !== "ResetPasswordScreen" &&
+          currentRoute !== "SuccessfulHabitCompletionScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;
@@ -107,7 +108,8 @@ export default function Header(props) {
           currentRoute !== "NoThankYouScreen" &&
           currentRoute !== "EndingCreditsScreen" &&
           currentRoute !== "ResetPasswordRequestScreen" &&
-          currentRoute !== "ResetPasswordScreen" && (
+          currentRoute !== "ResetPasswordScreen" &&
+          currentRoute !== "SuccessfulHabitCompletionScreen" && (
             <TouchableOpacity
               onLayout={(event) => {
                 const { x, y, width, height } = event.nativeEvent.layout;

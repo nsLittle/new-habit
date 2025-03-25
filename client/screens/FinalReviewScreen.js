@@ -47,6 +47,8 @@ export default function FinalReviewScreen() {
 
   const [habitMetaData, setHabitMetaData] = useState(null);
 
+  const [hasShownEditDialog, setHasShownEditDialog] = useState(false);
+
   useEffect(() => {
     if (userContext) {
       console.log("UserContext:", userContext);
@@ -72,6 +74,8 @@ export default function FinalReviewScreen() {
   console.log("Token:", token);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchReflection = async () => {
       if (!habitContextId || !userNameContext || !token) return;
 
@@ -93,12 +97,15 @@ export default function FinalReviewScreen() {
 
         if (data?.habit?.reflections?.length > 0) {
           const latest = data.habit.reflections.slice(-1)[0];
-          if (latest?.text?.trim()) {
+
+          if (isMounted && !hasShownEditDialog && latest?.text?.trim()) {
+            setReflection(latest.text);
             setDialogMessage(
               "Do you want to edit your existing final reflection?"
             );
             setDialogAction("editOrSkip");
             setShowDialog(true);
+            setHasShownEditDialog(true);
           }
         }
       } catch (error) {
@@ -161,25 +168,33 @@ export default function FinalReviewScreen() {
   }, [isLastDay, userNameContext]);
 
   useEffect(() => {
-    if (!habitMetaData) {
-      console.warn("Skipping useEffect due to missing habitMetaData values.");
-      return;
-    }
+    if (!habitMetaData) return;
 
-    const { startDate, habitLength } = habitMetaData.habits[0] || {};
+    const habit = habitMetaData.habits[0];
     const today = new Date();
 
-    const feedbackUnlockDate = new Date(startDate);
-    feedbackUnlockDate.setDate(feedbackUnlockDate.getDate() + habitLength);
+    // Get current cycle number and find its start date
+    const currentCycle = habit.currentCycle || 1;
+    const currentCycleData = habit.habitCycles?.find(
+      (cycle) => cycle.cycleNumber === currentCycle
+    );
 
-    console.log("Today:", today);
-    console.log("Feedback unlock date:", feedbackUnlockDate);
+    const cycleStartDate = currentCycleData?.startDate
+      ? new Date(currentCycleData.startDate)
+      : new Date(habit.startDate);
+
+    const feedbackUnlockDate = new Date(cycleStartDate);
+    feedbackUnlockDate.setDate(
+      feedbackUnlockDate.getDate() + (habit.habitLength || 90)
+    );
 
     setIsLastDay(today >= feedbackUnlockDate);
+    console.log("Today:", today);
+    console.log("Cycle start:", cycleStartDate);
+    console.log("Feedback unlock date:", feedbackUnlockDate);
     console.log("isLastDay:", today >= feedbackUnlockDate);
-    // Prepopulate reflection from the latest one if it exists
-    const latestReflection =
-      habitMetaData.habits[0]?.reflections?.slice(-1)[0]?.text;
+
+    const latestReflection = habit.reflections?.slice(-1)[0]?.text;
     if (latestReflection) {
       setReflection(latestReflection);
     }
@@ -244,14 +259,14 @@ export default function FinalReviewScreen() {
       }
 
       setDialogMessage("Do you feel like you have mastered this habit?");
-      setShowDialog(true);
       setDialogAction("masteryCheck");
+      setShowDialog(true);
     } catch (error) {
       console.error("Error saving reflection:", error);
     }
   };
 
-  const updateHabitCycle = async (markComplete) => {
+  const completeHabitCycle = async (markComplete) => {
     try {
       const response = await fetch(
         `${BASE_URL}/habit/${userNameContext}/${habitContextId}/complete-cycle`,
@@ -266,9 +281,9 @@ export default function FinalReviewScreen() {
       );
 
       const data = await response.json();
-      console.log("Cycle update response:", data);
+      console.log("Cycle complete response:", data);
 
-      if (!response.ok) throw new Error("Failed to update habit cycle.");
+      if (!response.ok) throw new Error("Failed to complete habit cycle.");
 
       if (markComplete) {
         // ✅ User is done with this habit
@@ -284,6 +299,29 @@ export default function FinalReviewScreen() {
     }
   };
 
+  const startNewHabitCycle = async () => {
+    try {
+      const response = await fetch(
+        `${YOUR_API_BASE_URL}/habits/${habitIdContext}/start-new-cycle`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error || "Failed to start new cycle");
+
+      navigation.navigate("StartNewHabitScreen");
+    } catch (error) {
+      console.error("Error starting new habit cycle:", error.message);
+      Alert.alert("Error", error.message);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Portal>
@@ -293,7 +331,7 @@ export default function FinalReviewScreen() {
           style={styles.dialog}>
           <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
           <Dialog.Content>
-            <Text>{dialogMessage}</Text>
+            <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
           <Dialog.Actions>
             {dialogAction === "editOrSkip" ? (
@@ -314,7 +352,44 @@ export default function FinalReviewScreen() {
                   YES
                 </Button>
               </>
+            ) : dialogAction === "masteryCheck" ? (
+              <>
+                <Button
+                  onPress={() => {
+                    setShowDialog(false);
+                    completeHabitCycle(true);
+                  }}
+                  labelStyle={styles.dialogButton}>
+                  YES
+                </Button>
+                <Button
+                  onPress={() => {
+                    navigation.navigate(NextTimeScreen);
+                  }}
+                  labelStyle={styles.dialogButtonNo}>
+                  NO
+                </Button>
+              </>
             ) : (
+              // ) : dialogAction === "repeatCheck" ? (
+              //   <>
+              //     <Button
+              //       onPress={() => {
+              //         setShowDialog(false);
+              //         startNewHabitCycle();
+              //       }}
+              //       labelStyle={styles.dialogButton}>
+              //       YES
+              //     </Button>
+              //     <Button
+              //       onPress={() => {
+              //         setShowDialog(false);
+              //         navigation.navigate("SuccessfulHabitCompletionScreen");
+              //       }}
+              //       labelStyle={styles.dialogButtonNo}>
+              //       NO
+              //     </Button>
+              //   </>
               <Button
                 onPress={() => setShowDialog(false)}
                 labelStyle={styles.dialogButton}>

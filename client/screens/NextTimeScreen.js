@@ -18,7 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
-export default function SuccessfulHabitCompletionScreen() {
+export default function NextTimeScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
@@ -103,16 +103,18 @@ export default function SuccessfulHabitCompletionScreen() {
         </Dialog>
       </Portal>
       <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>SUCCESS!!!</Text>
         <Text style={styles.bodyTitleText}>
-          Your habit is now a part of your life
+          Better habit formation next time
+        </Text>
+        <Text style={styles.bodyTitleText}>
+          Forming a habit is a continuous process.
         </Text>
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => navigation.navigate("LogoutScreen")}>
-            <Text style={styles.saveButtonText}>Logout</Text>
+            <Text style={styles.buttonText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -179,6 +181,7 @@ const styles = StyleSheet.create({
   bodyTitleText: {
     fontSize: 28,
     fontWeight: "bold",
+    color: "#4CAF50",
     marginBottom: 30,
   },
   buttonRow: {
@@ -190,16 +193,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     alignItems: "center",
-    width: 150,
-    height: 45,
     justifyContent: "center",
   },
-  saveButtonText: {
+  buttonText: {
+    fontSize: 16,
     color: "black",
-    fontSize: 12,
-    textAlign: "center",
     fontWeight: "bold",
   },
 });

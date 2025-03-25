@@ -127,8 +127,6 @@ export default function FeedbackDataScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Feedback Data</Text>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Portal>
           <Dialog
@@ -161,6 +159,8 @@ export default function FeedbackDataScreen() {
             </Dialog.Actions>
           </Dialog>
         </Portal>
+
+        <Text style={styles.title}>Feedback Data</Text>
 
         {processedFeedback.length ? (
           processedFeedback.map((entry, idx) => (

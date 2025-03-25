@@ -534,3 +534,40 @@ exports.completeCycle = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.createNewHabitCycle = async (req, res) => {
+  try {
+    const { habitId } = req.params;
+
+    const habit = await Habit.findById(habitId);
+    if (!habit) return res.status(404).json({ error: "Habit not found" });
+
+    const nextCycle = habit.currentCycle + 1;
+
+    // Guard against exceeding maxCycles
+    if (nextCycle > habit.maxCycles) {
+      return res.status(400).json({ error: "Max cycles reached" });
+    }
+
+    const now = new Date();
+    const newReviewDate = new Date(now);
+    newReviewDate.setDate(now.getDate() + habit.cadenceLength);
+
+    habit.habitCycles.push({
+      cycleNumber: nextCycle,
+      startDate: now,
+    });
+
+    habit.currentCycle = nextCycle;
+    habit.startDate = now;
+    habit.reviewDate = newReviewDate;
+    habit.endDate = newReviewDate;
+    habit.completed = false;
+
+    await habit.save();
+
+    res.status(200).json({ message: "New habit cycle started", habit });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

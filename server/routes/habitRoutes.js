@@ -11,6 +11,7 @@ const {
   saveReflection,
   getReflections,
   completeCycle,
+  createNewHabitCycle,
 } = require("../controllers/habitController");
 const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
@@ -30,5 +31,10 @@ router.patch("/:username/:habit_id/complete", protect, completeHabit);
 router.post("/:username/:habit_id/save-reflection", protect, saveReflection);
 router.get("/:username/:habit_id/get-reflection", protect, getReflections);
 router.post("/:username/:habit_id/complete-cycle", protect, completeCycle);
+router.post(
+  "/:username/:habit_id/start-new-habit-cycle",
+  protect,
+  createNewHabitCycle
+);
 
 module.exports = router;

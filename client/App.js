@@ -40,6 +40,7 @@ import NoThankYouScreen from "./screens/NoThankYouScreen";
 import EndingCreditsScreen from "./screens/EndingCreditsScreen";
 import FinalReviewScreen from "./screens/FinalReviewScreen";
 import SuccessfulHabitCompletionScreen from "./screens/SuccessfulHabitCompletionScreen";
+import NextTimeScreen from "./screens/NextTimeScreen";
 import DefaultScreen from "./screens/DefaultScreen";
 import Header from "./component/Header";
 
@@ -191,6 +192,7 @@ export default function App() {
               name="SuccessfulHabitCompletionScreen"
               component={SuccessfulHabitCompletionScreen}
             />
+            <Stack.Screen name="NextTimeScreen" component={NextTimeScreen} />
             <Stack.Screen name="DefaultScreen" component={DefaultScreen} />
           </Stack.Navigator>
         </NavigationContainer>
