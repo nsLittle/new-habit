@@ -2,18 +2,18 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
 exports.checkAllUsernames = async (req, res) => {
-  console.log("I'm here checkign users...");
+  // console.log("I'm here checkign users...");
   try {
     const { username } = req.params;
 
     console.log("Usernmae: ", username);
     if (!username) {
-      console.log("No username given");
+      // console.log("No username given");
       return res.status(400).json({ error: "Username is required" });
     }
 
     const userExists = (await User.exists({ username })) ? true : false;
-    console.log(userExists);
+    // console.log(userExists);
 
     return res.status(200).json(userExists);
   } catch (error) {
@@ -23,40 +23,40 @@ exports.checkAllUsernames = async (req, res) => {
 };
 
 exports.checkAllEmails = async (req, res) => {
-  console.log("I'm here checkign emails...");
+  // console.log("I'm here checkign emails...");
 
   try {
     const { email } = req.params;
-    console.log("Email: ", email);
+    // console.log("Email: ", email);
 
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
 
     const user = await User.findOne({ email });
-    console.log("User: ", user);
+    // console.log("User: ", user);
 
     return res.status(200).json({ exists: !!user });
   } catch (error) {
-    console.error("Error checking email:", error);
+    // console.error("Error checking email:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 exports.getUserProfile = async (req, res) => {
   try {
-    console.log("Request for username:", req.params.username);
+    // console.log("Request for username:", req.params.username);
     const { username } = req.params;
-    console.log("Username: ", username);
+    // console.log("Username: ", username);
 
     const user = await User.find({ username });
-    console.log("MongoDB user found:", user);
+    // console.log("MongoDB user found:", user);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const foundUser = Array.isArray(user) && user.length === 0 ? "" : user;
 
-    console.log("Found User: ", foundUser);
+    // console.log("Found User: ", foundUser);
 
     res.status(200).json(foundUser);
   } catch (error) {
@@ -78,18 +78,16 @@ exports.updateUserProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Filter out empty fields
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== "")
     );
 
     console.log("Filtered Updates:", filteredUpdates);
 
-    // Prevent updating to an email that already exists
     if (filteredUpdates.email) {
       const existingEmail = await User.findOne({
         email: filteredUpdates.email,
-        username: { $ne: username }, // Exclude current user
+        username: { $ne: username },
       });
 
       if (existingEmail) {
@@ -103,7 +101,7 @@ exports.updateUserProfile = async (req, res) => {
         filteredUpdates.password,
         salt
       );
-      console.log("Hashed password:", filteredUpdates.password);
+      // console.log("Hashed password:", filteredUpdates.password);
     }
 
     if (filteredUpdates.profilePic === "") {
@@ -124,10 +122,9 @@ exports.updateUserProfile = async (req, res) => {
       return res.status(400).json({ message: "Update failed" });
     }
 
-    // Manually set virtual `fullName`
     updatedUser.fullName = `${updatedUser.firstName} ${updatedUser.lastName}`;
 
-    console.log("Updated User:", updatedUser);
+    // console.log("Updated User:", updatedUser);
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Error in updateUserProfile:", error);
@@ -140,8 +137,8 @@ exports.deleteUserProfile = async (req, res) => {
     const { username } = req.params;
     const requester = req.user;
 
-    console.log("Requester:", requester);
-    console.log("Requested username for deletion:", username);
+    // console.log("Requester:", requester);
+    // console.log("Requested username for deletion:", username);
 
     if (!requester) {
       return res

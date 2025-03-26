@@ -34,22 +34,22 @@ export default function CadenceScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -65,7 +65,7 @@ export default function CadenceScreen() {
 
   useEffect(() => {
     const checkForExistingCadence = async () => {
-      console.log(`Checking for existing cadence...`);
+      // console.log(`Checking for existing cadence...`);
 
       try {
         const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
@@ -87,8 +87,8 @@ export default function CadenceScreen() {
         const data = await response.json();
 
         const foundCadence = data.habits[0]?.cadence || "";
-        console.log("Data: ", data);
-        console.log("Existing Cadence: ", foundCadence);
+        "Data: ", data;
+        // consconsole.logole.log("Existing Cadence: ", foundCadence);
         setExistingCadence(foundCadence);
 
         if (
@@ -124,7 +124,7 @@ export default function CadenceScreen() {
     }
 
     try {
-      console.log("Saving cadence...");
+      // console.log("Saving cadence...");
       const response = await fetch(
         `${BASE_URL}/habit/${userNameContext}/${habitContextId}/cadence`,
         {
@@ -143,7 +143,7 @@ export default function CadenceScreen() {
       }
 
       const data = await response.json();
-      console.log("Data: ", data);
+      // console.log("Data: ", data);
 
       setDialogMessage("Feedback cadence updated successfully.");
       navigation.navigate("ReminderScreen");
@@ -301,17 +301,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingBottom: 30,
   },
-  bodyIntroContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
-  },
   optionsContainer: {
     marginBottom: 30,
   },
@@ -330,11 +319,6 @@ const styles = StyleSheet.create({
     borderColor: "#FFD700",
     backgroundColor: "#FFF8DC",
   },
-  optionText: {
-    fontSize: 16,
-    marginLeft: 10,
-    color: "black",
-  },
   checkCircle: {
     width: 20,
     height: 20,
@@ -347,7 +331,6 @@ const styles = StyleSheet.create({
     borderColor: "#FFD700",
     backgroundColor: "#FFD700",
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -371,7 +354,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
   backButton: {
     backgroundColor: "#D3D3D3",
@@ -387,6 +369,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
 });

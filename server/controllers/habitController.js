@@ -2,19 +2,19 @@ const { Habit } = require("../models/Habit");
 const Feedback = require("../models/Feedback");
 const User = require("../models/User");
 
-console.log("User model:", User);
+// console.log("User model:", User);
 
 exports.createHabit = async (req, res) => {
   try {
-    console.log("Incoming request to create habit for:", req.params.username);
-    console.log("Reqeust Body: ", req.body);
+    // console.log("Incoming request to create habit for:", req.params.username);
+    // console.log("Reqeust Body: ", req.body);
 
     const { username } = req.params;
-    console.log("Username:", username);
+    // console.log("Username:", username);
 
     let { habit, userId, completed } = req.body;
-    console.log("Habit: ", habit);
-    console.log("User Id: ", userId);
+    // console.log("Habit: ", habit);
+    // console.log("User Id: ", userId);
 
     if (!habit) {
       return res.status(400).json({ message: "Habit is required" });
@@ -34,11 +34,11 @@ exports.createHabit = async (req, res) => {
       userId = user._id;
     }
 
-    console.log("User: ", user);
-    console.log("Final User Id (ensured from User model):", userId);
+    // console.log("User: ", user);
+    // console.log("Final User Id (ensured from User model):", userId);
 
     const existingHabit = await Habit.findOne({ userId, completed: false });
-    console.log("Existing Habit: ", existingHabit);
+    // console.log("Existing Habit: ", existingHabit);
 
     if (existingHabit) {
       return res
@@ -58,7 +58,7 @@ exports.createHabit = async (req, res) => {
       endDate,
     });
 
-    console.log("New Habit: ", newHabit);
+    // console.log("New Habit: ", newHabit);
 
     res.status(201).json({
       habit: newHabit.habit,
@@ -75,12 +75,12 @@ exports.createHabit = async (req, res) => {
 exports.getUserHabits = async (req, res) => {
   console.log("I'm here to get habit....");
   try {
-    console.log("Incoming request to get habit for:", req.params.username);
+    // console.log("Incoming request to get habit for:", req.params.username);
     const { username } = req.params;
-    console.log("Fetching habits for: ", username);
+    // console.log("Fetching habits for: ", username);
 
     const user = await User.findOne({ username });
-    console.log("User: ", user);
+    // console.log("User: ", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -88,7 +88,7 @@ exports.getUserHabits = async (req, res) => {
 
     const habits = await Habit.find({ userId: user._id });
 
-    console.log("Habit: ", habits);
+    // console.log("Habit: ", habits);
 
     res.status(200).json({ habits });
   } catch (error) {
@@ -98,26 +98,26 @@ exports.getUserHabits = async (req, res) => {
 
 exports.getDetailedHabit = async (req, res) => {
   try {
-    console.log(
-      "Incoming request to get description for:",
-      req.params.username
-    );
-    console.log(
-      "Incoming request to get description for:",
-      req.params.habit_id
-    );
-    console.log("Req Params: ", req.params);
-    const { username, habit_id } = req.params;
-    console.log(
-      "Fetching descriptions for: ",
-      username,
-      "with habit id: ",
-      habit_id
-    );
+    // console.log(
+    //   "Incoming request to get description for:",
+    //   req.params.username
+    // );
+    // console.log(
+    //   "Incoming request to get description for:",
+    //   req.params.habit_id
+    // );
+    // console.log("Req Params: ", req.params);
+    // const { username, habit_id } = req.params;
+    // console.log(
+    //   "Fetching descriptions for: ",
+    //   username,
+    //   "with habit id: ",
+    //   habit_id
+    // );
 
     const user = await User.findOne({ username });
-    console.log("User: ", user);
-    console.log("User Id: ", user._id);
+    // console.log("User: ", user);
+    // console.log("User Id: ", user._id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
@@ -128,9 +128,8 @@ exports.getDetailedHabit = async (req, res) => {
       return res.status(404).json({ message: "Habit not found!" });
     }
 
-    console.log("Habits: ", habit);
-
-    console.log("Habit successfully retrieved...");
+    // console.log("Habits: ", habit);
+    // console.log("Habit successfully retrieved...");
     res.status(200).json({
       message: "Habit retrieved successfully",
       habit,
@@ -142,21 +141,21 @@ exports.getDetailedHabit = async (req, res) => {
 
 exports.saveHabit = async (req, res) => {
   try {
-    console.log("Fetching saved habit for:", req.params.username);
-    console.log("Request Body: ", req.body);
+    // console.log("Fetching saved habit for:", req.params.username);
+    // console.log("Request Body: ", req.body);
 
     const { username, habit_id } = req.params;
-    console.log("Req Params: ", req.params);
-    console.log("Saving Habit:", habit_id, "for User:", username);
+    // console.log("Req Params: ", req.params);
+    // console.log("Saving Habit:", habit_id, "for User:", username);
 
     const user = await User.findOne({ username });
-    console.log("User: ", user);
+    // console.log("User: ", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User ID Type:", typeof user._id);
-    console.log("User ID:", user._id);
+    // console.log("User ID Type:", typeof user._id);
+    // console.log("User ID:", user._id);
 
     const updatedHabit = await Habit.findOneAndUpdate(
       { _id: habit_id },
@@ -164,13 +163,13 @@ exports.saveHabit = async (req, res) => {
       { new: true }
     );
 
-    console.log("Updated Habit: ", updatedHabit);
+    // console.log("Updated Habit: ", updatedHabit);
 
     if (!updatedHabit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    console.log("Habit updated successfully.");
+    // console.log("Habit updated successfully.");
 
     res.status(200).json({
       message: "Detailed habit updated successfully",
@@ -186,8 +185,8 @@ exports.saveDescription = async (req, res) => {
     const { username, habit_id } = req.params;
     const { description } = req.body;
 
-    console.log("Fetching habit for:", username, "Habit ID:", habit_id);
-    console.log("Received Description:", description);
+    // console.log("Fetching habit for:", username, "Habit ID:", habit_id);
+    // console.log("Received Description:", description);
 
     if (!description || description.trim() === "") {
       return res.status(400).json({ message: "Description cannot be empty." });
@@ -195,7 +194,7 @@ exports.saveDescription = async (req, res) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-      console.log("User not found:", username);
+      // console.log("User not found:", username);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -206,11 +205,11 @@ exports.saveDescription = async (req, res) => {
     );
 
     if (!updatedDescription) {
-      console.log("Habit not found:", habit_id);
+      // console.log("Habit not found:", habit_id);
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    console.log("Updated Description:", updatedDescription);
+    // console.log("Updated Description:", updatedDescription);
     return res.status(200).json({
       message: "Description updated successfully",
       updatedDescription,
@@ -246,32 +245,32 @@ exports.completeHabit = async (req, res) => {
 
 exports.saveReminder = async (req, res) => {
   try {
-    console.log("Request Params:", req.params);
+    // console.log("Request Params:", req.params);
     const { username, habit_id } = req.params;
 
-    console.log(
-      "Saving Reminder for Habit Id:",
-      habit_id,
-      "for username:",
-      username
-    );
+    // console.log(
+    //   "Saving Reminder for Habit Id:",
+    //   habit_id,
+    //   "for username:",
+    //   username
+    // );
 
-    console.log("Request Body:", req.body);
-    console.log("Extracted reminders object:", req.body.reminders);
+    // console.log("Request Body:", req.body);
+    // console.log("Extracted reminders object:", req.body.reminders);
 
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User: ", user);
+    // console.log("User: ", user);
 
     const habit = await Habit.findOne({ _id: habit_id });
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
-    console.log("Habit: ", habit);
+    // console.log("Habit: ", habit);
 
     if (!req.body.reminders) {
       return res.status(400).json({ message: "Reminders data is missing" });
@@ -292,8 +291,8 @@ exports.saveReminder = async (req, res) => {
       period: String(reminders.selectedTime?.period) || "AM",
     };
 
-    console.log("Final selectedDays:", selectedDays);
-    console.log("Final selectedTime:", selectedTime);
+    // console.log("Final selectedDays:", selectedDays);
+    // console.log("Final selectedTime:", selectedTime);
 
     const updatedHabit = await Habit.findByIdAndUpdate(
       habit_id,
@@ -326,14 +325,14 @@ exports.saveReminder = async (req, res) => {
 };
 
 exports.saveCadence = async (req, res) => {
-  console.log("Saving on the back end with cadence...");
+  // console.log("Saving on the back end with cadence...");
   try {
     const { username, habit_id } = req.params;
     const { cadence } = req.body;
-    console.log("Request Params:", req.params);
-    console.log("Request Body:", req.body);
-    console.log(`Updating cadence for habit: ${habit_id}, user: ${username}`);
-    console.log("Received cadence:", cadence);
+    // console.log("Request Params:", req.params);
+    // console.log("Request Body:", req.body);
+    // console.log(`Updating cadence for habit: ${habit_id}, user: ${username}`);
+    // console.log("Received cadence:", cadence);
 
     const validCadences = [
       "Weekly",
@@ -349,7 +348,7 @@ exports.saveCadence = async (req, res) => {
     }
 
     const user = await User.findOne({ username });
-    console.log("User: ", user);
+    // console.log("User: ", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -361,7 +360,7 @@ exports.saveCadence = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    console.log("Updated Habit: ", updatedHabit);
+    // console.log("Updated Habit: ", updatedHabit);
 
     if (!updatedHabit) {
       return res.status(404).json({ message: "Habit not found" });
@@ -389,8 +388,8 @@ exports.saveReflection = async (req, res) => {
     }
 
     const habit = await Habit.findById(habit_id);
-    console.log("Habit: ", habit);
-    console.log("Habit End: ", habit.endDate);
+    // console.log("Habit: ", habit);
+    // console.log("Habit End: ", habit.endDate);
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
@@ -399,9 +398,9 @@ exports.saveReflection = async (req, res) => {
     const finalPeriodEnd = new Date(habit.endDate);
     const finalPeriodOver = today >= finalPeriodEnd;
 
-    console.log("📅 Today:", today.toISOString());
-    console.log("📅 Final Period End:", finalPeriodEnd.toISOString());
-    console.log("✅ Final Period is Over:", finalPeriodOver);
+    // console.log("📅 Today:", today.toISOString());
+    // console.log("📅 Final Period End:", finalPeriodEnd.toISOString());
+    // console.log("✅ Final Period is Over:", finalPeriodOver);
 
     if (!finalPeriodOver) {
       return res.status(400).json({
@@ -427,19 +426,17 @@ exports.saveReflection = async (req, res) => {
       });
     }
 
-    // Add reflection
     habit.reflections.push({
       text,
       createdAt: new Date(),
     });
 
-    // Determine next cycle logic
     const current = habit.currentCycle;
     const isNumber = typeof current === "number" && !isNaN(current);
     const nextCycle = isNumber ? current + 1 : 2;
 
     if (mastered || current >= habit.maxCycles) {
-      console.log("✅ Marking habit as complete");
+      // console.log("✅ Marking habit as complete");
       habit.completed = true;
 
       habit.habitCycles.push({
@@ -448,7 +445,7 @@ exports.saveReflection = async (req, res) => {
         completionDate: today,
       });
     } else {
-      console.log("🔄 Extending to next cycle:", nextCycle);
+      // console.log("🔄 Extending to next cycle:", nextCycle);
 
       const newStart = new Date();
       const newEnd = new Date(newStart);
@@ -477,7 +474,7 @@ exports.saveReflection = async (req, res) => {
 };
 
 exports.getReflections = async (req, res) => {
-  console.log("I'm here in teh back getting reflecdtions...");
+  // console.log("I'm here in teh back getting reflecdtions...");
   try {
     const { habit_id } = req.params;
 
@@ -498,13 +495,13 @@ exports.getReflections = async (req, res) => {
 };
 
 exports.completeCycle = async (req, res) => {
-  console.log("🔄 Completing habit cycle...");
+  // console.log("🔄 Completing habit cycle...");
   try {
     const { username, habit_id } = req.params;
-    console.log("REq Param: ", req.params);
+    // console.log("REq Param: ", req.params);
 
     const habit = await Habit.findById(habit_id);
-    console.log("Habit Retreived: ", habit);
+    // console.log("Habit Retreived: ", habit);
 
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
@@ -526,14 +523,14 @@ exports.completeCycle = async (req, res) => {
     }
 
     if (habit.completed) {
-      console.log("Habit successbully complete in back ednd..");
+      // console.log("Habit successbully complete in back ednd..");
       return res
         .status(400)
         .json({ message: "Habit successfully marked as complete." });
     }
 
     await habit.save();
-    console.log("✅ Habit cycle updated successfully.");
+    // console.log("✅ Habit cycle updated successfully.");
 
     res
       .status(200)
@@ -553,7 +550,6 @@ exports.createNewHabitCycle = async (req, res) => {
 
     const nextCycle = habit.currentCycle + 1;
 
-    // Guard against exceeding maxCycles
     if (nextCycle > habit.maxCycles) {
       return res.status(400).json({ error: "Max cycles reached" });
     }

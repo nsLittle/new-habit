@@ -7,7 +7,7 @@ const SENDGRID_SENDER_EMAIL = process.env.SENDGRID_SENDER_EMAIL;
 sgMail.setApiKey(SENDGRID_API_KEY);
 
 const sendEmail = async (toEmail, firstName, habitName, feedbackLink) => {
-  console.log("Sending a test email via SendGrid...");
+  // console.log("Sending a test email via SendGrid...");
 
   const msg = {
     to: toEmail,
@@ -21,12 +21,10 @@ const sendEmail = async (toEmail, firstName, habitName, feedbackLink) => {
   };
 
   try {
-    console.log(`Sending email to ${toEmail}...`);
+    // console.log(`Sending email to ${toEmail}...`);
     await sgMail.send(msg);
-    console.log(`✅ Email successfully sent to ${toEmail}`);
+    // console.log(`✅ Email successfully sent to ${toEmail}`);
   } catch (error) {
     console.error("❌ SendGrid Error:", error.response?.body || error.message);
   }
 };
-
-// sendEmail("notsolittle88@gmail.com"); // Test the email

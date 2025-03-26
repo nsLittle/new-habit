@@ -13,17 +13,16 @@ import {
 } from "react-native-responsive-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function LogoutScreen() {
   const navigation = useNavigation();
   const { userContext, setUserContext } = useContext(UserContext);
-  console.log("UserContext in LogoutScreen:", userContext);
+  // console.log("UserContext in LogoutScreen:", userContext);
 
   const logout = async () => {
     try {
-      console.log("Logging out...");
+      // console.log("Logging out...");
 
       await AsyncStorage.clear();
 
@@ -47,8 +46,8 @@ export default function LogoutScreen() {
         token: null,
       });
 
-      console.log("UserContext after reset:", userContext);
-      console.log("Logout completed.");
+      // console.log("UserContext after reset:", userContext);
+      // console.log("Logout completed.");
 
       setTimeout(() => {
         navigation.navigate("EndingCreditsScreen");
@@ -93,29 +92,11 @@ const styles = StyleSheet.create({
     paddingTop: hp("15%"),
     backgroundColor: "white",
   },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
-  bodyIntroContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
   bodyIntroText: {
     textAlign: "center",
     fontSize: 14,
     paddingBottom: 15,
     width: 225,
-  },
-  bodyIntroInviteText: {
-    fontSize: 12,
-    paddingTop: 15,
-    color: "#6A8CAF",
-    textDecorationLine: "underline",
-    fontWeight: "bold",
   },
   buttonRow: {
     justifyContent: "center",

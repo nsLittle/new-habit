@@ -15,12 +15,12 @@ exports.getScheduledEmails = async (req, res) => {
 };
 
 exports.triggerEmailRequest = async (req, res) => {
-  console.log("I'm here triggering emails...");
+  // console.log("I'm here triggering emails...");
 
   const { username, habit_id } = req.params;
   const { teamMembers } = req.body;
-  console.log("Req Params: ", req.params);
-  console.log("Req Body: ", req.body);
+  // console.log("Req Params: ", req.params);
+  // console.log("Req Body: ", req.body);
 
   try {
     let failedEmails = [];
@@ -43,7 +43,7 @@ exports.triggerEmailRequest = async (req, res) => {
 
       try {
         await sendgrid.send(msg);
-        console.log(`✅ Email sent to ${firstName} ${lastName}`);
+        // console.log(`✅ Email sent to ${firstName} ${lastName}`);
 
         await Emails.create({
           recipient: recipientEmail,
@@ -78,7 +78,7 @@ exports.triggerEmailRequest = async (req, res) => {
       });
     }
     lastFeedbackRequestDate = new Date();
-    console.log("Last Feedback Reqeust End Date: ", lastFeedbackRequestDate);
+    // console.log("Last Feedback Reqeust End Date: ", lastFeedbackRequestDate);
 
     return res.json({
       message: "Feedback requests sent successfully to all team members",

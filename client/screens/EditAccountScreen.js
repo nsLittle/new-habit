@@ -37,25 +37,25 @@ export default function EditAccountScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
   const [dialogMessage, setDialogMessage] = useState(false);
   const [showDialog, setShowDialog] = useState("");
@@ -88,7 +88,7 @@ export default function EditAccountScreen() {
   };
 
   const handleSave = async () => {
-    console.log(`I'm here to save your edits...`);
+    // console.log(`I'm here to save your edits...`);
     try {
       const updates = {
         userName: userName,
@@ -97,13 +97,13 @@ export default function EditAccountScreen() {
         email: email,
         profilePic: profilePic,
       };
-      console.log("Updated User Data: ", updates);
+      // console.log("Updated User Data: ", updates);
 
       if (password && password !== "********") {
         updates.password = password;
       }
 
-      console.log("Updated User Data: ", updates);
+      // console.log("Updated User Data: ", updates);
 
       if (!token) throw new Error("Authentication token is missing.");
 
@@ -117,7 +117,7 @@ export default function EditAccountScreen() {
       });
 
       const data = await response.json();
-      console.log("Edit Response:", data);
+      // console.log("Edit Response:", data);
       setUserContext((prev) => ({ ...prev, ...updates }));
 
       if (!response.ok) throw new Error("Failed to update user data");
@@ -288,12 +288,13 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
+  profilePicMain: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 100,
+    height: 100,
+    marginBottom: 15,
+    borderRadius: 50,
   },
   inputContainer: {
     width: "100%",
@@ -321,26 +322,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     marginBottom: 10,
   },
-  usernameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#E6FFCC",
-    marginBottom: 10,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    placeholderTextColor: "gray",
-  },
   iconButton: {
     padding: 10,
   },
@@ -353,7 +334,6 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 10,
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -392,13 +372,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-  },
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
   },
 });

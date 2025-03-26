@@ -4,7 +4,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -42,7 +41,7 @@ export default function FeedbackDataScreen() {
 
         if (!response.ok) throw new Error("Failed to fetch feedback data.");
         const data = await response.json();
-        console.log("Data: ", data);
+        // console.log("Data: ", data);
         setFeedbackData(data.feedback || []);
       } catch (error) {
         console.error("Error fetching feedback data:", error);
@@ -132,7 +131,7 @@ export default function FeedbackDataScreen() {
 
   const processedFeedback = processFeedback();
 
-  console.log("Processed feedback count:", processedFeedback.length);
+  // console.log("Processed feedback count:", processedFeedback.length);
 
   return (
     <View style={styles.container}>
@@ -177,50 +176,51 @@ export default function FeedbackDataScreen() {
           </Dialog>
         </Portal>
 
-        <Text style={styles.title}>Feedback Data</Text>
-
-        {processedFeedback.length ? (
-          processedFeedback.map((entry, idx) => (
-            <View key={idx} style={styles.feedbackPeriod}>
-              <Text style={styles.feedbackHeader}>{entry.dateRange}</Text>
-              <Text style={styles.prominentMetric}>
-                Avg Rating: {entry.averageRating}
-                {entry.ratingTrend === "up" && (
-                  <Text style={styles.upArrow}> ↑</Text>
-                )}
-                {entry.ratingTrend === "down" && (
-                  <Text style={styles.downArrow}> ↓</Text>
-                )}
-              </Text>
-              <Text style={styles.prominentMetric}>
-                Avg Thanks: {entry.averageThanksRating}
-              </Text>
-              {entry.feedbackTexts.map((text, i) => (
-                <Text key={i} style={styles.feedbackText}>
-                  "{text}"
+        <View style={styles.body}>
+          <Text style={styles.title}>Feedback Data</Text>
+          {processedFeedback.length ? (
+            processedFeedback.map((entry, idx) => (
+              <View key={idx} style={styles.feedbackPeriod}>
+                <Text style={styles.feedbackHeader}>{entry.dateRange}</Text>
+                <Text style={styles.prominentMetric}>
+                  Avg Rating: {entry.averageRating}
+                  {entry.ratingTrend === "up" && (
+                    <Text style={styles.upArrow}> ↑</Text>
+                  )}
+                  {entry.ratingTrend === "down" && (
+                    <Text style={styles.downArrow}> ↓</Text>
+                  )}
                 </Text>
-              ))}
-            </View>
-          ))
-        ) : (
-          <Text>No feedback available.</Text>
-        )}
+                <Text style={styles.prominentMetric}>
+                  Avg Thanks: {entry.averageThanksRating}
+                </Text>
+                {entry.feedbackTexts.map((text, i) => (
+                  <Text key={i} style={styles.feedbackText}>
+                    "{text}"
+                  </Text>
+                ))}
+              </View>
+            ))
+          ) : (
+            <Text>No feedback available.</Text>
+          )}
 
-        {processedFeedback.length >= 1 && (
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={() => {
-                setDialogMessage(
-                  "Do you want to complete your habit and view the final review?"
-                );
-                setDialogAction("completeHabit");
-                setShowDialog(true);
-              }}>
-              <Text style={styles.buttonText}>Review & Complete Habit</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+          {processedFeedback.length >= 1 && (
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={() => {
+                  setDialogMessage(
+                    "Do you want to complete your habit and view the final review?"
+                  );
+                  setDialogAction("completeHabit");
+                  setShowDialog(true);
+                }}>
+                <Text style={styles.buttonText}>Review & Complete Habit</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
@@ -247,6 +247,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+  },
+  body: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
   button: {
     marginTop: 40,

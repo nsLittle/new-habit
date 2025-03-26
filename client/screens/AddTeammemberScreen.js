@@ -21,9 +21,9 @@ import { UserContext } from "../context/UserContext";
 export default function AddTeammemberScreen() {
   const navigation = useNavigation();
 
-  const routes = navigation.getState().routes;
-  const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
+  // const routes = navigation.getState().routes;
+  // const currentRoute = routes[routes.length - 1]?.name;
+  // console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
@@ -39,21 +39,21 @@ export default function AddTeammemberScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -66,7 +66,6 @@ export default function AddTeammemberScreen() {
   const [teamMembers, setTeamMembers] = useState([]);
 
   const handleSave = async () => {
-    console.log("I'm here to save team members...");
     const { userIdContext } = userContext;
 
     if (!userIdContext) {
@@ -82,8 +81,6 @@ export default function AddTeammemberScreen() {
       teamMemberProfilePic,
       user: userIdContext,
     };
-
-    console.log("New Team Member: ", newTeamMember);
 
     try {
       if (!token) {
@@ -115,10 +112,7 @@ export default function AddTeammemberScreen() {
         }
       );
 
-      console.log("New Team Member: ", newTeamMember);
-
       const data = await response.json();
-      console.log("Response Data:", data);
 
       if (data.message === "Person already on your team.") {
         setDialogMessage("Person already on your team.");
@@ -128,7 +122,6 @@ export default function AddTeammemberScreen() {
 
       if (response.ok) {
         const { teamMember } = data;
-        console.log("Team Member: ", teamMember);
 
         setTeamMembers([teamMember, ...teamMembers]);
         setTeamMemberFirstName("");
@@ -232,7 +225,6 @@ export default function AddTeammemberScreen() {
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => {
-              console.log("Save button pressed!");
               handleSave();
             }}>
             <Text style={styles.saveButtonText}>Save ▶</Text>
@@ -244,6 +236,18 @@ export default function AddTeammemberScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -262,16 +266,13 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-  bodyIntroContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
+  profilePicMain: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 100,
+    height: 100,
+    marginBottom: 15,
+    borderRadius: 50,
   },
   inputField: {
     height: 40,
@@ -284,7 +285,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: "gray",
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -325,26 +325,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
-  },
-
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
   },
 });

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Image,
   Linking,
   Platform,
   ScrollView,
@@ -13,7 +12,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import DefaultProfiler from "../component/DefaultProfiler";
 import { BASE_URL } from "../constants/config";
@@ -24,7 +22,7 @@ export default function ReviewScreen() {
 
   const routes = navigation.getState().routes;
   const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
+  // console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
 
@@ -43,30 +41,28 @@ export default function ReviewScreen() {
     lastFeedbackRequestDateContext,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-      console.log(
-        "Last Feedback Reqeuest Date:",
-        lastFeedbackRequestDateContext
-      );
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //     console.log(
+  //       "Last Feedback Reqeuest Date:",
+  //       lastFeedbackRequestDateContext
+  //     );
+  //   }
+  // }, [userContext]);
 
   const [userData, setUserData] = useState("");
-
-  const [validImage, setValidImage] = useState(true);
 
   const [profileData, setProfileData] = useState({
     firstname: "",
@@ -115,7 +111,7 @@ export default function ReviewScreen() {
           const errorData = await response.json();
           setDialogMessage(errorData.error || "We can't find you.");
           setDialogVisible(true);
-          console.log(`We can't find you.`);
+          // console.log(`We can't find you.`);
           return;
         }
 
@@ -161,25 +157,25 @@ export default function ReviewScreen() {
       const habitData = await habitsResponse.json();
       const teamMemberData = await teamMemberResponse.json();
 
-      console.log("User Data: ", userData);
-      console.log("Habit Data:", habitData);
-      console.log("Team Memeber Data: ", teamMemberData);
+      // console.log("User Data: ", userData);
+      // console.log("Habit Data:", habitData);
+      // console.log("Team Memeber Data: ", teamMemberData);
       // console.log("✅ END DATE: ", habitData.habits[0].endDate);
 
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
       );
 
-      console.log("🟡 Incomplete Habits:", incompleteHabits);
-      console.log("Incomplete Cadence: ", incompleteHabits[0].cadence);
-      console.log(
-        "Incomplete Reminders Day: ",
-        incompleteHabits[0].reminders.selectedDays
-      );
-      console.log(
-        "Incomplete Reminders: ",
-        incompleteHabits[0].reminders.selectedTime
-      );
+      // console.log("🟡 Incomplete Habits:", incompleteHabits);
+      // console.log("Incomplete Cadence: ", incompleteHabits[0].cadence);
+      // console.log(
+      //   "Incomplete Reminders Day: ",
+      //   incompleteHabits[0].reminders.selectedDays
+      // );
+      // console.log(
+      //   "Incomplete Reminders: ",
+      //   incompleteHabits[0].reminders.selectedTime
+      // );
 
       setProfileData({
         username: userData[0].username,
@@ -194,17 +190,17 @@ export default function ReviewScreen() {
           : [],
       });
 
-      console.log("Updated Profile Data:", {
-        firstname: userData[0]?.firstName || "",
-        lastName: userData[0]?.lastName || "",
-        profilePic: userData[0]?.profilePic || "",
-        email: userData[0]?.email || "",
-        habits: incompleteHabits,
-        habitsId: incompleteHabits[0]._id,
-        habitsInput: incompleteHabits[0].habit,
-        habitsDescription: incompleteHabits[0].description,
-        teammembers: teamMemberData.teamMembers || [],
-      });
+      // console.log("Updated Profile Data:", {
+      //   firstname: userData[0]?.firstName || "",
+      //   lastName: userData[0]?.lastName || "",
+      //   profilePic: userData[0]?.profilePic || "",
+      //   email: userData[0]?.email || "",
+      //   habits: incompleteHabits,
+      //   habitsId: incompleteHabits[0]._id,
+      //   habitsInput: incompleteHabits[0].habit,
+      //   habitsDescription: incompleteHabits[0].description,
+      //   teammembers: teamMemberData.teamMembers || [],
+      // });
 
       setUserContext((prev) => {
         const newContext = {
@@ -222,7 +218,7 @@ export default function ReviewScreen() {
           habitContextEndDate: incompleteHabits[0].endDate,
           teammembers: teamMemberData.teamMembers || [],
         };
-        console.log("Updated UserContext:", newContext);
+        // console.log("Updated UserContext:", newContext);
         return newContext;
       });
     } catch (error) {
@@ -230,13 +226,13 @@ export default function ReviewScreen() {
     }
   };
 
-  useEffect(() => {
-    console.log("UserContext Updated:", userContext);
-  }, [userContext]);
+  // useEffect(() => {
+  //   console.log("UserContext Updated:", userContext);
+  // }, [userContext]);
 
-  useEffect(() => {
-    console.log("Profile Data Updated:", profileData);
-  }, [profileData]);
+  // useEffect(() => {
+  //   console.log("Profile Data Updated:", profileData);
+  // }, [profileData]);
 
   useEffect(() => {
     if (userNameContext) {
@@ -371,8 +367,6 @@ export default function ReviewScreen() {
           </View>
 
           <View style={styles.teamMemberDataBox}>
-            {/* <Text style={styles.sectionTitle}>Your feedback circle:</Text> */}
-
             {profileData.teammembers && profileData.teammembers.length > 0 ? (
               profileData.teammembers.map((teammember, index) => (
                 <View
@@ -469,26 +463,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  teamMemberProfilePic: {
-    width: 30,
-    height: 30,
-    marginBottom: 15,
-    borderRadius: 50,
-    color: "light gray",
-  },
-  reviewHabit: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-  },
   teamMemberDataBox: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  reviewCadence: {
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 5,
@@ -500,48 +475,15 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
-  reviewTeams: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
   profileData: {
     textAlign: "center",
     alignSelf: "center",
     fontSize: 16,
   },
-  teammemberProfilePicMain: {
-    // borderWidth: 0.5,
-    // borderColor: "#FFD700",
-    width: 15,
-    height: 15,
-    marginTop: 3,
-    marginBottom: 3,
-    marginLeft: 100,
-    borderRadius: 50,
-  },
   noProfileData: {
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-  },
-  habitBox: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  contactPersonButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-    borderRadius: 25,
-    marginTop: 5,
-    marginBottom: 5,
-    width: 300,
-    height: 30,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
   contactPersonNameColumn: {
     flexDirection: "row",

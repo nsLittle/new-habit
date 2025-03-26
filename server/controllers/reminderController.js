@@ -6,7 +6,6 @@ exports.scheduleReminder = async (req, res) => {
   try {
     const { userId, habitId } = req.body;
 
-    // Fetch habit and user email dynamically
     const habit = await Habit.findById(habitId).populate("userId", "email");
 
     if (!habit || !habit.reminders.isReminderEnabled) {

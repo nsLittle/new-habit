@@ -14,7 +14,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -35,28 +34,28 @@ export default function ResetPasswordRequestScreen() {
     teamMemberContextId,
     token,
   } = userContext || {};
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  // const [password, setPassword] = useState("");
+  // const [showPassword, setShowPassword] = useState(false);
 
   const handleResetEmail = async () => {
     if (!email) {
@@ -91,11 +90,11 @@ export default function ResetPasswordRequestScreen() {
         setShowDialog(true);
         return;
       }
-      console.log("Data: ", data);
-      console.log("Token: ", data.resetToken);
+      // console.log("Data: ", data);
+      // console.log("Token: ", data.resetToken);
 
       const token = data.resetToken;
-      console.log("Token: ", token);
+      // console.log("Token: ", token);
 
       if (!token) {
         setDialogMessage("Error generating reset token.");
@@ -200,16 +199,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
   },
-  usernameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    marginBottom: 10,
-  },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -222,28 +211,11 @@ const styles = StyleSheet.create({
   infoIcon: {
     padding: 10,
   },
-  eyeIcon: {
-    padding: 10,
-    marginLeft: 20,
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
   passwordInput: {
     flex: 1,
     height: 40,
     padding: 10,
     backgroundColor: "transparent",
-  },
-  resetContainer: {
-    alignItems: "center",
-    marginTop: 10,
-  },
-  resetLink: {
-    fontSize: 12,
-    paddingTop: 15,
-    color: "#6A8CAF",
-    textDecorationLine: "underline",
-    fontWeight: "bold",
   },
   buttonRow: {
     flexDirection: "row",

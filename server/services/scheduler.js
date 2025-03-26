@@ -8,31 +8,31 @@ const User = require("../models/User");
 
 dotenv.config();
 
-console.log("✅ Feedback email scheduler is loading...");
+// console.log("✅ Feedback email scheduler is loading...");
 
 const runScheduler = async () => {
   if (!dbConnected) {
-    console.log(
-      "🔄 Waiting for MongoDB connection before running scheduler..."
-    );
+    // console.log(
+    //   "🔄 Waiting for MongoDB connection before running scheduler..."
+    // );
     await connectDB();
   }
 
-  console.log("🔄 Running scheduled feedback email check...");
+  // console.log("🔄 Running scheduled feedback email check...");
 
   try {
     const habits = await Habit.find({ completed: false });
-    console.log(`👀 Found ${habits.length} active habits`);
+    // console.log(`👀 Found ${habits.length} active habits`);
 
     for (const habit of habits) {
-      console.log(`👀 Checking habit: ${habit.habit} (User: ${habit.userId})`);
+      // console.log(`👀 Checking habit: ${habit.habit} (User: ${habit.userId})`);
 
       const user = await User.findById(habit.userId);
-      console.log("User: ", user);
+      // console.log("User: ", user);
       if (!user || !user.email) continue;
-      console.log(
-        `👀  User: ${user.firstName} ${user.lastName}, Email: ${user.email}`
-      );
+      // console.log(
+      //   `👀  User: ${user.firstName} ${user.lastName}, Email: ${user.email}`
+      // );
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -43,7 +43,7 @@ const runScheduler = async () => {
         cadenceEnd.setDate(cadenceEnd.getDate() + habit.cadenceLength);
 
         if (today.getTime() === cadenceStart.getTime()) {
-          console.log(`✅ Today matches cadence start date: ${cadenceStart}`);
+          // console.log(`✅ Today matches cadence start date: ${cadenceStart}`);
 
           const existingRequest = await Feedback.findOne({
             habitId: habit._id,
@@ -53,11 +53,11 @@ const runScheduler = async () => {
           });
 
           if (existingRequest) {
-            console.log(`❌  Feedback request already exists, skipping email.`);
+            // console.log(`❌  Feedback request already exists, skipping email.`);
             continue;
           }
 
-          console.log(`✅ Sending feedback request email to ${user.email}`);
+          // console.log(`✅ Sending feedback request email to ${user.email}`);
           const feedbackLink = `http://localhost:8081/feedback-request/${habit._id}`;
           await sendEmail(
             user.email,
@@ -110,10 +110,10 @@ cron.schedule("0 9 * * *", async () => {
   await runScheduler();
 });
 
-console.log("✅ Scheduler integrated into main app...");
+// console.log("✅ Scheduler integrated into main app...");
 module.exports = runScheduler;
 
-(async () => {
-  console.log("✅ Manually triggering scheduler for testing...");
-  await runScheduler();
-})();
+// (async () => {
+//   console.log("✅ Manually triggering scheduler for testing...");
+//   await runScheduler();
+// })();

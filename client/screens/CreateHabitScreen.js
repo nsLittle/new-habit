@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -36,31 +35,31 @@ export default function CreateHabitScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (!userContext) {
-      console.error("UserContext is NULL in CreateHabitScreen!");
-    } else {
-      console.log("UserContext in CreateHabitScreen:", userContext);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!userContext) {
+  //     console.error("UserContext is NULL in CreateHabitScreen!");
+  //   } else {
+  //     console.log("UserContext in CreateHabitScreen:", userContext);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Habit End Date Context: ", habitContextEndDate);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Habit End Date Context: ", habitContextEndDate);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -91,19 +90,18 @@ export default function CreateHabitScreen() {
         }
 
         const data = await response.json();
-        console.log("Data: ", data);
+        // console.log("Data: ", data);
         const incompleteHabit = data.habits.find((habit) => !habit.completed);
 
         if (incompleteHabit) {
-          console.log(
-            "Existing Incomplete Habit Found:",
-            incompleteHabit.habit
-          );
-          console.log("Existing Habit ID Found:", incompleteHabit._id);
+          // console.log(
+          //   "Existing Incomplete Habit Found:",
+          //   incompleteHabit.habit
+          // );
+          // console.log("Existing Habit ID Found:", incompleteHabit._id);
           setHabitInput(incompleteHabit.habit);
           setExistingHabit(incompleteHabit.habit);
           setIncompleteHabit(incompleteHabit);
-
           setUserContext((prevContext) => ({
             ...prevContext,
             habitContextId: incompleteHabit._id,
@@ -125,13 +123,13 @@ export default function CreateHabitScreen() {
   }, []);
 
   const saveHabit = async () => {
-    console.log(`Attempting to save habit.`);
-    console.log("Habit Input:", habitInput);
-    console.log("Existing Habit: ", existingHabit);
-    console.log("User Id:", userIdContext);
-    console.log("Habit Id:", habitContextId);
-    console.log("Username: ", userNameContext);
-    console.log("End Date: ", habitContextEndDate);
+    // console.log(`Attempting to save habit.`);
+    // console.log("Habit Input:", habitInput);
+    // console.log("Existing Habit: ", existingHabit);
+    // console.log("User Id:", userIdContext);
+    // console.log("Habit Id:", habitContextId);
+    // console.log("Username: ", userNameContext);
+    // console.log("End Date: ", habitContextEndDate);
 
     if (!habitInput.trim()) {
       setDialogMessage("You must enter a habit.");
@@ -170,7 +168,7 @@ export default function CreateHabitScreen() {
         method = "POST";
       }
 
-      console.log(`Sending ${method} request to:`, url);
+      // console.log(`Sending ${method} request to:`, url);
 
       response = await fetch(url, {
         method: method,
@@ -187,9 +185,9 @@ export default function CreateHabitScreen() {
         );
 
       const responseData = await response.json();
-      console.log("Response Data: ", responseData);
-      console.log("Habit Input: ", responseData.habit);
-      console.log("Habit Id: ", responseData.habitId);
+      // console.log("Response Data: ", responseData);
+      // console.log("Habit Input: ", responseData.habit);
+      // console.log("Habit Id: ", responseData.habitId);
 
       setUserContext((prevContext) => {
         const updatedContext = {
@@ -197,7 +195,7 @@ export default function CreateHabitScreen() {
           habitContextId: responseData.habitId,
           habitContextInput: responseData.habit,
         };
-        console.log("Updated UserContext: ", updatedContext);
+        // console.log("Updated UserContext: ", updatedContext);
         return updatedContext;
       });
 
@@ -386,22 +384,22 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
   saveButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,

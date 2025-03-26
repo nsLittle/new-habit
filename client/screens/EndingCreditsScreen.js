@@ -1,55 +1,46 @@
-import { useContext, useEffect, useState } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+// import { useContext, useEffect } from "react";
+import { Platform, ScrollView, StyleSheet, View, Text } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { BASE_URL } from "../constants/config";
-import { UserContext } from "../context/UserContext";
+// import { useNavigation } from "@react-navigation/native";
+// import { UserContext } from "../context/UserContext";
 
 export default function EndingCreditsScreen() {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    lastNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-    token,
-  } = userContext || {};
+  // const { userContext, setUserContext } = useContext(UserContext) || {};
+  // const {
+  //   userIdContext,
+  //   userNameContext,
+  //   firstNameContext,
+  //   lastNameContext,
+  //   emailContext,
+  //   profilePicContext,
+  //   habitContextId,
+  //   habitContextInput,
+  //   descriptionContextInput,
+  //   teamMemberContextId,
+  //   token,
+  // } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

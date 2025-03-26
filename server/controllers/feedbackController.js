@@ -3,21 +3,21 @@ const feedbackController = require("../controllers/feedbackController");
 const { Habit } = require("../models/Habit");
 const User = require("../models/User");
 const sendEmail = require("../utils/emailSender");
-console.log("Habit Model:", Habit);
+// console.log("Habit Model:", Habit);
 
 const Feedback = require("../models/Feedback");
 
 exports.submitFeedback = async (req, res) => {
-  console.log("I'm here to submit feedback...");
+  // console.log("I'm here to submit feedback...");
   try {
     const receivedData = req.params;
-    console.log("Received Data: ", receivedData);
+    // console.log("Received Data: ", receivedData);
     const { feedbackRating } = req.body;
 
-    console.log("✅ Username:", receivedData.username);
-    console.log("✅ Habit ID:", receivedData.habit_id);
-    console.log("✅ Team Member ID:", receivedData.teammemberId);
-    console.log("✅ Feedback Rating:", feedbackRating);
+    // console.log("✅ Username:", receivedData.username);
+    // console.log("✅ Habit ID:", receivedData.habit_id);
+    // console.log("✅ Team Member ID:", receivedData.teammemberId);
+    // console.log("✅ Feedback Rating:", feedbackRating);
     const username = receivedData.username;
     const habit_id = receivedData.habit_id;
     const teammemberId = receivedData.teammemberId;
@@ -27,7 +27,7 @@ exports.submitFeedback = async (req, res) => {
     }
 
     const habit = await Habit.findById(habit_id);
-    console.log("Found habit: ", habit);
+    // console.log("Found habit: ", habit);
 
     if (!habit) {
       return res.status(404).json({ error: "Habit not found" });
@@ -42,22 +42,22 @@ exports.submitFeedback = async (req, res) => {
     const cadenceEnd = new Date();
     cadenceEnd.setDate(cadenceStart.getDate() + cadenceLength);
 
-    console.log(
-      "Checking for existing feedback with habit id: ",
-      habit_id,
-      "and team member Id, ",
-      teammemberId
-    );
+    // console.log(
+    //   "Checking for existing feedback with habit id: ",
+    //   habit_id,
+    //   "and team member Id, ",
+    //   teammemberId
+    // );
 
     const existingFeedback = await Feedback.findOne({
       habitId: habit_id,
       teamMemberId: teammemberId,
     });
 
-    console.log("Existing Feedback: ", existingFeedback);
+    // console.log("Existing Feedback: ", existingFeedback);
 
     if (existingFeedback) {
-      console.log("⚠️ Feedback already exists, attempting to send response...");
+      // console.log("⚠️ Feedback already exists, attempting to send response...");
 
       if (res.headersSent) {
         console.error(
@@ -103,17 +103,17 @@ exports.submitFeedback = async (req, res) => {
 };
 
 exports.editFeedbackRating = async (req, res) => {
-  console.log("Editing existing feedback...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
-  console.log("Team Member Id: ", req.body.teamMemberId);
+  // console.log("Editing existing feedback...");
+  // console.log("Incoming PATCH request:", req.params);
+  // console.log("Incoming Request Body:", req.body);
+  // console.log("Team Member Id: ", req.body.teamMemberId);
 
   try {
     const { username, habit_id } = req.params;
-    console.log("Username: ", username, "with habit id: ", habit_id);
+    // console.log("Username: ", username, "with habit id: ", habit_id);
 
     const { feedbackRating, teamMemberId } = req.body;
-    console.log("Feedback Rating: ", feedbackRating);
+    // console.log("Feedback Rating: ", feedbackRating);
 
     if (!habit_id || feedbackRating === undefined || !teamMemberId) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -129,7 +129,7 @@ exports.editFeedbackRating = async (req, res) => {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    console.log("Successfully updating feedback rating");
+    // console.log("Successfully updating feedback rating");
     return res.status(200).json({
       message: "Feedback rating updated successfully",
       feedback: updatedFeedback,
@@ -145,22 +145,22 @@ exports.editFeedbackRating = async (req, res) => {
 };
 
 exports.editFeedbackThanksRating = async (req, res) => {
-  console.log("Editing feedback thanks rating...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
+  // console.log("Editing feedback thanks rating...");
+  // console.log("Incoming PATCH request:", req.params);
+  // console.log("Incoming Request Body:", req.body);
 
   try {
     const { habit_id } = req.params;
-    console.log("Req Param: ", req.params);
+    // console.log("Req Param: ", req.params);
     const { feedbackThanksRating, teamMemberContextId } = req.body;
-    console.log("Req Body: ", req.body);
-    console.log(
-      "Feedback Thanks Rating: ",
-      feedbackThanksRating,
-      "Team Member ID: ",
-      teamMemberContextId
-    );
-    console.log("Team Member ID: ", teamMemberContextId);
+    // console.log("Req Body: ", req.body);
+    // console.log(
+    //   "Feedback Thanks Rating: ",
+    //   feedbackThanksRating,
+    //   "Team Member ID: ",
+    //   teamMemberContextId
+    // );
+    // console.log("Team Member ID: ", teamMemberContextId);
 
     const updatedFeedback = await Feedback.findOneAndUpdate(
       { habitId: habit_id },
@@ -168,13 +168,13 @@ exports.editFeedbackThanksRating = async (req, res) => {
       { new: true }
     );
 
-    console.log("Updated Feedback: ", updatedFeedback);
+    // console.log("Updated Feedback: ", updatedFeedback);
 
     if (!updatedFeedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    console.log("Successfully updateing feedback thanks rating");
+    // console.log("Successfully updateing feedback thanks rating");
     return res.status(200).json({
       message: "Feedback thanks rating updated successfully",
       feedback: updatedFeedback,
@@ -188,14 +188,14 @@ exports.editFeedbackThanksRating = async (req, res) => {
 };
 
 exports.editFeedbackTextRating = async (req, res) => {
-  console.log("Editing feedback text...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
+  // console.log("Editing feedback text...");
+  // console.log("Incoming PATCH request:", req.params);
+  // console.log("Incoming Request Body:", req.body);
 
   try {
     const { habit_id } = req.params;
     const { feedbackText, teamMemberId } = req.body;
-    console.log("Req Body: ", req.body);
+    // console.log("Req Body: ", req.body);
 
     const updatedFeedback = await Feedback.findOneAndUpdate(
       { habitId: habit_id },
@@ -207,7 +207,7 @@ exports.editFeedbackTextRating = async (req, res) => {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    console.log("Successfully updated feedback text");
+    // console.log("Successfully updated feedback text");
     return res.status(200).json({
       message: "Feedback text updated successfully",
       feedback: updatedFeedback,
@@ -219,11 +219,11 @@ exports.editFeedbackTextRating = async (req, res) => {
 };
 
 exports.getFeedback = async (req, res) => {
-  console.log("I'm here to get feedback...");
+  // console.log("I'm here to get feedback...");
   try {
     const { habit_id } = req.params;
 
-    console.log("Received Params:", req.params);
+    // console.log("Received Params:", req.params);
 
     if (!mongoose.Types.ObjectId.isValid(habit_id)) {
       return res.status(400).json({ error: "Invalid habit ID format" });
@@ -231,7 +231,7 @@ exports.getFeedback = async (req, res) => {
 
     const feedback = await Feedback.find({ habitId: habit_id });
 
-    console.log("Feedback:", feedback);
+    // console.log("Feedback:", feedback);
 
     if (!feedback.length) {
       return res
@@ -239,13 +239,13 @@ exports.getFeedback = async (req, res) => {
         .json({ message: "No feedback found for this habit", feedback: [] });
     }
 
-    console.log("Right before sneding feedback response...");
+    // console.log("Right before sneding feedback response...");
 
     res.status(200).json({
       message: "Feedback retrieved successfully",
       feedback,
     });
-    console.log("Right afetr sneding feedback response...");
+    // console.log("Right afetr sneding feedback response...");
   } catch (error) {
     console.error("❌ Error fetching feedback:", error);
     res.status(500).json({ error: "Failed to retrieve feedback" });
@@ -276,7 +276,7 @@ exports.getAggregateFeedback = async (req, res) => {
       return res.status(400).json({ error: "Invalid habit ID format" });
     }
 
-    console.log(`🔍 Fetching aggregated feedback for habit ID: ${habit_id}`);
+    // console.log(`🔍 Fetching aggregated feedback for habit ID: ${habit_id}`);
 
     const aggregatedData = await aggregateFeedbackData(habit_id);
 

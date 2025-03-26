@@ -1,15 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import {
-  Image,
-  Linking,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { UserProvider } from "./context/UserContext";

@@ -12,7 +12,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -34,22 +33,22 @@ export default function FeedbackRequestRatingScreen() {
     teamMemberContextId,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -63,17 +62,17 @@ export default function FeedbackRequestRatingScreen() {
     teamMemberRouteProfilePic,
   } = route.params || {};
 
-  console.log("Received from FeedbackWelcomeScreen:", route.params);
+  // console.log("Received from FeedbackWelcomeScreen:", route.params);
 
   const teammemberId = route.params.teamMemberData.teamMember.teamMemberId;
   const token = route.params.token;
 
-  console.log("Team member ID: ", teammemberId);
-  console.log("Token: ", token);
+  // console.log("Team member ID: ", teammemberId);
+  // console.log("Token: ", token);
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
-  console.log("Rating Value: ", ratingValue);
+  // console.log("Rating Value: ", ratingValue);
 
   const ratings = [
     { value: 1, label: "Significantly Improved", color: "#006400" }, // Dark Green
@@ -88,7 +87,7 @@ export default function FeedbackRequestRatingScreen() {
 
   useEffect(() => {
     const checkForExistingRating = async () => {
-      console.log(`Checking for existing rating...`);
+      // console.log(`Checking for existing rating...`);
 
       try {
         const response = await fetch(
@@ -110,7 +109,7 @@ export default function FeedbackRequestRatingScreen() {
         }
 
         const data = await response.json();
-        console.log("Data: ", data);
+        // console.log("Data: ", data);
       } catch (error) {
         console.error("Error checking existing rating:", error);
       }
@@ -119,7 +118,7 @@ export default function FeedbackRequestRatingScreen() {
   }, []);
 
   const handleSave = async () => {
-    console.log("I'm here saving...");
+    // console.log("I'm here saving...");
 
     if (!ratingValue) {
       setDialogMessage("Please select a feedback rating.");
@@ -128,17 +127,17 @@ export default function FeedbackRequestRatingScreen() {
     }
 
     try {
-      console.log("Saving rating...");
-      console.log(
-        "Username: ",
-        userNameContext,
-        "and Habit Id: ",
-        habitContextId[0],
-        "from Team Member Id: ",
-        teammemberId
-      );
+      // console.log("Saving rating...");
+      // console.log(
+      //   "Username: ",
+      //   userNameContext,
+      //   "and Habit Id: ",
+      //   habitContextId[0],
+      //   "from Team Member Id: ",
+      //   teammemberId
+      // );
       const feedbackRating = ratingValue;
-      console.log("Feedback Rating :", feedbackRating);
+      // console.log("Feedback Rating :", feedbackRating);
 
       if (!teammemberId) {
         console.error(
@@ -149,10 +148,10 @@ export default function FeedbackRequestRatingScreen() {
         return;
       }
 
-      console.log("✅ Using Team Member Id:", teammemberId);
+      // console.log("✅ Using Team Member Id:", teammemberId);
       const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`;
 
-      console.log("Fetching from: ", url);
+      // console.log("Fetching from: ", url);
 
       const response = await fetch(
         `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`,
@@ -172,13 +171,13 @@ export default function FeedbackRequestRatingScreen() {
       );
 
       const data = await response.json();
-      console.log("Data: ", data);
+      // console.log("Data: ", data);
 
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
-      console.log("Navigating with params:", {
-        teamMemberRouteId: teammemberId,
-      });
+      // console.log("Navigating with params:", {
+      //   teamMemberRouteId: teammemberId,
+      // });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
         teamMemberRouteId: teammemberId,
       });
@@ -252,7 +251,7 @@ export default function FeedbackRequestRatingScreen() {
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() => {
-              console.log("Save button pressed");
+              // console.log("Save button pressed");
               handleSave();
             }}>
             <Text style={styles.saveButtonText}>Save ▶</Text>
@@ -261,7 +260,7 @@ export default function FeedbackRequestRatingScreen() {
           <TouchableOpacity
             style={styles.noThanksButton}
             onPress={() => {
-              console.log("Team member declines feedback request.");
+              // console.log("Team member declines feedback request.");
               navigation.navigate("NoThankYouScreen", {});
             }}>
             <Text style={styles.noThanksButtonText} title="No Thanks">
@@ -305,11 +304,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-  dataContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    paddingBottom: 50,
-  },
   ratingContainer: {
     flexDirection: "column",
     alignItems: "center",
@@ -328,14 +322,6 @@ const styles = StyleSheet.create({
     borderColor: "#D3D3D3",
     borderRadius: 10,
     backgroundColor: "white",
-  },
-  circle: {
-    width: 15,
-    height: 15,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#D3D3D3",
-    marginRight: 10,
   },
   label: {
     flex: 1,
@@ -391,6 +377,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
 });

@@ -21,15 +21,15 @@ import { UserContext } from "../context/UserContext";
 export default function EditTeammemberScreen() {
   const navigation = useNavigation();
 
-  const route = useRoute();
-  const { teamMember_id, firstName, lastName, email, profilePic } =
-    route.params;
+  // const route = useRoute();
+  // const { teamMember_id, firstName, lastName, email, profilePic } =
+  //   route.params;
 
-  console.log("Team Member ID: ", teamMember_id);
-  console.log("Team Member First Name: ", firstName);
-  console.log("Team Member Last Name> ", lastName);
-  console.log("Team Member Email: ", email);
-  console.log("Team member Profile Pic: ", profilePic);
+  // console.log("Team Member ID: ", teamMember_id);
+  // console.log("Team Member First Name: ", firstName);
+  // console.log("Team Member Last Name> ", lastName);
+  // console.log("Team Member Email: ", email);
+  // console.log("Team member Profile Pic: ", profilePic);
 
   const [editedFirstName, setEditedFirstName] = useState(firstName || "");
   const [editedLastName, setEditedLastName] = useState(lastName || "");
@@ -51,10 +51,10 @@ export default function EditTeammemberScreen() {
   const [userData, setUserData] = useState("");
 
   useEffect(() => {
-    console.log(`I'm here to reset passed team member data...`);
+    // console.log(`I'm here to reset passed team member data...`);
     setEditedFirstName(firstName);
-    console.log("Edited first name: ", editedFirstName);
-    console.log("Old First Name: ", firstName);
+    // console.log("Edited first name: ", editedFirstName);
+    // console.log("Old First Name: ", firstName);
     setEditedLastName(lastName);
     setEditedEmail(email);
     setEditedProfilePic(profilePic);
@@ -75,25 +75,25 @@ export default function EditTeammemberScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const handleSave = async () => {
-    console.log(`I'm here to save your team member edits...`);
+    // console.log(`I'm here to save your team member edits...`);
     try {
       const updates = {
         firstName: editedFirstName,
@@ -101,13 +101,13 @@ export default function EditTeammemberScreen() {
         email: editedEmail,
         profilePic: editedProfilePic,
       };
-      console.log("Updated User Data: ", updates);
+      // console.log("Updated User Data: ", updates);
 
       if (!token) throw new Error("Authentication token is missing.");
 
-      console.log("Team Member Id: ", teamMember_id);
+      // console.log("Team Member Id: ", teamMember_id);
       const routeCheck = `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`;
-      console.log("Route Check: ", routeCheck);
+      // console.log("Route Check: ", routeCheck);
 
       const response = await fetch(
         `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`,
@@ -127,13 +127,12 @@ export default function EditTeammemberScreen() {
       );
 
       const data = await response.json();
-      console.log("Edit Response:", data);
+      // console.log("Edit Response:", data);
       setEditedFirstName(data.firstName);
-      console.log("Edited First Name; ", editedFirstName);
+      // console.log("Edited First Name; ", editedFirstName);
 
       if (!response.ok) throw new Error("Failed to update user data");
       setUserData(data.teamMember);
-
       setDialogMessage("Success! Account updated successfully!");
       setDialogVisible(true);
 
@@ -230,6 +229,18 @@ export default function EditTeammemberScreen() {
 }
 
 const styles = StyleSheet.create({
+  dialog: {
+    backgroundColor: "white",
+  },
+  dialogTitle: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  dialogButton: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -247,6 +258,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingBottom: 30,
     fontWeight: "bold",
+  },
+  profilePicMain: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 100,
+    height: 100,
+    marginBottom: 15,
+    borderRadius: 50,
   },
   inputField: {
     height: 40,
@@ -299,26 +318,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
-  },
-
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
   },
 });

@@ -59,10 +59,10 @@ export default function HabitDescriptionScreen() {
 
   useEffect(() => {
     const checkForExistingDescription = async () => {
-      console.log(`Checking for existing description...`);
+      // console.log(`Checking for existing description...`);
 
       try {
-        console.log(`Fetching URL: ${BASE_URL}/habit/${userNameContext}`);
+        // console.log(`Fetching URL: ${BASE_URL}/habit/${userNameContext}`);
 
         const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
           method: "GET",
@@ -81,17 +81,17 @@ export default function HabitDescriptionScreen() {
         }
 
         const data = await response.json();
-        console.log("Existing habit data ...", data);
-        console.log("Eixisting habit id: ", data.habits._id);
+        // console.log("Existing habit data ...", data);
+        // console.log("Eixisting habit id: ", data.habits._id);
         const incompleteHabit = data.habits.find((habit) => !habit.completed);
-        console.log("Incomplete Habit: ", incompleteHabit);
+        // console.log("Incomplete Habit: ", incompleteHabit);
 
         if (incompleteHabit && incompleteHabit.description?.trim()) {
-          console.log(
-            "Existing Incomplete Habit Found:",
-            incompleteHabit.habit
-          );
-          console.log("Existing Habit ID Found:", incompleteHabit._id);
+          // console.log(
+          //   "Existing Incomplete Habit Found:",
+          //   incompleteHabit.habit
+          // );
+          // console.log("Existing Habit ID Found:", incompleteHabit._id);
 
           setDescriptionInput(incompleteHabit.description);
           setExistingDescription(incompleteHabit.description);
@@ -121,12 +121,12 @@ export default function HabitDescriptionScreen() {
   }, []);
 
   const saveDescription = async () => {
-    console.log(`Attempting to save description.`);
-    console.log("Description Input:", descriptionInput);
-    console.log("Existing description: ", existingDescription);
-    console.log("User Id Context:", userIdContext);
-    console.log("User Name Context: ", userNameContext);
-    console.log("Habit Id Context:", habitContextId);
+    // console.log(`Attempting to save description.`);
+    // console.log("Description Input:", descriptionInput);
+    // console.log("Existing description: ", existingDescription);
+    // console.log("User Id Context:", userIdContext);
+    // console.log("User Name Context: ", userNameContext);
+    // console.log("Habit Id Context:", habitContextId);
 
     if (!descriptionInput.trim()) {
       setDialogMessage("You must enter a description.");
@@ -159,7 +159,7 @@ export default function HabitDescriptionScreen() {
         method = "PATCH";
       }
 
-      console.log(`Sending ${method} request to:`, url);
+      // console.log(`Sending ${method} request to:`, url);
 
       response = await fetch(url, {
         method: method,
@@ -173,9 +173,9 @@ export default function HabitDescriptionScreen() {
         }),
       });
 
-      console.log(`Response Status: ${response.status}`);
+      // console.log(`Response Status: ${response.status}`);
       const responseData = await response.json();
-      console.log("Response Data: ", responseData);
+      // console.log("Response Data: ", responseData);
 
       if (!response.ok)
         throw new Error(
@@ -189,7 +189,7 @@ export default function HabitDescriptionScreen() {
         descriptionContextInput: descriptionInput,
       }));
 
-      console.log("Updated UserContext:", userContext);
+      // console.log("Updated UserContext:", userContext);
 
       setDialogMessage("Description successfully saved");
       setDialogAction("successfulUpdate");
@@ -337,12 +337,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
+
   inputContainer: {
     width: "100%",
     alignItems: "flex-start",

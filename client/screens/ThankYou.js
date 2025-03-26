@@ -1,19 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import { Platform, ScrollView, StyleSheet, View, Text } from "react-native";
 import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { BASE_URL } from "../constants/config";
+import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
 
 export default function ThankYouScreen() {
@@ -35,22 +26,22 @@ export default function ThankYouScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -63,8 +54,6 @@ export default function ThankYouScreen() {
           <Text style={styles.bodyIntroText}>
             {firstNameContext} appreciates your time!
           </Text>
-
-          <View style={styles.buttonRow}></View>
         </View>
       </View>
     </ScrollView>
@@ -84,31 +73,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
   bodyIntroContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-  },
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
-  },
-
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
   },
 });

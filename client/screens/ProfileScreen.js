@@ -22,7 +22,7 @@ export default function ProfileScreen() {
 
   const routes = navigation.getState().routes;
   const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
+  // console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
@@ -40,23 +40,23 @@ export default function ProfileScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Habit End Date: ", habitContextEndDate);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Habit End Date: ", habitContextEndDate);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -100,18 +100,18 @@ export default function ProfileScreen() {
       const habitData = await habitsResponse.json();
       const teamMemberData = await teamMemberResponse.json();
 
-      console.log("User Data: ", userData);
-      console.log("User Data - Username: ", userData[0]?.username);
-      console.log("User Data - First Name: ", userData[0]?.firstName);
-      console.log("Habit Data: ", habitData);
-      console.log("Habit Data - Habit: ", habitData.habits[0]?.habit);
-      console.log(
-        "Habit Data - Description: ",
-        habitData.habits[0]?.description
-      );
-      console.log("Habit Data - Habit Id: ", habitData.habits[0]?._id);
-      console.log("Habit End Dte: ", habitData.habits[0]?.endDate);
-      console.log("Team Member Data: ", teamMemberData);
+      // console.log("User Data: ", userData);
+      // console.log("User Data - Username: ", userData[0]?.username);
+      // console.log("User Data - First Name: ", userData[0]?.firstName);
+      // console.log("Habit Data: ", habitData);
+      // console.log("Habit Data - Habit: ", habitData.habits[0]?.habit);
+      // console.log(
+      //   "Habit Data - Description: ",
+      //   habitData.habits[0]?.description
+      // );
+      // console.log("Habit Data - Habit Id: ", habitData.habits[0]?._id);
+      // console.log("Habit End Dte: ", habitData.habits[0]?.endDate);
+      // console.log("Team Member Data: ", teamMemberData);
 
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
@@ -139,7 +139,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     if (userNameContext) {
       fetchUserData();
-      console.log(userNameContext);
+      // console.log(userNameContext);
     }
   }, []);
 
@@ -183,13 +183,13 @@ export default function ProfileScreen() {
           }
         );
         const feedbacks = await feedbackResponse.json();
-        console.log("Feedback: ", feedbacks);
+        // console.log("Feedback: ", feedbacks);
 
         if (feedbacks.feedback && feedbacks.feedback.length > 0) {
-          console.log("Feedback found. Navigating to FeedbackDataScreen...");
+          // console.log("Feedback found. Navigating to FeedbackDataScreen...");
           navigation.navigate("FeedbackDataScreen");
         } else {
-          console.log("No feedback. Navigating to ReviewScreen...");
+          // console.log("No feedback. Navigating to ReviewScreen...");
           navigation.navigate("ReviewScreen");
         }
       } catch (error) {
@@ -198,7 +198,7 @@ export default function ProfileScreen() {
     };
 
     checkData();
-  }, [userContext]); // instead of [habitContextId]
+  }, [userContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -275,89 +275,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  profileHabits: {
-    marginBottom: 10,
-  },
-  profileTeams: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
   profileData: {
     textAlign: "center",
     alignSelf: "center",
     fontSize: 16,
-  },
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  teammemberProfilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 50,
-    height: 50,
-    marginTop: 15,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  habitDataBox: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  habitBox: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  teamMemberBox: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  teamMemberDetails: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconsColumn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: 80,
-  },
-  contactPersonButton: {
-    backgroundColor: "#F8F8F8",
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    marginTop: 15,
-    marginBottom: 5,
-    width: 350,
-    height: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  contactPersonNameColumn: {
-    flexDirection: "row",
-    alignItem: "center",
-    justifyContent: "space-around",
-  },
-  contactEmail: {
-    fontSize: 10,
-    color: "gray",
-  },
-  teamMemberProfilePic: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 40,
-    height: 40,
-    marginBottom: 15,
-    borderRadius: 50,
   },
   buttonRow: {
     flexDirection: "row",

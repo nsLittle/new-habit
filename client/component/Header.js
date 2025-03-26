@@ -1,8 +1,7 @@
+import { useState, useContext } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { useState, useEffect, useContext } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useNavigationState } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "../context/UserContext";
 
 export default function Header(props) {
@@ -18,17 +17,17 @@ export default function Header(props) {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    lastNameContext,
-    emailContext,
-    profilePicContext,
+    // userIdContext,
+    // userNameContext,
+    // firstNameContext,
+    // lastNameContext,
+    // emailContext,
+    // profilePicContext,
     habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-    token,
+    // habitContextInput,
+    // descriptionContextInput,
+    // teamMemberContextId,
+    // token,
   } = userContext || {};
 
   const currentRoute = useNavigationState((state) => {

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -9,11 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { Button, Dialog, Portal } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -49,29 +48,29 @@ export default function FinalReviewScreen() {
 
   const [hasShownEditDialog, setHasShownEditDialog] = useState(false);
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Habit End Date: ", habitContextEndDate);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Habit End Date: ", habitContextEndDate);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
-  console.log(
-    "Fetching habit metadata with URL:",
-    `${BASE_URL}/habit/${userNameContext}/${habitContextId}`
-  );
-  console.log("Token:", token);
+  // console.log(
+  //   "Fetching habit metadata with URL:",
+  //   `${BASE_URL}/habit/${userNameContext}/${habitContextId}`
+  // );
+  // console.log("Token:", token);
 
   useEffect(() => {
     let isMounted = true;
@@ -88,12 +87,12 @@ export default function FinalReviewScreen() {
         );
 
         if (!response.ok) {
-          console.log("No existing reflection found.");
+          // console.log("No existing reflection found.");
           return;
         }
 
         const data = await response.json();
-        console.log("DATA: ", data);
+        // console.log("DATA: ", data);
 
         if (data?.habit?.reflections?.length > 0) {
           const latest = data.habit.reflections.slice(-1)[0];
@@ -125,7 +124,7 @@ export default function FinalReviewScreen() {
 
         if (!response.ok) throw new Error("Failed to fetch habit metadata.");
         const data = await response.json();
-        console.log("Habit metadata:", data);
+        // console.log("Habit metadata:", data);
         setHabitMetaData(data);
       } catch (error) {
         console.error("Error fetching habit metadata:", error);
@@ -144,12 +143,12 @@ export default function FinalReviewScreen() {
     const fetchFeedbackData = async () => {
       if (!token) return;
       try {
-        console.log(
-          "Fetching feedback for user:",
-          userNameContext,
-          "Habit:",
-          habitContextId
-        );
+        // console.log(
+        //   "Fetching feedback for user:",
+        //   userNameContext,
+        //   "Habit:",
+        //   habitContextId
+        // );
         const response = await fetch(
           `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -157,7 +156,7 @@ export default function FinalReviewScreen() {
 
         if (!response.ok) throw new Error("Failed to fetch feedback data.");
         const data = await response.json();
-        console.log("Fetched Feedback Data:", data);
+        // console.log("Fetched Feedback Data:", data);
         setFeedbackData(data.feedback || []);
       } catch (error) {
         console.error("Error fetching feedback:", error);
@@ -189,10 +188,10 @@ export default function FinalReviewScreen() {
     );
 
     setIsLastDay(today >= feedbackUnlockDate);
-    console.log("Today:", today);
-    console.log("Cycle start:", cycleStartDate);
-    console.log("Feedback unlock date:", feedbackUnlockDate);
-    console.log("isLastDay:", today >= feedbackUnlockDate);
+    // console.log("Today:", today);
+    // console.log("Cycle start:", cycleStartDate);
+    // console.log("Feedback unlock date:", feedbackUnlockDate);
+    // console.log("isLastDay:", today >= feedbackUnlockDate);
 
     const latestReflection = habit.reflections?.slice(-1)[0]?.text;
     if (latestReflection) {
@@ -247,10 +246,10 @@ export default function FinalReviewScreen() {
 
       if (!response.ok) throw new Error("Failed to save reflection.");
 
-      console.log("Response: ", response);
+      // console.log("Response: ", response);
 
       const data = await response.json();
-      console.log("Data: ", data);
+      // console.log("Data: ", data);
 
       if (data.message === "Duplicate reflection detected") {
         setDialogMessage("Reflection already exists.");
@@ -281,7 +280,7 @@ export default function FinalReviewScreen() {
       );
 
       const data = await response.json();
-      console.log("Cycle complete response:", data);
+      // console.log("Cycle complete response:", data);
 
       if (!response.ok) throw new Error("Failed to complete habit cycle.");
 
@@ -458,21 +457,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  subtitle: {
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 5,
-  },
   description: {
     fontSize: 14,
     textAlign: "center",
     marginBottom: 15,
-  },
-  feedbackSection: {
-    marginTop: 20,
-    padding: 15,
-    borderWidth: 1,
-    borderRadius: 5,
   },
   header: {
     fontSize: 18,
@@ -482,18 +470,6 @@ const styles = StyleSheet.create({
   subHeader: {
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 10,
-  },
-  feedbackText: {
-    fontStyle: "italic",
-    marginLeft: 10,
-  },
-  textInput: {
-    height: 100,
-    width: "85%",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
     marginTop: 10,
   },
   buttonColumn: {

@@ -18,15 +18,12 @@ agenda.define("send reminder email", async (job) => {
 
   try {
     await sendEmail(email, subject, message);
-    console.log(`Reminder email sent to ${email}`);
   } catch (error) {
     console.error("Failed to send reminder email:", error);
   }
 });
 
 const scheduleUserReminders = async () => {
-  console.log("Checking for reminders to schedule...");
-
   try {
     const habits = await Habit.find({
       "reminders.isReminderEnabled": true,
@@ -48,8 +45,6 @@ const scheduleUserReminders = async () => {
         subject: "Reminder Alert",
         message: `Reminder for your habit: ${habit.habit}`,
       });
-
-      console.log(`Scheduled reminder for ${userEmail} every ${interval}`);
     }
   } catch (error) {
     console.error("Error scheduling reminders:", error);
@@ -74,7 +69,6 @@ const getCadenceInterval = (cadence, cadenceLength) => {
 (async function () {
   await agenda.start();
   await scheduleUserReminders();
-  console.log("Agenda.js is running...");
 })();
 
 module.exports = agenda;

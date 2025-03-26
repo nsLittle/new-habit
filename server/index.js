@@ -48,7 +48,7 @@ const startServer = async () => {
     app.use(express.json());
 
     app.use((req, res, next) => {
-      console.log(`Incoming Request: ${req.method} ${req.url}`);
+      // console.log(`Incoming Request: ${req.method} ${req.url}`);
       next();
     });
 
@@ -56,7 +56,6 @@ const startServer = async () => {
       res.send("Server is running!");
     });
 
-    // API Routes
     const authRoutes = require("./routes/authRoutes");
     app.use("/auth", authRoutes);
 
@@ -81,15 +80,15 @@ const startServer = async () => {
     const emailRoutes = require("./routes/emailRoutes");
     app.use("/email", emailRoutes);
 
-    app._router.stack.forEach((r) => {
-      if (r.route && r.route.path) {
-        console.log(
-          `Registered Route: ${r.route.path} [${Object.keys(r.route.methods)
-            .join(", ")
-            .toUpperCase()}]`
-        );
-      }
-    });
+    // app._router.stack.forEach((r) => {
+    //   if (r.route && r.route.path) {
+    //     console.log(
+    //       `Registered Route: ${r.route.path} [${Object.keys(r.route.methods)
+    //         .join(", ")
+    //         .toUpperCase()}]`
+    //     );
+    //   }
+    // });
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`✅ Server is running on http://localhost:${PORT}`);

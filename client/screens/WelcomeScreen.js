@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../constants/config";
+
 import { UserContext } from "../context/UserContext";
 
 export default function WelcomeScreen() {
@@ -19,7 +19,7 @@ export default function WelcomeScreen() {
 
   useEffect(() => {
     if (resetUserContext) {
-      console.log("Resetting UserContext from WelcomeScreen...");
+      // console.log("Resetting UserContext from WelcomeScreen...");
       resetUserContext("WelcomeScreen");
     }
   }, []);
@@ -28,8 +28,8 @@ export default function WelcomeScreen() {
     const checkStorage = async () => {
       const keys = await AsyncStorage.getAllKeys();
       const values = await AsyncStorage.multiGet(keys);
-      console.log("AsyncStorage keys after clearing:", keys);
-      console.log("Stored values:", values);
+      // console.log("AsyncStorage keys after clearing:", keys);
+      // console.log("Stored values:", values);
     };
     checkStorage();
   }, []);
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
   createAccountButton: {
     backgroundColor: "#D3D3D3",
@@ -143,6 +142,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
 });

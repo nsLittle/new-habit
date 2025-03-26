@@ -26,17 +26,10 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("🚀 User context initialized in memory only (not persisted)");
-  }, []);
-
-  useEffect(() => {
     const saveUserInfo = async () => {
       if (!userContext || !userContext.userIdContext) return;
 
       try {
-        console.log("User Context Updated: ", userContext);
-
-        // ✅ Save token securely on mobile (optional)
         if (Platform.OS !== "web") {
           if (userContext.token) {
             await SecureStore.setItemAsync("token", userContext.token);
@@ -62,19 +55,14 @@ export const UserProvider = ({ children }) => {
         "ResetPasswordScreen",
       ].includes(caller)
     ) {
-      console.log(
-        `🛑 BLOCKED: resetUserContext should not be triggered by ${caller}`
-      );
       return;
     }
-
-    console.log(`✅ resetUserContext allowed: called by ${caller}`);
 
     try {
       if (Platform.OS !== "web") await SecureStore.deleteItemAsync("token");
       setUserContext({ ...defaultUserState });
     } catch (error) {
-      console.error("❌ Error resetting user context:", error);
+      console.error("❌ Error:", error);
     }
   }, []);
 

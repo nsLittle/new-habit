@@ -3,10 +3,10 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  View,
+  Switch,
   Text,
   TouchableOpacity,
-  Switch,
+  View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
 import RNPickerSelect from "react-native-picker-select";
@@ -36,22 +36,22 @@ export default function ReminderScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -83,7 +83,7 @@ export default function ReminderScreen() {
 
   useEffect(() => {
     if (reminderProfile.isReminderEnabled) {
-      console.log("Reminder profile updated:", reminderProfile);
+      // console.log("Reminder profile updated:", reminderProfile);
     }
   }, [reminderProfile.isReminderEnabled]);
 
@@ -158,14 +158,14 @@ export default function ReminderScreen() {
 
   useEffect(() => {
     const checkForExistingReminder = async () => {
-      console.log(`Checking for existing reminder...`);
+      // console.log(`Checking for existing reminder...`);
 
       if (!userNameContext || !habitContextId) {
         console.warn("User or Habit ID missing, skipping API call.");
         return;
       }
 
-      console.log(`Fetching existing reminder for ${userNameContext}...`);
+      // console.log(`Fetching existing reminder for ${userNameContext}...`);
 
       try {
         const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
@@ -192,7 +192,7 @@ export default function ReminderScreen() {
           return;
         }
 
-        console.log("Existing Reminders Fetched:", existingReminder);
+        // console.log("Existing Reminders Fetched:", existingReminder);
 
         setReminderProfile((prev) => ({
           ...prev,
@@ -223,7 +223,7 @@ export default function ReminderScreen() {
           const formattedHour = existingReminder.selectedTime.hour
             .toString()
             .padStart(2, "0");
-          console.log("Setting Hour to: ", formattedHour);
+          // console.log("Setting Hour to: ", formattedHour);
           setSelectedHour(
             existingReminder.selectedTime.hour.toString().padStart(2, "0")
           );
@@ -258,7 +258,7 @@ export default function ReminderScreen() {
   }, []);
 
   const handleSave = async () => {
-    console.log("I'm here to save reminders....");
+    // console.log("I'm here to save reminders....");
     if (!reminderProfile.isReminderEnabled) {
       setDialogMessage("Are you certain you don't want reminders?");
       setShowDialog(true);
@@ -266,27 +266,27 @@ export default function ReminderScreen() {
     }
 
     try {
-      console.log("Saving reminders...");
-      console.log(
-        "Request Body:",
-        JSON.stringify(
-          {
-            reminders: {
-              isReminderEnabled: reminderProfile.isReminderEnabled,
-              isEmailReminderEnabled: reminderProfile.isEmailReminderEnabled,
-              isTextReminderEnabled: reminderProfile.isTextReminderEnabled,
-              selectedDays: reminderProfile.selectedDays,
-              selectedTime: {
-                hour: selectedHour || "00",
-                minute: selectedMinute || "00",
-                period: selectedPeriod || "00",
-              },
-            },
-          },
-          null,
-          2
-        )
-      );
+      // console.log("Saving reminders...");
+      // console.log(
+      //   "Request Body:",
+      //   JSON.stringify(
+      //     {
+      //       reminders: {
+      //         isReminderEnabled: reminderProfile.isReminderEnabled,
+      //         isEmailReminderEnabled: reminderProfile.isEmailReminderEnabled,
+      //         isTextReminderEnabled: reminderProfile.isTextReminderEnabled,
+      //         selectedDays: reminderProfile.selectedDays,
+      //         selectedTime: {
+      //           hour: selectedHour || "00",
+      //           minute: selectedMinute || "00",
+      //           period: selectedPeriod || "00",
+      //         },
+      //       },
+      //     },
+      //     null,
+      //     2
+      //   )
+      // );
 
       const response = await fetch(
         `${BASE_URL}/habit/${userNameContext}/${habitContextId}/reminder`,
@@ -317,7 +317,7 @@ export default function ReminderScreen() {
       }
 
       const data = await response.json();
-      console.log("Response Data from Back End: ", data);
+      // console.log("Response Data from Back End: ", data);
 
       setDialogMessage("Reminder settings updated successfully.");
       setDialogAction("successfulUpdate");
@@ -466,7 +466,7 @@ export default function ReminderScreen() {
             <RNPickerSelect
               onValueChange={(value) => {
                 if (reminderProfile.isReminderEnabled) {
-                  console.log("Hour selected: ", value);
+                  // console.log("Hour selected: ", value);
                   setSelectedHour(value);
                 } else {
                   setDialogMessage("Would you like to enable reminders first?");
@@ -485,7 +485,7 @@ export default function ReminderScreen() {
             <RNPickerSelect
               onValueChange={(value) => {
                 if (reminderProfile.isReminderEnabled) {
-                  console.log("Minute selected: ", value);
+                  // console.log("Minute selected: ", value);
                   setSelectedMinute(value);
                 }
               }}
@@ -502,7 +502,7 @@ export default function ReminderScreen() {
           <View style={styles.pickerItem}>
             <RNPickerSelect
               onValueChange={(value) => {
-                console.log("Period selected: ", value);
+                // console.log("Period selected: ", value);
                 if (reminderProfile.isReminderEnabled) {
                   setSelectedPeriod(value);
                 }
@@ -587,15 +587,6 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: "left",
   },
-  toggleSectionTwo: {
-    flexDirection: "column",
-    marginVertical: 10,
-    borderWidth: 1,
-    borderBlockColor: "gray",
-    width: 300,
-    height: 60,
-    justifyContent: "left",
-  },
   toggleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -630,54 +621,6 @@ const styles = StyleSheet.create({
   },
   dayText: {
     fontSize: 16,
-    color: "#4a4a4a",
-  },
-  pickerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "50%",
-    alignSelf: "center",
-    marginVertical: 20,
-  },
-  pickerItem: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  timeContainer: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  timeBody: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 5,
-  },
-  timerPicker: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 150,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#D3D3D3",
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  timerColumn: {
-    flex: 1,
-    marginHorizontal: 5,
-    height: 150,
-  },
-  timerOption: {
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  timerText: {
-    fontSize: 14,
     color: "#4a4a4a",
   },
   selectedTime: {

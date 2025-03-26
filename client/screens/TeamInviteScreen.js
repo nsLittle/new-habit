@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import {
   Image,
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -9,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Dialog, IconButton, Portal } from "react-native-paper";
+import { Button, Dialog, Portal } from "react-native-paper";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -36,21 +35,21 @@ export default function TeamInviteScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -61,7 +60,7 @@ export default function TeamInviteScreen() {
   const [contactData, setContactData] = useState({ teammembers: [] });
 
   useEffect(() => {
-    console.log("I'm here to fetch team member data...");
+    // console.log("I'm here to fetch team member data...");
 
     const fetchTeamMembersData = async () => {
       try {
@@ -83,7 +82,7 @@ export default function TeamInviteScreen() {
           );
 
         const data = await response.json();
-        console.log("Raw API Response:", data);
+        // console.log("Raw API Response:", data);
 
         const teammembers = Array.isArray(data.teamMembers)
           ? data.teamMembers.map((member) => ({
@@ -100,7 +99,7 @@ export default function TeamInviteScreen() {
           teammembers: teammembers || [],
         }));
 
-        console.log("Transformed team members:", teammembers);
+        // console.log("Transformed team members:", teammembers);
       } catch (err) {
         console.error("Error fetching teammembers.", err);
         setDialogMessage("Error fetching teammembers.");
@@ -163,9 +162,9 @@ export default function TeamInviteScreen() {
           <Dialog.Actions>
             <Button
               onPress={() => {
-                console.log("User clicked NO. Deletion canceled.");
+                // console.log("User clicked NO. Deletion canceled.");
                 setShowDialog(false);
-                setSelectedTeamMember(null); // Ensure no deletion happens
+                setSelectedTeamMember(null);
               }}
               labelStyle={styles.dialogButtonNo}>
               NO
@@ -173,9 +172,9 @@ export default function TeamInviteScreen() {
             <Button
               onPress={async () => {
                 if (selectedTeamMember) {
-                  console.log(
-                    `User clicked YES. Deleting team member: ${selectedTeamMember.firstName} ${selectedTeamMember.lastName} (ID: ${selectedTeamMember.teamMember_id})`
-                  );
+                  // console.log(
+                  //   `User clicked YES. Deleting team member: ${selectedTeamMember.firstName} ${selectedTeamMember.lastName} (ID: ${selectedTeamMember.teamMember_id})`
+                  // );
                   await handleDelete(selectedTeamMember.teamMember_id);
                 }
                 setShowDialog(false);
@@ -204,10 +203,10 @@ export default function TeamInviteScreen() {
               ]}
               onPress={() => {
                 if (userContext.teammembers.length < 10) {
-                  console.log("Navigating to AddTeammemberScreen...");
+                  // console.log("Navigating to AddTeammemberScreen...");
                   navigation.navigate("AddTeammemberScreen");
                 } else {
-                  console.log("Max team members reached. Showing dialog...");
+                  // console.log("Max team members reached. Showing dialog...");
                   setDialogMessage(
                     "You cannot have more than 10 team members."
                   );
@@ -242,13 +241,6 @@ export default function TeamInviteScreen() {
                   <Text style={styles.contactEmail}>{teammember.email}</Text>
                 </View>
                 <View style={styles.iconsColumn}>
-                  {/* <MaterialIcons
-                    name="send"
-                    size={24}
-                    color="black"
-                    style={styles.iconSend}
-                    onPress={() => sendEmail(teammember.email)}
-                  /> */}
                   <MaterialIcons
                     name="edit"
                     size={24}
@@ -270,15 +262,12 @@ export default function TeamInviteScreen() {
                     color="black"
                     style={styles.iconDelete}
                     onPress={() => {
-                      console.log("Delete button clicked...");
-                      console.log("Selected Team Member:", teammember);
-
+                      // console.log("Delete button clicked...");
+                      // console.log("Selected Team Member:", teammember);
                       if (!teammember.teamMember_id) {
                         console.error("Error: Team member ID is undefined.");
                         return;
                       }
-
-                      // Open the confirmation dialog without deleting yet
                       setSelectedTeamMember(teammember);
                       setShowDialog(true);
                     }}
@@ -305,7 +294,7 @@ export default function TeamInviteScreen() {
                   : {},
               ]}
               onPress={() => {
-                console.log("Save button pressed...");
+                // console.log("Save button pressed...");
                 if (userContext.teammembers.length < 3) {
                   setDialogMessage(
                     "You must have at least 3 team members to proceed with habit formation."

@@ -12,12 +12,11 @@ const sendEmail = async (to, subject, text) => {
     if (useSendGrid) {
       const msg = {
         to,
-        from: process.env.EMAIL_FROM, // Example: "noreply@westsood.com"
+        from: process.env.EMAIL_FROM,
         subject,
         text,
       };
       await sgMail.send(msg);
-      console.log(`Email sent via SendGrid to ${to}`);
     } else {
       const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
@@ -35,7 +34,6 @@ const sendEmail = async (to, subject, text) => {
         subject,
         text,
       });
-      console.log(`Email sent via SMTP to ${to}`);
     }
 
     return { success: true };

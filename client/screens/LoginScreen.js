@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -62,14 +61,14 @@ export default function LoginScreen() {
     });
   };
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -82,9 +81,9 @@ export default function LoginScreen() {
 
   const login = async () => {
     try {
-      console.log("Starting login...");
-      console.log("Username: ", username);
-      console.log("Password: ", password);
+      // console.log("Starting login...");
+      // console.log("Username: ", username);
+      // console.log("Password: ", password);
 
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
@@ -97,14 +96,14 @@ export default function LoginScreen() {
         }),
       });
 
-      console.log("Raw response:", response);
+      // console.log("Raw response:", response);
       const data = await response.json();
-      console.log("Response text:", data);
+      // console.log("Response text:", data);
 
       if (!response.ok) {
         setDialogMessage("Invalid username or password.");
         setShowDialog(true);
-        console.log("Invalid username or password.");
+        // console.log("Invalid username or password.");
         return;
       }
 
@@ -124,13 +123,13 @@ export default function LoginScreen() {
       }));
 
       setTimeout(() => {
-        console.log("UserContext Updated! Navigating to ProfileScreen...");
+        // console.log("UserContext Updated! Navigating to ProfileScreen...");
         navigation.navigate("ProfileScreen");
       }, 200);
     } catch (error) {
       setDialogMessage("Something went wrong");
       setShowDialog(true);
-      console.log("Error saving user", error);
+      // console.log("Error saving user", error);
     }
   };
 

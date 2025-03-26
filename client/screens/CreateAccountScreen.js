@@ -44,21 +44,21 @@ export default function CreateAccountScreen() {
   //   resetUserContext();
   // }, []);
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -81,8 +81,8 @@ export default function CreateAccountScreen() {
     if (!username.trim()) return false;
 
     try {
-      console.log("Checking for duplicate username...");
-      console.log("Username: ", username);
+      // console.log("Checking for duplicate username...");
+      // console.log("Username: ", username);
 
       const response = await fetch(`${BASE_URL}/user/check/${username}`, {
         method: "GET",
@@ -92,14 +92,14 @@ export default function CreateAccountScreen() {
       });
 
       const data = await response.json();
-      console.log("Data: ", data);
+      // console.log("Data: ", data);
 
       if (response.status === 404) {
         return true;
       }
 
       if (!response.ok) {
-        console.log("No dup");
+        // console.log("No dup");
         throw new Error("Failed to check username.");
         return true;
         console.error("Unexpected response checking username.");
@@ -107,7 +107,7 @@ export default function CreateAccountScreen() {
       }
 
       if (data && data.user) {
-        console.log("Username already exists.");
+        // console.log("Username already exists.");
         return false;
       }
 
@@ -167,7 +167,7 @@ export default function CreateAccountScreen() {
     };
 
     console.log("Sending signup request:", JSON.stringify(userData));
-
+    //
     try {
       const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
@@ -181,7 +181,7 @@ export default function CreateAccountScreen() {
         throw new Error(data.error || "Signup failed.");
       }
 
-      console.log("Saved Data: ", data);
+      // console.log("Saved Data: ", data);
 
       setUserContext((prevContext) => ({
         ...prevContext,
@@ -194,7 +194,7 @@ export default function CreateAccountScreen() {
         profilePicContext: data.user.profilePic,
       }));
 
-      console.log("Updated User Context:", userContext);
+      // console.log("Updated User Context:", userContext);
       setDialogMessage("Account created successfully!");
       setShowDialog(true);
       setTimeout(() => {
@@ -207,11 +207,11 @@ export default function CreateAccountScreen() {
     }
   };
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("Updated UserContext:", JSON.stringify(userContext, null, 2));
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("Updated UserContext:", JSON.stringify(userContext, null, 2));
+  //   }
+  // }, [userContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -412,7 +412,14 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-
+  profilePicMain: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 100,
+    height: 100,
+    marginBottom: 15,
+    borderRadius: 50,
+  },
   inputContainer: {
     width: "100%",
   },
@@ -471,7 +478,6 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 10,
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -512,13 +518,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "bold",
-  },
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
   },
 });

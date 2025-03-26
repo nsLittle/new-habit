@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Image,
   Linking,
   Platform,
   ScrollView,
@@ -14,7 +13,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import DefaultProfiler from "../component/DefaultProfiler";
 import { BASE_URL } from "../constants/config";
@@ -38,22 +36,22 @@ export default function FeedbackRequestScreen() {
     token,
   } = userContext || {};
 
-  useEffect(() => {
-    if (userContext) {
-      console.log("UserContext:", userContext);
-      console.log("User Id Context: ", userIdContext);
-      console.log("UserName Context: ", userNameContext);
-      console.log("First Name Context: ", firstNameContext);
-      console.log("Last Name Context: ", lastNameContext);
-      console.log("Email Context: ", emailContext);
-      console.log("Profile Pic Context: ", profilePicContext);
-      console.log("Habit Id Context: ", habitContextId);
-      console.log("Habit Input Context: ", habitContextInput);
-      console.log("Description Input Context: ", descriptionContextInput);
-      console.log("TeamMember Id Context: ", teamMemberContextId);
-      console.log("Token: ", token);
-    }
-  }, [userContext]);
+  // useEffect(() => {
+  //   if (userContext) {
+  //     console.log("UserContext:", userContext);
+  //     console.log("User Id Context: ", userIdContext);
+  //     console.log("UserName Context: ", userNameContext);
+  //     console.log("First Name Context: ", firstNameContext);
+  //     console.log("Last Name Context: ", lastNameContext);
+  //     console.log("Email Context: ", emailContext);
+  //     console.log("Profile Pic Context: ", profilePicContext);
+  //     console.log("Habit Id Context: ", habitContextId);
+  //     console.log("Habit Input Context: ", habitContextInput);
+  //     console.log("Description Input Context: ", descriptionContextInput);
+  //     console.log("TeamMember Id Context: ", teamMemberContextId);
+  //     console.log("Token: ", token);
+  //   }
+  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -86,7 +84,7 @@ export default function FeedbackRequestScreen() {
           );
 
         const data = await response.json();
-        console.log("Raw API Response:", data);
+        // console.log("Raw API Response:", data);
 
         const teammembers = Array.isArray(data.teamMembers)
           ? data.teamMembers.map((member) => ({
@@ -100,11 +98,11 @@ export default function FeedbackRequestScreen() {
 
         setContactData({ teammembers });
 
-        console.log("Transformed team members:", teammembers);
-        console.log(
-          "Transformed team member first name: ",
-          teammembers[0].firstName
-        );
+        // console.log("Transformed team members:", teammembers);
+        // console.log(
+        //   "Transformed team member first name: ",
+        //   teammembers[0].firstName
+        // );
 
         setDialogMessage("Team member feedback requests sent.");
       } catch (err) {
@@ -149,16 +147,16 @@ export default function FeedbackRequestScreen() {
   };
 
   const activateFeedbackRequests = async () => {
-    console.log("Button clicked, triggering feedback request...");
+    // console.log("Button clicked, triggering feedback request...");
     setIsLoading(true);
 
     const habitIdToSend = Array.isArray(habitContextId)
       ? habitContextId[0]
       : habitContextId;
-    console.log("habitContextId:", habitContextId);
-    console.log("userId:", userContext.userIdContext);
-    console.log("User Name COntext: ", userNameContext);
-    console.log("Habit Context ID: ", habitContextId);
+    // console.log("habitContextId:", habitContextId);
+    // console.log("userId:", userContext.userIdContext);
+    // console.log("User Name COntext: ", userNameContext);
+    // console.log("Habit Context ID: ", habitContextId);
 
     try {
       const teamMembersData = contactData.teammembers.map((member) => ({
@@ -166,7 +164,7 @@ export default function FeedbackRequestScreen() {
         lastName: member.lastName,
         email: member.email,
       }));
-      console.log("Team Members: ", teamMembersData);
+      // console.log("Team Members: ", teamMembersData);
 
       const response = await fetch(
         `${BASE_URL}/email/${userNameContext}/${habitContextId}/trigger-email-request`,
@@ -184,10 +182,10 @@ export default function FeedbackRequestScreen() {
         }
       );
 
-      console.log("Raw Response:", response);
+      // console.log("Raw Response:", response);
 
       const data = await response.json();
-      console.log("Response Data", data);
+      // console.log("Response Data", data);
 
       if (response.ok) {
         const formattedDate = new Date(
@@ -197,7 +195,7 @@ export default function FeedbackRequestScreen() {
           month: "long",
           day: "numeric",
         });
-        console.log("Formatted End Dtae: ", formattedDate);
+        // console.log("Formatted End Dtae: ", formattedDate);
 
         setUserContext((prev) => ({
           ...prev,
@@ -212,7 +210,7 @@ export default function FeedbackRequestScreen() {
 
       setShowDialog(true);
     } catch (error) {
-      console.log("Error:", error);
+      // console.log("Error:", error);
       setDialogMessage("Error", "Failed to send feedback request.");
       setShowDialog(true);
     } finally {

@@ -13,10 +13,8 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import emailjs from "@emailjs/browser";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
 
 export default function ResetPasswordScreen() {
@@ -28,11 +26,11 @@ export default function ResetPasswordScreen() {
 
   const url = new URL(window.location.href);
   const token = url.pathname.split("/").pop(); // Extracts last segment
-  console.log("Token:", token);
+  // console.log("Token:", token);
 
   const navigation = useNavigation();
 
-  const routes = navigation.getState().routes;
+  // const routes = navigation.getState().routes;
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -58,11 +56,11 @@ export default function ResetPasswordScreen() {
       });
 
       const data = await response.json();
-      console.log("Response: ", response);
-      console.log("Data: ", data);
+      // console.log("Response: ", response);
+      // console.log("Data: ", data);
 
       if (!response.ok) {
-        console.log("Something went wrong.");
+        // console.log("Something went wrong.");
         setDialogMessage(data.message || "Error requesting password reset.");
         setShowDialog(true);
         return;
@@ -90,13 +88,13 @@ export default function ResetPasswordScreen() {
         console.error("Error opening email:", err)
       );
 
-      console.log("Success", "A password reset email has been sent!");
+      // console.log("Success", "A password reset email has been sent!");
       setDialogMessage("Success. A password reset email has been sent!");
       setShowDialog(true);
       return;
     } catch (error) {
       console.error("Password reset error:", error);
-      console.log("Unable to send reset email.");
+      // console.log("Unable to send reset email.");
     }
   };
 
@@ -188,24 +186,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
   },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
   inputContainer: {
     width: "100%",
-  },
-  usernameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    marginBottom: 10,
   },
   passwordContainer: {
     flexDirection: "row",
@@ -218,12 +200,6 @@ const styles = StyleSheet.create({
   },
   infoIcon: {
     padding: 10,
-  },
-  eyeIcon: {
-    padding: 10,
-    marginLeft: 20,
-    justifyContent: "flex-end",
-    alignItems: "center",
   },
   passwordInput: {
     flex: 1,
@@ -241,15 +217,6 @@ const styles = StyleSheet.create({
     color: "#6A8CAF",
     textDecorationLine: "underline",
     fontWeight: "bold",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
   },
   resetButton: {
     backgroundColor: "#FFD700",
