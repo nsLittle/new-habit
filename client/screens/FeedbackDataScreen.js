@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     textAlign: "center",
     fontWeight: "bold",
-    marginTop: 100,
+    marginTop: 20,
   },
   feedbackPeriod: {
     marginTop: 20,
@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   feedbackHeader: {
+    textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,

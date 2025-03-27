@@ -24,7 +24,7 @@ if (!process.env.PORT) {
   process.exit(1);
 }
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000;
 
 const startServer = async () => {
   try {
@@ -48,7 +48,6 @@ const startServer = async () => {
     app.use(express.json());
 
     app.use((req, res, next) => {
-      // console.log(`Incoming Request: ${req.method} ${req.url}`);
       next();
     });
 
@@ -80,22 +79,12 @@ const startServer = async () => {
     const emailRoutes = require("./routes/emailRoutes");
     app.use("/email", emailRoutes);
 
-    // app._router.stack.forEach((r) => {
-    //   if (r.route && r.route.path) {
-    //     console.log(
-    //       `Registered Route: ${r.route.path} [${Object.keys(r.route.methods)
-    //         .join(", ")
-    //         .toUpperCase()}]`
-    //     );
-    //   }
-    // });
-
     app.listen(PORT, "0.0.0.0", () => {
-      console.log(`✅ Server is running on http://localhost:${PORT}`);
+      console.log(`✅ Server is running on port ${PORT}`);
     });
   } catch (error) {
     console.error("❌ Error starting server:", error);
-    process.exit(1); // Stop execution if DB connection fails
+    process.exit(1);
   }
 };
 

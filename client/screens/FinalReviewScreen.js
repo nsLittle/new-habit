@@ -472,6 +472,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
   },
+  textInput: {
+    height: 100,
+    width: "85%",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+  },
   buttonColumn: {
     flexDirection: "column",
     justifyContent: "center",

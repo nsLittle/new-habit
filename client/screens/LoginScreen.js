@@ -21,10 +21,6 @@ import { UserContext } from "../context/UserContext";
 export default function LoginScreen() {
   const navigation = useNavigation();
 
-  const routes = navigation.getState().routes;
-  const currentRoute = routes[routes.length - 1]?.name;
-  console.log("Current Route:", currentRoute);
-
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
     userIdContext,
@@ -61,15 +57,6 @@ export default function LoginScreen() {
     });
   };
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
@@ -81,10 +68,6 @@ export default function LoginScreen() {
 
   const login = async () => {
     try {
-      // console.log("Starting login...");
-      // console.log("Username: ", username);
-      // console.log("Password: ", password);
-
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -96,14 +79,11 @@ export default function LoginScreen() {
         }),
       });
 
-      // console.log("Raw response:", response);
       const data = await response.json();
-      // console.log("Response text:", data);
 
       if (!response.ok) {
         setDialogMessage("Invalid username or password.");
         setShowDialog(true);
-        // console.log("Invalid username or password.");
         return;
       }
 
@@ -123,13 +103,11 @@ export default function LoginScreen() {
       }));
 
       setTimeout(() => {
-        // console.log("UserContext Updated! Navigating to ProfileScreen...");
         navigation.navigate("ProfileScreen");
       }, 200);
     } catch (error) {
       setDialogMessage("Something went wrong");
       setShowDialog(true);
-      // console.log("Error saving user", error);
     }
   };
 
@@ -242,7 +220,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   inputContainer: {
-    width: "100%",
+    width: "85%",
   },
   usernameContainer: {
     flexDirection: "row",

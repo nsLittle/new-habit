@@ -20,6 +20,7 @@ import EditTeammemberScreen from "./screens/EditTeammemberScreen";
 import CadenceScreen from "./screens/CadenceScreen";
 import ReminderScreen from "./screens/ReminderScreen";
 import ReviewScreen from "./screens/ReviewScreen";
+import EditReviewScreen from "./screens/EditReviewScreen";
 import FeedbackRequestScreen from "./screens/FeedbackRequestScreen";
 import FeedbackRequestWelcomeScreen from "./screens/FeedbackRequestWelcomeScreen";
 import FeedbackRequestRatingScreen from "./screens/FeedbackRequestRatingScreen";
@@ -142,6 +143,10 @@ export default function App() {
             <Stack.Screen name="CadenceScreen" component={CadenceScreen} />
             <Stack.Screen name="ReminderScreen" component={ReminderScreen} />
             <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
+            <Stack.Screen
+              name="EditReviewScreen"
+              component={EditReviewScreen}
+            />
             <Stack.Screen
               name="FeedbackRequestScreen"
               component={FeedbackRequestScreen}

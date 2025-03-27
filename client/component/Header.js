@@ -16,19 +16,7 @@ export default function Header(props) {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    // userIdContext,
-    // userNameContext,
-    // firstNameContext,
-    // lastNameContext,
-    // emailContext,
-    // profilePicContext,
-    habitContextId,
-    // habitContextInput,
-    // descriptionContextInput,
-    // teamMemberContextId,
-    // token,
-  } = userContext || {};
+  const { habitContextId } = userContext || {};
 
   const currentRoute = useNavigationState((state) => {
     const route = state.routes[state.index];
@@ -61,6 +49,8 @@ export default function Header(props) {
     });
   };
 
+  console.log("Header rendering on:", currentRoute);
+
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
@@ -69,6 +59,12 @@ export default function Header(props) {
           currentRoute !== "ResetPasswordScreen" &&
           currentRoute !== "LogoutScreen" &&
           currentRoute !== "CreateAccountScreen" &&
+          currentRoute !== "CreateHabitScreen" &&
+          currentRoute !== "HabitDescriptionScreen" &&
+          currentRoute !== "TeamInviteScreen" &&
+          currentRoute !== "CadenceScreen" &&
+          currentRoute !== "ReminderScreen" &&
+          currentRoute !== "ReviewScreen" &&
           currentRoute !== "FeedbackRequestScreen" &&
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&
@@ -225,7 +221,7 @@ export default function Header(props) {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
-          {currentRoute !== "ProfileScreen" && (
+          {/* {currentRoute !== "ProfileScreen" && (
             <TouchableOpacity
               onPress={() =>
                 navigateToScreen("ProfileScreen", {
@@ -234,7 +230,7 @@ export default function Header(props) {
               }>
               <Text style={styles.menuItem}>Profile</Text>
             </TouchableOpacity>
-          )}
+          )} */}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("EditAccountScreen", {
@@ -242,6 +238,14 @@ export default function Header(props) {
               })
             }>
             <Text style={styles.menuItem}>Edit Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigateToScreen("EditReviewScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Edit Review</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>

@@ -40,24 +40,6 @@ export default function ProfileScreen() {
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Habit End Date: ", habitContextEndDate);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
@@ -168,6 +150,8 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
+    if (currentRoute !== "ProfileScreen") return;
+
     const checkData = async () => {
       if (!habitContextId || !userNameContext || !token) return;
 
@@ -175,21 +159,14 @@ export default function ProfileScreen() {
         const feedbackResponse = await fetch(
           `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
           {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         const feedbacks = await feedbackResponse.json();
-        // console.log("Feedback: ", feedbacks);
 
         if (feedbacks.feedback && feedbacks.feedback.length > 0) {
-          // console.log("Feedback found. Navigating to FeedbackDataScreen...");
           navigation.navigate("FeedbackDataScreen");
         } else {
-          // console.log("No feedback. Navigating to ReviewScreen...");
           navigation.navigate("ReviewScreen");
         }
       } catch (error) {
@@ -198,7 +175,7 @@ export default function ProfileScreen() {
     };
 
     checkData();
-  }, [userContext]);
+  }, [userContext, currentRoute]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

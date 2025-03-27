@@ -40,31 +40,12 @@ export default function CreateAccountScreen() {
     setUserContext(null);
   };
 
-  // useEffect(() => {
-  //   resetUserContext();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
   const [showPictureDialog, setShowPictureDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [showUsernameDialog, setShowUsernameDialog] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -81,9 +62,6 @@ export default function CreateAccountScreen() {
     if (!username.trim()) return false;
 
     try {
-      // console.log("Checking for duplicate username...");
-      // console.log("Username: ", username);
-
       const response = await fetch(`${BASE_URL}/user/check/${username}`, {
         method: "GET",
         headers: {
@@ -92,14 +70,12 @@ export default function CreateAccountScreen() {
       });
 
       const data = await response.json();
-      // console.log("Data: ", data);
 
       if (response.status === 404) {
         return true;
       }
 
       if (!response.ok) {
-        // console.log("No dup");
         throw new Error("Failed to check username.");
         return true;
         console.error("Unexpected response checking username.");
@@ -107,7 +83,6 @@ export default function CreateAccountScreen() {
       }
 
       if (data && data.user) {
-        // console.log("Username already exists.");
         return false;
       }
 
@@ -181,8 +156,6 @@ export default function CreateAccountScreen() {
         throw new Error(data.error || "Signup failed.");
       }
 
-      // console.log("Saved Data: ", data);
-
       setUserContext((prevContext) => ({
         ...prevContext,
         userNameContext: data.user.username,
@@ -194,7 +167,6 @@ export default function CreateAccountScreen() {
         profilePicContext: data.user.profilePic,
       }));
 
-      // console.log("Updated User Context:", userContext);
       setDialogMessage("Account created successfully!");
       setShowDialog(true);
       setTimeout(() => {
@@ -206,12 +178,6 @@ export default function CreateAccountScreen() {
       console.error("Signup Error:", error);
     }
   };
-
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("Updated UserContext:", JSON.stringify(userContext, null, 2));
-  //   }
-  // }, [userContext]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -269,6 +235,25 @@ export default function CreateAccountScreen() {
           <Dialog.Actions>
             <Button
               onPress={() => setShowPasswordDialog(false)}
+              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
+              Close
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+
+        <Dialog
+          visible={showUsernameDialog}
+          onDismiss={() => setShowUsernameDialog(false)}
+          style={{ backgroundColor: "white" }}>
+          <Dialog.Title style={{ color: "blue", fontWeight: "bold" }}>
+            Username
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text>Once created username can not be changed.</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={() => setShowUsernameDialog(false)}
               labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
               Close
             </Button>

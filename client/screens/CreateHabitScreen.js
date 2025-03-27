@@ -261,7 +261,10 @@ export default function CreateHabitScreen() {
                   NO
                 </Button>
                 <Button
-                  onPress={() => setShowDialog(false)}
+                  onPress={() => {
+                    setShowDialog(false);
+                    setDialogAction(null);
+                  }}
                   labelStyle={styles.dialogButton}>
                   YES
                 </Button>
@@ -357,7 +360,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   inputContainer: {
-    width: "100%",
+    width: "85%",
   },
   input: {
     height: 40,
@@ -384,22 +387,6 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 50,
   },
-  // backButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // backButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
   saveButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,

@@ -18,6 +18,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { retrieveProfile } from "../utils/fetchers";
 
 export default function EditAccountScreen() {
   const navigation = useNavigation();
@@ -36,26 +37,6 @@ export default function EditAccountScreen() {
     teamMemberContextId,
     token,
   } = userContext || {};
-
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
 
   const [dialogMessage, setDialogMessage] = useState(false);
   const [showDialog, setShowDialog] = useState("");
@@ -88,7 +69,6 @@ export default function EditAccountScreen() {
   };
 
   const handleSave = async () => {
-    // console.log(`I'm here to save your edits...`);
     try {
       const updates = {
         userName: userName,
@@ -97,13 +77,10 @@ export default function EditAccountScreen() {
         email: email,
         profilePic: profilePic,
       };
-      // console.log("Updated User Data: ", updates);
 
       if (password && password !== "********") {
         updates.password = password;
       }
-
-      // console.log("Updated User Data: ", updates);
 
       if (!token) throw new Error("Authentication token is missing.");
 
@@ -117,13 +94,12 @@ export default function EditAccountScreen() {
       });
 
       const data = await response.json();
-      // console.log("Edit Response:", data);
       setUserContext((prev) => ({ ...prev, ...updates }));
 
       if (!response.ok) throw new Error("Failed to update user data");
 
       setDialogMessage("Success", "Account updated successfully!");
-      navigation.navigate("ProfileScreen", { userNameContext });
+      navigation.navigate("ReviewScreen", { userNameContext });
     } catch (err) {
       console.log("Error", err.message);
     }
@@ -254,11 +230,11 @@ export default function EditAccountScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.navigate("ProfileScreen")}>
             <Text style={styles.backButtonText}>◀ Back</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save ▶</Text>
@@ -358,19 +334,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
 });

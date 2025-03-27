@@ -21,16 +21,6 @@ import { UserContext } from "../context/UserContext";
 export default function EditTeammemberScreen() {
   const navigation = useNavigation();
 
-  // const route = useRoute();
-  // const { teamMember_id, firstName, lastName, email, profilePic } =
-  //   route.params;
-
-  // console.log("Team Member ID: ", teamMember_id);
-  // console.log("Team Member First Name: ", firstName);
-  // console.log("Team Member Last Name> ", lastName);
-  // console.log("Team Member Email: ", email);
-  // console.log("Team member Profile Pic: ", profilePic);
-
   const [editedFirstName, setEditedFirstName] = useState(firstName || "");
   const [editedLastName, setEditedLastName] = useState(lastName || "");
   const [editedEmail, setEditedEmail] = useState(email || "");

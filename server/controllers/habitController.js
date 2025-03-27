@@ -388,8 +388,8 @@ exports.saveReflection = async (req, res) => {
     }
 
     const habit = await Habit.findById(habit_id);
-    // console.log("Habit: ", habit);
-    // console.log("Habit End: ", habit.endDate);
+    console.log("Habit: ", habit);
+    console.log("Habit End: ", habit.endDate);
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
@@ -398,9 +398,9 @@ exports.saveReflection = async (req, res) => {
     const finalPeriodEnd = new Date(habit.endDate);
     const finalPeriodOver = today >= finalPeriodEnd;
 
-    // console.log("📅 Today:", today.toISOString());
-    // console.log("📅 Final Period End:", finalPeriodEnd.toISOString());
-    // console.log("✅ Final Period is Over:", finalPeriodOver);
+    console.log("📅 Today:", today.toISOString());
+    console.log("📅 Final Period End:", finalPeriodEnd.toISOString());
+    console.log("✅ Final Period is Over:", finalPeriodOver);
 
     if (!finalPeriodOver) {
       return res.status(400).json({
@@ -436,7 +436,7 @@ exports.saveReflection = async (req, res) => {
     const nextCycle = isNumber ? current + 1 : 2;
 
     if (mastered || current >= habit.maxCycles) {
-      // console.log("✅ Marking habit as complete");
+      console.log("✅ Marking habit as complete");
       habit.completed = true;
 
       habit.habitCycles.push({
@@ -445,7 +445,7 @@ exports.saveReflection = async (req, res) => {
         completionDate: today,
       });
     } else {
-      // console.log("🔄 Extending to next cycle:", nextCycle);
+      console.log("🔄 Extending to next cycle:", nextCycle);
 
       const newStart = new Date();
       const newEnd = new Date(newStart);

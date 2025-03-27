@@ -1,47 +1,10 @@
-// import { useContext, useEffect } from "react";
 import { Platform, ScrollView, StyleSheet, View, Text } from "react-native";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-// import { useNavigation } from "@react-navigation/native";
-// import { UserContext } from "../context/UserContext";
 
 export default function EndingCreditsScreen() {
-  // const navigation = useNavigation();
-
-  // const { userContext, setUserContext } = useContext(UserContext) || {};
-  // const {
-  //   userIdContext,
-  //   userNameContext,
-  //   firstNameContext,
-  //   lastNameContext,
-  //   emailContext,
-  //   profilePicContext,
-  //   habitContextId,
-  //   habitContextInput,
-  //   descriptionContextInput,
-  //   teamMemberContextId,
-  //   token,
-  // } = userContext || {};
-
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
@@ -50,14 +13,23 @@ export default function EndingCreditsScreen() {
         </View>
 
         <View style={styles.bodyIntroContainer}>
+          <Text style={styles.bodyIntroText}>App Concept by:</Text>
+          <Text style={styles.bodyIntroLink}>
+            Greg Zlevor of Westwood International
+          </Text>
+
+          <Text style={styles.bodyIntroText}>Design Concept by:</Text>
+          <Text style={styles.bodyIntroLink}>Dan Holmgren of ImageMakers</Text>
+
           <Text style={styles.bodyIntroText}>Favicon designed by:</Text>
           <a
+            style={styles.bodyIntroLink}
             href="https://www.flaticon.com/free-icons/daily"
             title="daily icons">
             by Awicon - Flaticon
           </a>
 
-          <Text>Default icon by:</Text>
+          <Text style={styles.bodyIntroText}>Default icon by:</Text>
           <a
             href="https://uxwing.com/default-profile-picture-female-icon/"
             title="default profile">
@@ -101,7 +73,12 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     width: 225,
   },
-
+  bodyIntroLink: {
+    textAlign: "center",
+    fontSize: 14,
+    paddingBottom: 15,
+    width: 225,
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",

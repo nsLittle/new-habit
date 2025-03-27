@@ -35,33 +35,15 @@ export default function TeamInviteScreen() {
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectedTeamMember, setSelectedTeamMember] = useState(null);
 
-  const [contactData, setContactData] = useState({ teammembers: [] });
+  const [contactData, setContactData] = useState({ teamMembers: [] });
 
   useEffect(() => {
-    // console.log("I'm here to fetch team member data...");
-
     const fetchTeamMembersData = async () => {
       try {
         if (!token || !userNameContext) return;
@@ -82,7 +64,6 @@ export default function TeamInviteScreen() {
           );
 
         const data = await response.json();
-        // console.log("Raw API Response:", data);
 
         const teammembers = Array.isArray(data.teamMembers)
           ? data.teamMembers.map((member) => ({
@@ -94,12 +75,12 @@ export default function TeamInviteScreen() {
             }))
           : [];
 
+        console.log("Fetched teammembers data:", data);
+        setContactData({ teamMembers: teammembers || [] });
         setUserContext((prevContext) => ({
           ...prevContext,
           teammembers: teammembers || [],
         }));
-
-        // console.log("Transformed team members:", teammembers);
       } catch (err) {
         console.error("Error fetching teammembers.", err);
         setDialogMessage("Error fetching teammembers.");
@@ -162,7 +143,6 @@ export default function TeamInviteScreen() {
           <Dialog.Actions>
             <Button
               onPress={() => {
-                // console.log("User clicked NO. Deletion canceled.");
                 setShowDialog(false);
                 setSelectedTeamMember(null);
               }}
@@ -172,9 +152,6 @@ export default function TeamInviteScreen() {
             <Button
               onPress={async () => {
                 if (selectedTeamMember) {
-                  // console.log(
-                  //   `User clicked YES. Deleting team member: ${selectedTeamMember.firstName} ${selectedTeamMember.lastName} (ID: ${selectedTeamMember.teamMember_id})`
-                  // );
                   await handleDelete(selectedTeamMember.teamMember_id);
                 }
                 setShowDialog(false);
@@ -203,10 +180,8 @@ export default function TeamInviteScreen() {
               ]}
               onPress={() => {
                 if (userContext.teammembers.length < 10) {
-                  // console.log("Navigating to AddTeammemberScreen...");
                   navigation.navigate("AddTeammemberScreen");
                 } else {
-                  // console.log("Max team members reached. Showing dialog...");
                   setDialogMessage(
                     "You cannot have more than 10 team members."
                   );
@@ -262,8 +237,6 @@ export default function TeamInviteScreen() {
                     color="black"
                     style={styles.iconDelete}
                     onPress={() => {
-                      // console.log("Delete button clicked...");
-                      // console.log("Selected Team Member:", teammember);
                       if (!teammember.teamMember_id) {
                         console.error("Error: Team member ID is undefined.");
                         return;
@@ -285,17 +258,17 @@ export default function TeamInviteScreen() {
                 ◀ Back
               </Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               style={[
                 styles.saveButton,
-                contactData.teammembers.length < 3
+                !Array.isArray(contactData.teamMembers) ||
+                contactData.teamMembers.length < 3
                   ? { backgroundColor: "#D3D3D3" }
                   : {},
               ]}
               onPress={() => {
-                // console.log("Save button pressed...");
-                if (userContext.teammembers.length < 3) {
+                const members = contactData.teamMembers;
+                if (!Array.isArray(members) || members.length < 3) {
                   setDialogMessage(
                     "You must have at least 3 team members to proceed with habit formation."
                   );
@@ -303,7 +276,11 @@ export default function TeamInviteScreen() {
                   return;
                 }
                 navigation.navigate("ReviewScreen");
-              }}>
+              }}
+              disabled={
+                !Array.isArray(contactData.teamMembers) ||
+                contactData.teamMembers.length < 3
+              }>
               <Text style={styles.saveButtonText} title="Next">
                 Save ▶
               </Text>
@@ -425,7 +402,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
   backButton: {
     backgroundColor: "#D3D3D3",
@@ -441,6 +417,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    fontWeight: "bold",
   },
 });

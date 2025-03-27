@@ -18,12 +18,9 @@ import { UserContext } from "../context/UserContext";
 export default function LogoutScreen() {
   const navigation = useNavigation();
   const { userContext, setUserContext } = useContext(UserContext);
-  // console.log("UserContext in LogoutScreen:", userContext);
 
   const logout = async () => {
     try {
-      // console.log("Logging out...");
-
       await AsyncStorage.clear();
 
       if (Platform.OS !== "web") {
@@ -46,9 +43,6 @@ export default function LogoutScreen() {
         token: null,
       });
 
-      // console.log("UserContext after reset:", userContext);
-      // console.log("Logout completed.");
-
       setTimeout(() => {
         navigation.navigate("EndingCreditsScreen");
       }, 500);
@@ -62,7 +56,7 @@ export default function LogoutScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Thank you</Text>
+          <Text style={styles.bodyTitleText}>Thank you!</Text>
         </View>
 
         <View style={styles.bodyIntroContainer}>
@@ -91,6 +85,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: hp("15%"),
     backgroundColor: "white",
+  },
+  bodyTitleText: {
+    textAlign: "center",
+    fontSize: 18,
+    paddingBottom: 15,
   },
   bodyIntroText: {
     textAlign: "center",

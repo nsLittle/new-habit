@@ -1,21 +1,21 @@
 const mongoose = require("mongoose");
 
-let dbConnected = false; // Track connection status
+let dbConnected = false;
 
 const connectDB = async () => {
   if (dbConnected || mongoose.connection.readyState !== 0) {
-    // console.log("🔄 MongoDB already connected");
     return;
   }
 
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // ⏳ Wait 5 seconds before failing
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
-
     dbConnected = true;
-    // console.log("✅ MongoDB connected successfully");
+    console.log("✅ MongoDB connected successfully");
   } catch (error) {
     console.error("❌ MongoDB connection error:", error);
     process.exit(1);
