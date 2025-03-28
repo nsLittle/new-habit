@@ -34,6 +34,7 @@ exports.triggerEmailRequest = async (req, res) => {
       const { firstName, lastName, email } = member;
       const token = generateTeamMemberToken(member.teamMember_id);
       const deepLink = `habitapp://FeedbackRequestWelcomeScreen/${member.teamMember_id}/${token}`;
+      console.log("📨 Email deepLink:", deepLink);
       const recipientEmail = email;
       const subject = `Feedback Request for Habit ${habit_id}`;
       const body = `Hi ${firstName} ${lastName},\n\n${username} is working on their habit and would love to get your feedback!\nClick the link below to provide your thoughts:\n${deepLink}\n\nThank you!\nYour Habit Formation Team`;

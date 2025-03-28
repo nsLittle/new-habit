@@ -13,5 +13,9 @@ router.post(
   "/:username/:habit_id/trigger-email-request",
   emailController.triggerEmailRequest
 );
+console.log(
+  "✅ triggerEmailRequest exported:",
+  typeof exports.triggerEmailRequest
+);
 
 module.exports = router;
