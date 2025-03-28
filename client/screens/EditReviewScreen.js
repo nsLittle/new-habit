@@ -58,88 +58,18 @@ export default function EditReviewScreen() {
     }
   };
 
-  const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
-  const showDialog = (message) => {
-    setDialogMessage(message);
-    setDialogVisible(true);
-  };
+  const [showDialog, setShowDialog] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
+
   const [habitContextInputState, setHabitContextInputState] = useState(
     habitContextInput || ""
   );
   const [descriptionContextInputState, setDescriptionContextInputState] =
     useState(descriptionContextInput || "");
 
-  useEffect(() => {
-    const retrieveProfile = async () => {
-      if (!token) return;
-
-      try {
-        const response = await fetch(`${BASE_URL}/user/${userNameContext}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          showDialog(errorData.error || "We can't find you.");
-          return;
-        }
-
-        const data = await response.json();
-        setUserData(data);
-        setProfileData(data);
-      } catch (error) {
-        showDialog("An error occurred while retrieving your data.");
-        console.error("Data Retrieval Error:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    retrieveProfile();
-  }, []);
-
-  useEffect(() => {
-    const retrieveProfile = async () => {
-      if (!token) {
-        console.error("No token available, authentication required.");
-        return;
-      }
-
-      console.log("Sending Request with Token:", token);
-
-      try {
-        const response = await fetch(`${BASE_URL}/user/${userNameContext}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          setDialogMessage(errorData.error || "We can't find you.");
-          setDialogVisible(true);
-          return;
-        }
-
-        const data = await response.json();
-        setUserData(data);
-        setProfileData(data);
-      } catch (error) {
-        setDialogMessage("An error occurred while retrieving your data.");
-        setDialogVisible(true);
-        console.error("Data Retrieval Error:", error);
-      }
-    };
-    retrieveProfile();
-  }, []);
+  console.log("Fetching from:", `${BASE_URL}/user/${userNameContext}`);
 
   const fetchUserData = async () => {
     try {
@@ -208,6 +138,8 @@ export default function EditReviewScreen() {
         };
         return newContext;
       });
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error with data retrieval:", error);
     }
@@ -230,29 +162,75 @@ export default function EditReviewScreen() {
     teammembers,
   } = profileData;
 
-  console.log("ProfilePic: ", profileData.profilePicContext);
+  // console.log("ProfilePic: ", profileData.profilePicContext);
 
-  const profilePicUrl = isValidUrl(profilePic)
-    ? profilePic
-    : profilePic
-    ? `${BASE_URL}/data/${profilePic.trim()}`
-    : "default-image-url-here";
+  // const profilePicUrl = isValidUrl(profilePic)
+  //   ? profilePic
+  //   : profilePic
+  //   ? `${BASE_URL}/data/${profilePic.trim()}`
+  //   : "default-image-url-here";
 
-  const testImage =
-    "https://media.wired.com/photos/5cdefc28b2569892c06b2ae4/master/w_2560%2Cc_limit/Culture-Grumpy-Cat-487386121-2.jpg";
+  // const testImage =
+  //   "https://media.wired.com/photos/5cdefc28b2569892c06b2ae4/master/w_2560%2Cc_limit/Culture-Grumpy-Cat-487386121-2.jpg";
 
-  const sendEmail = (email) => {
-    if (email) {
-      const mailtoURL = `mailto:${email}`;
-      Linking.openURL(mailtoURL).catch((err) =>
-        console.error("Failed to open email client", err)
+  // const sendEmail = (email) => {
+  //   if (email) {
+  //     const mailtoURL = `mailto:${email}`;
+  //     Linking.openURL(mailtoURL).catch((err) =>
+  //       console.error("Failed to open email client", err)
+  //     );
+  //     setDialogMessage("Failed to open email client.");
+  //     setDialogVisible(true);
+  //   } else {
+  //     console.error("No email address provided");
+  //     setDialogMessage("No email address provided");
+  //     setDialogVisible(true);
+  //   }
+  // };
+
+  const handleSave = async () => {
+    try {
+      if (!token || !userNameContext || !habitContextId) {
+        throw new Error("Missing authentication or habit data.");
+      }
+
+      console.log(
+        "Saving to:",
+        `${BASE_URL}/habit/${userNameContext}/${habitContextId}/edit`
       );
-      setDialogMessage("Failed to open email client.");
-      setDialogVisible(true);
-    } else {
-      console.error("No email address provided");
-      setDialogMessage("No email address provided");
-      setDialogVisible(true);
+
+      const response = await fetch(
+        `${BASE_URL}/habit/${userNameContext}/${habitContextId}/edit`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            habit: habitContextInputState,
+            description: descriptionContextInputState,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("PATCH failed:", errorData);
+        setDialogMessage("Failed to save habit changes.");
+        setShowDialog(true);
+
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Habit updated:", data);
+      setDialogMessage("Habit updated successfully!");
+      setShowDialog(true);
+    } catch (err) {
+      console.error("Error updating habit:", err.message);
+      setDialogMessage("Error updating habit.");
+      setShowDialog(true);
     }
   };
 
@@ -272,7 +250,7 @@ export default function EditReviewScreen() {
         </View>
 
         <View style={styles.reviewBox}>
-          <View style={styles.teamMemberDataBox}>
+          <View style={styles.dataBox}>
             <Text style={styles.sectionTitle}>Your Habit:</Text>
             {Array.isArray(profileData.habits) &&
             profileData.habits.length > 0 ? (
@@ -282,6 +260,7 @@ export default function EditReviewScreen() {
                   value={habitContextInputState}
                   onChangeText={setHabitContextInputState}
                   placeholder="Enter your habit"
+                  placeholderTextColor="gray"
                 />
                 <Text style={[styles.sectionTitle]}>What that looks like:</Text>
                 <TextInput
@@ -289,6 +268,7 @@ export default function EditReviewScreen() {
                   value={descriptionContextInputState}
                   onChangeText={setDescriptionContextInputState}
                   placeholder="Enter your description"
+                  placeholderTextColor="gray"
                 />
               </View>
             ) : (
@@ -296,13 +276,18 @@ export default function EditReviewScreen() {
             )}
           </View>
 
-          <View style={styles.teamMemberDataBox}>
+          <View style={styles.dataBox}>
             <Text style={styles.sectionTitle}>Your Feedback Cadence:</Text>
             {Array.isArray(habits) && habits.length > 0 ? (
               habits.map((habit) => (
-                <Text key={habit._id} style={styles.centeredData}>
-                  {habit.cadence || "No Feedback Cadence Available"}
-                </Text>
+                <TextInput
+                  key={habit._id}
+                  style={styles.inputField}
+                  value={habit.cadence || ""}
+                  editable
+                  placeholder="Enter feedback cadence"
+                  placeholderTextColor="gray"
+                />
               ))
             ) : (
               <Text style={styles.noProfileData}>
@@ -311,32 +296,40 @@ export default function EditReviewScreen() {
             )}
           </View>
 
-          <View style={styles.teamMemberDataBox}>
+          <View style={styles.dataBox}>
             <Text style={styles.sectionTitle}>Your Reminder Cadence:</Text>
             {Array.isArray(habits) && habits.length > 0 ? (
               habits.map((habit) => (
-                <Text key={habit._id} style={styles.centeredData}>
-                  {habit.reminders && habit.reminders.isReminderEnabled
-                    ? `You will receive a ${
-                        habit.reminders.isTextReminderEnabled
-                          ? "text reminder"
-                          : habit.reminders.isEmailReminderEnabled
-                          ? "email reminder"
-                          : "reminder"
-                      } on ${
-                        Array.isArray(habit.reminders.selectedDays) &&
-                        habit.reminders.selectedDays.length > 0
-                          ? habit.reminders.selectedDays.join(", ")
-                          : "No days selected"
-                      } at ${
-                        habit.reminders.selectedTime?.hour ?? "--"
-                      }:${String(
-                        habit.reminders.selectedTime?.minute ?? "00"
-                      ).padStart(2, "0")} ${
-                        habit.reminders.selectedTime?.period ?? "--"
-                      }.`
-                    : "No Reminder Cadence Available"}
-                </Text>
+                <TextInput
+                  key={habit._id}
+                  style={styles.inputField}
+                  placeholderTextColor="#888"
+                  value={
+                    habit.reminders && habit.reminders.isReminderEnabled
+                      ? `You will receive a ${
+                          habit.reminders.isTextReminderEnabled
+                            ? "text reminder"
+                            : habit.reminders.isEmailReminderEnabled
+                            ? "email reminder"
+                            : "reminder"
+                        } on ${
+                          Array.isArray(habit.reminders.selectedDays) &&
+                          habit.reminders.selectedDays.length > 0
+                            ? habit.reminders.selectedDays.join(", ")
+                            : "No days selected"
+                        } at ${
+                          habit.reminders.selectedTime?.hour ?? "--"
+                        }:${String(
+                          habit.reminders.selectedTime?.minute ?? "00"
+                        ).padStart(2, "0")} ${
+                          habit.reminders.selectedTime?.period ?? "--"
+                        }.`
+                      : ""
+                  }
+                  editable
+                  placeholder="Enter reminder cadence"
+                  placeholderTextColor="gray"
+                />
               ))
             ) : (
               <Text style={styles.noProfileData}>
@@ -344,65 +337,11 @@ export default function EditReviewScreen() {
               </Text>
             )}
           </View>
-
-          <View style={styles.teamMemberDataBox}>
-            <Text style={styles.sectionTitle}>Your Feedback Team Members:</Text>
-            {profileData.teammembers && profileData.teammembers.length > 0 ? (
-              profileData.teammembers.map((teammember, index) => (
-                <View
-                  key={teammember.teamMemberId}
-                  style={styles.contactPersonNameColumn}>
-                  <TouchableOpacity style={styles.contactPersonButton}>
-                    <DefaultProfiler
-                      uri={teammember.teamMemberProfilePic}
-                      style={styles.teamMemberProfilePic}
-                    />
-                    <Text style={styles.contactName}>
-                      {teammember.teamMemberFirstName || "No First Name"}{" "}
-                      {teammember.teamMemberLastName || "No Last Name"}
-                    </Text>
-                    <Text style={styles.contactEmail}>
-                      {teammember.teamMemberEmail || "No Email"}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noProfileData}>
-                No team members available.
-              </Text>
-            )}
-          </View>
-
-          <View style={styles.reviewBox}>
-            {lastFeedbackRequestDateContext && (
-              <Text style={styles.sectionTitle}>
-                Last feedback request sent:{" "}
-                {new Date(
-                  lastFeedbackRequestDateContext
-                ).toLocaleDateString() || "Invalid Date"}
-              </Text>
-            )}
-          </View>
         </View>
 
         <View style={styles.buttonColumn}>
-          <TouchableOpacity
-            style={styles.startButton}
-            onPress={() => navigation.navigate("CreateHabitScreen")}>
-            <Text style={styles.startButtonText}>Create Your Habit</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.viewButton}
-            onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-            <Text style={styles.startButtonText}>Request Feedback</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.viewButton}
-            onPress={() => navigation.navigate("FeedbackDataScreen")}>
-            <Text style={styles.viewButtonText}>Review Feedback</Text>
+          <TouchableOpacity style={styles.startButton} onPress={handleSave}>
+            <Text style={styles.startButtonText}>Save</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -430,11 +369,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: "bold",
   },
-  bodyTitleTextSub: {
-    fontSize: 18,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
   bold: {
     fontWeight: "bold",
   },
@@ -444,46 +378,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 10,
   },
-  centeredData: {
-    textAlign: "center",
-    fontSize: 16,
-    marginBotton: 5,
-  },
   inputField: {
+    height: 40,
+    borderColor: "#A9A9A9",
     borderWidth: 1,
-    borderColor: "#ccc",
     padding: 10,
-    borderRadius: 8,
-    width: "100%",
-    marginVertical: 8,
+    marginBottom: 10,
+    borderRadius: 5,
+    backgroundColor: "#F0F0F0",
+    width: wp("85%"),
   },
-  habitBox: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  teamMemberDataBox: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  reviewHabit: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  reviewCadence: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  reviewReminders: {
-    borderColor: "#D3D3D3",
-    borderWidth: 1,
+  dataBox: {
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
@@ -496,22 +401,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-  },
-  contactPersonNameColumn: {
-    flexDirection: "column",
-    alignItem: "center",
-    justifyContent: "center",
-  },
-  contactName: {
-    fontSize: 16,
-    alignItems: "right",
-    alignItem: "center",
-    justifyContent: "center",
-    textAlign: "center",
-  },
-  contactEmail: {
-    fontSize: 16,
-    alignItems: "right",
   },
   buttonColumn: {
     flexDirection: "column",

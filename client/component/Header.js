@@ -65,6 +65,7 @@ export default function Header(props) {
           currentRoute !== "CadenceScreen" &&
           currentRoute !== "ReminderScreen" &&
           currentRoute !== "ReviewScreen" &&
+          currentRoute !== "EditReviewScreen" &&
           currentRoute !== "FeedbackRequestScreen" &&
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&
@@ -190,6 +191,17 @@ export default function Header(props) {
               <Text style={styles.menuItem}>Review</Text>
             </TouchableOpacity>
           )}
+          {currentRoute !== "EditReviewScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("EditReviewScreen", {
+                  userName: userContext.userName,
+                  habitContextId,
+                })
+              }>
+              <Text style={styles.menuItem}>Edit Review</Text>
+            </TouchableOpacity>
+          )}
           {currentRoute !== "FeedbackDataScreen" && (
             <TouchableOpacity
               onPress={() =>
@@ -221,16 +233,6 @@ export default function Header(props) {
             styles.menuProfileList,
             { right: 25, top: profileMenuPosition.top + 50 },
           ]}>
-          {/* {currentRoute !== "ProfileScreen" && (
-            <TouchableOpacity
-              onPress={() =>
-                navigateToScreen("ProfileScreen", {
-                  userName: userContext.userName,
-                })
-              }>
-              <Text style={styles.menuItem}>Profile</Text>
-            </TouchableOpacity>
-          )} */}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("EditAccountScreen", {
@@ -241,12 +243,22 @@ export default function Header(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
-              navigateToScreen("EditReviewScreen", {
+              navigateToScreen("ReviewScreen", {
                 userName: userContext.userName,
               })
             }>
-            <Text style={styles.menuItem}>Edit Review</Text>
+            <Text style={styles.menuItem}>Review</Text>
           </TouchableOpacity>
+          {currentRoute !== "EditReviewScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("EditReviewScreen", {
+                  userName: userContext.userName,
+                })
+              }>
+              <Text style={styles.menuItem}>Edit Review</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() =>
               navigateToScreen("LogoutScreen", {

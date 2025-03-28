@@ -73,7 +73,7 @@ exports.createHabit = async (req, res) => {
 };
 
 exports.getUserHabits = async (req, res) => {
-  console.log("I'm here to get habit....");
+  // console.log("I'm here to get habit....");
   try {
     // console.log("Incoming request to get habit for:", req.params.username);
     const { username } = req.params;
@@ -574,5 +574,40 @@ exports.createNewHabitCycle = async (req, res) => {
     res.status(200).json({ message: "New habit cycle started", habit });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.editHabit = async (req, res) => {
+  console.log("I'm here to save all habits....");
+
+  const { username, habit_id } = req.params;
+  const { habit, description, cadence, reminders } = req.body;
+  console.log("Username: ", username, "Habit Id: ", habit_id);
+
+  try {
+    const targetHabit = await Habit.findOne({
+      _id: habit_id,
+      username,
+    });
+
+    if (!targetHabit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
+
+    if (habit !== undefined) targetHabit.habit = habit;
+    if (description !== undefined) targetHabit.description = description;
+    if (cadence !== undefined) targetHabit.cadence = cadence;
+    if (reminders !== undefined) targetHabit.reminders = reminders;
+
+    await targetHabit.save();
+
+    console.log("Target Habtit: ", targetHabit);
+
+    return res
+      .status(200)
+      .json({ message: "Habit updated successfully", habit: targetHabit });
+  } catch (error) {
+    console.error("Edit habit error:", error);
+    return res.status(500).json({ error: "Failed to update habit" });
   }
 };

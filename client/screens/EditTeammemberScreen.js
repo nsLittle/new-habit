@@ -21,6 +21,10 @@ import { UserContext } from "../context/UserContext";
 export default function EditTeammemberScreen() {
   const navigation = useNavigation();
 
+  const route = useRoute();
+  const { firstName, lastName, email, profilePic, teamMember_id } =
+    route.params || {};
+
   const [editedFirstName, setEditedFirstName] = useState(firstName || "");
   const [editedLastName, setEditedLastName] = useState(lastName || "");
   const [editedEmail, setEditedEmail] = useState(email || "");
@@ -196,13 +200,13 @@ export default function EditTeammemberScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.navigate("TeamInviteScreen")}>
             <Text style={styles.backButtonText} title="Back">
               ◀ Back
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             style={styles.saveButton}
@@ -293,20 +297,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
 });

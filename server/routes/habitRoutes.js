@@ -12,6 +12,7 @@ const {
   getReflections,
   completeCycle,
   createNewHabitCycle,
+  editHabit,
 } = require("../controllers/habitController");
 const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
@@ -36,5 +37,6 @@ router.post(
   protect,
   createNewHabitCycle
 );
+router.patch("/:username/:habit_id/edit", protect, editHabit);
 
 module.exports = router;
