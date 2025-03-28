@@ -36,23 +36,6 @@ export default function FeedbackRequestScreen() {
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
@@ -84,7 +67,6 @@ export default function FeedbackRequestScreen() {
           );
 
         const data = await response.json();
-        // console.log("Raw API Response:", data);
 
         const teammembers = Array.isArray(data.teamMembers)
           ? data.teamMembers.map((member) => ({
@@ -97,12 +79,6 @@ export default function FeedbackRequestScreen() {
           : [];
 
         setContactData({ teammembers });
-
-        // console.log("Transformed team members:", teammembers);
-        // console.log(
-        //   "Transformed team member first name: ",
-        //   teammembers[0].firstName
-        // );
 
         setDialogMessage("Team member feedback requests sent.");
       } catch (err) {
@@ -125,9 +101,7 @@ export default function FeedbackRequestScreen() {
 
     const subject = encodeURIComponent("Feedback Request");
 
-    const feedbackLink = __DEV__
-      ? `http://localhost:8081/feedback-request/${teammember_id}/${token}`
-      : `https://your-live-app.com/feedback-request/${teammember_id}/${token}`;
+    const feedbackLink = `habitapp://FeedbackRequestWelcomeScreen/${teammember_id}/${token}`;
 
     const body = encodeURIComponent(
       `Hello ${firstName},\n\n
@@ -163,8 +137,10 @@ export default function FeedbackRequestScreen() {
         firstName: member.firstName,
         lastName: member.lastName,
         email: member.email,
+        teamMember_id: member.teamMember_id,
       }));
-      // console.log("Team Members: ", teamMembersData);
+
+      console.log("team Member Data: ", teamMembersData);
 
       const response = await fetch(
         `${BASE_URL}/email/${userNameContext}/${habitContextId}/trigger-email-request`,

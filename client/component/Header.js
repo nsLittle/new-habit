@@ -49,7 +49,7 @@ export default function Header(props) {
     });
   };
 
-  console.log("Header rendering on:", currentRoute);
+  // console.log("Header rendering on:", currentRoute);
 
   return (
     <View style={styles.headerContainer}>
@@ -241,14 +241,16 @@ export default function Header(props) {
             }>
             <Text style={styles.menuItem}>Edit Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigateToScreen("ReviewScreen", {
-                userName: userContext.userName,
-              })
-            }>
-            <Text style={styles.menuItem}>Review</Text>
-          </TouchableOpacity>
+          {currentRoute !== "ReviewScreen" && (
+            <TouchableOpacity
+              onPress={() =>
+                navigateToScreen("ReviewScreen", {
+                  userName: userContext.userName,
+                })
+              }>
+              <Text style={styles.menuItem}>Review</Text>
+            </TouchableOpacity>
+          )}
           {currentRoute !== "EditReviewScreen" && (
             <TouchableOpacity
               onPress={() =>

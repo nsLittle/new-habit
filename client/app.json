@@ -39,6 +39,6 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": ["expo-secure-store"],
-    "scheme": "myapp"
+    "scheme": "habitapp"
   }
 }

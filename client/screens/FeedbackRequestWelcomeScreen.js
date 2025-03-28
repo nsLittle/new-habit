@@ -1,13 +1,6 @@
+import * as Linking from "expo-linking";
 import { useContext, useEffect, useState } from "react";
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { Image, Platform, ScrollView, StyleSheet } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -34,39 +27,33 @@ export default function FeedbackRequestWelcomeScreen() {
     teamMemberContextId,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
   const [teamMemberData, setTeamMemberData] = useState(null);
 
   const route = useRoute();
+  const token = deeplinkToken;
+  const teammemberId = deeplinkTeammemberId;
 
-  // console.log("Route Params: ", route.params);
-  // console.log(
-  //   "Received from Email Deeplink (route.params):",
-  //   route.params.teamMemberId
-  // );
-  const token = route.params.token;
-  const teammemberId = route.params.teamMemberId;
-  // console.log("Extracted Team Member ID:", teammemberId);
-  // console.log("Extracted Token:", token);
+  const [deeplinkToken, setDeeplinkToken] = useState(null);
+  const [deeplinkTeammemberId, setDeeplinkTeammemberId] = useState(null);
+
+  useEffect(() => {
+    const getInitialUrl = async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        const parsed = Linking.parse(initialUrl);
+        const [teammemberId, token] = parsed.path.split("/").slice(1);
+
+        console.log("Parsed from deep link:", teammemberId, token);
+        setDeeplinkToken(token);
+        setDeeplinkTeammemberId(teammemberId);
+      }
+    };
+
+    getInitialUrl();
+  }, []);
 
   const fetchUserData = async () => {
     try {
@@ -115,16 +102,6 @@ export default function FeedbackRequestWelcomeScreen() {
       const teamMemberData = await teamMemberResponse.json();
 
       setTeamMemberData(teamMemberData);
-
-      // console.log("User Data: ", userData);
-      // console.log("Profile Pic: ", userData[0].profilePic);
-      // console.log("Habit Data: ", habitData);
-      // console.log("Habit Id: ", habitData?.habits[0]._id);
-      // console.log("Habit: ", habitData?.habits[0].habit);
-      // console.log("Reminders: ", habitData?.habits[0].description);
-      // console.log("Team Members Data: ", teamMembersData);
-      // console.log("Feedback Data: ", feedbackData);
-      // console.log("Team Member Data: ", teamMemberData);
 
       setUserContext((prev) => ({
         ...prev,
@@ -177,7 +154,6 @@ export default function FeedbackRequestWelcomeScreen() {
             <TouchableOpacity
               style={styles.feedbackButton}
               onPress={() => {
-                console.log("Navigating with teamMember Data:", teamMemberData); // Debug log
                 navigation.navigate("FeedbackRequestRatingScreen", {
                   teamMemberData,
                   token,
@@ -191,7 +167,6 @@ export default function FeedbackRequestWelcomeScreen() {
             <TouchableOpacity
               style={styles.noThanksButton}
               onPress={() => {
-                console.log("Team member declines feedback request.");
                 resetUserContext("NoThankYouScreen");
                 navigation.navigate("NoThankYouScreen", {});
               }}>

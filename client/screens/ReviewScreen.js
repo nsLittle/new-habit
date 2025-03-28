@@ -79,6 +79,8 @@ export default function ReviewScreen() {
       const teamMemberData = await teamMemberResponse.json();
       const feedbackData = await feedbackResponse.json();
 
+      console.log("TEAM MEMBER DATA: ", teamMemberData);
+
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
       );
@@ -131,82 +133,86 @@ export default function ReviewScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>Review</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: "white" }}
+        contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
+        <View style={styles.body}>
+          <Text style={styles.bodyTitleText}>Review</Text>
 
-        <View style={styles.teamMemberDataBox}>
-          <Text style={styles.sectionTitle}>Your Habit:</Text>
-          {Array.isArray(habits) && habits.length > 0 ? (
-            <View>
-              <Text style={styles.centeredData}>
-                {habitContextInput || "No Habit Available"}
-              </Text>
-              <Text style={styles.sectionTitle}>What that looks like:</Text>
-              <Text style={styles.centeredData}>
-                {descriptionContextInput || "No Description Available"}
-              </Text>
-            </View>
-          ) : (
-            <Text style={styles.noProfileData}>No habits available.</Text>
-          )}
-        </View>
+          <View style={styles.teamMemberDataBox}>
+            <Text style={styles.sectionTitle}>Your Habit:</Text>
+            {Array.isArray(habits) && habits.length > 0 ? (
+              <View>
+                <Text style={styles.centeredData}>
+                  {habitContextInput || "No Habit Available"}
+                </Text>
+                <Text style={styles.sectionTitle}>What that looks like:</Text>
+                <Text style={styles.centeredData}>
+                  {descriptionContextInput || "No Description Available"}
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.noProfileData}>No habits available.</Text>
+            )}
+          </View>
 
-        <View style={styles.teamMemberDataBox}>
-          <Text style={styles.sectionTitle}>Your Feedback Cadence:</Text>
-          {Array.isArray(habits) && habits.length > 0 ? (
-            habits.map((habit) => (
-              <Text key={habit._id} style={styles.centeredData}>
-                {habit.cadence || "No Feedback Cadence Available"}
+          <View style={styles.teamMemberDataBox}>
+            <Text style={styles.sectionTitle}>Your Feedback Cadence:</Text>
+            {Array.isArray(habits) && habits.length > 0 ? (
+              habits.map((habit) => (
+                <Text key={habit._id} style={styles.centeredData}>
+                  {habit.cadence || "No Feedback Cadence Available"}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>
+                No feedback cadence available.
               </Text>
-            ))
-          ) : (
-            <Text style={styles.noProfileData}>
-              No feedback cadence available.
-            </Text>
-          )}
-        </View>
+            )}
+          </View>
 
-        <View style={styles.teamMemberDataBox}>
-          <Text style={styles.sectionTitle}>Your Reminder Cadence:</Text>
-          {Array.isArray(habits) && habits.length > 0 ? (
-            habits.map((habit) => (
-              <Text key={habit._id} style={styles.centeredData}>
-                {habit.reminders && habit.reminders.isReminderEnabled
-                  ? `You will receive a ${
-                      habit.reminders.isTextReminderEnabled
-                        ? "text reminder"
-                        : habit.reminders.isEmailReminderEnabled
-                        ? "email reminder"
-                        : "reminder"
-                    } on ${
-                      Array.isArray(habit.reminders.selectedDays) &&
-                      habit.reminders.selectedDays.length > 0
-                        ? habit.reminders.selectedDays.join(", ")
-                        : "No days selected"
-                    } at ${habit.reminders.selectedTime?.hour ?? "--"}:${String(
-                      habit.reminders.selectedTime?.minute ?? "00"
-                    ).padStart(2, "0")} ${
-                      habit.reminders.selectedTime?.period ?? "--"
-                    }.`
-                  : "No Reminder Cadence Available"}
+          <View style={styles.teamMemberDataBox}>
+            <Text style={styles.sectionTitle}>Your Reminder Cadence:</Text>
+            {Array.isArray(habits) && habits.length > 0 ? (
+              habits.map((habit) => (
+                <Text key={habit._id} style={styles.centeredData}>
+                  {habit.reminders && habit.reminders.isReminderEnabled
+                    ? `You will receive a ${
+                        habit.reminders.isTextReminderEnabled
+                          ? "text reminder"
+                          : habit.reminders.isEmailReminderEnabled
+                          ? "email reminder"
+                          : "reminder"
+                      } on ${
+                        Array.isArray(habit.reminders.selectedDays) &&
+                        habit.reminders.selectedDays.length > 0
+                          ? habit.reminders.selectedDays.join(", ")
+                          : "No days selected"
+                      } at ${
+                        habit.reminders.selectedTime?.hour ?? "--"
+                      }:${String(
+                        habit.reminders.selectedTime?.minute ?? "00"
+                      ).padStart(2, "0")} ${
+                        habit.reminders.selectedTime?.period ?? "--"
+                      }.`
+                    : "No Reminder Cadence Available"}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>
+                No reminder schedule available.
               </Text>
-            ))
-          ) : (
-            <Text style={styles.noProfileData}>
-              No reminder schedule available.
-            </Text>
-          )}
-        </View>
+            )}
+          </View>
 
-        <View style={styles.teamMemberDataBox}>
-          <Text style={styles.sectionTitle}>Your Feedback Team Members:</Text>
-          {teammembers && teammembers.length > 0 ? (
-            teammembers.map((teammember) => (
-              <View
-                key={teammember.teamMemberId}
-                style={styles.contactPersonNameColumn}>
-                <TouchableOpacity style={styles.contactPersonButton}>
+          <View style={styles.teamMemberDataBox}>
+            <Text style={styles.sectionTitle}>Your Feedback Team Members:</Text>
+            {teammembers && teammembers.length > 0 ? (
+              teammembers.map((teammember) => (
+                <View
+                  key={teammember.teamMemberId}
+                  style={styles.teamMemberProfileBox}>
                   <DefaultProfiler
                     uri={teammember.teamMemberProfilePic}
                     style={styles.teamMemberProfilePic}
@@ -215,55 +221,58 @@ export default function ReviewScreen() {
                     {teammember.teamMemberFirstName || "No First Name"}{" "}
                     {teammember.teamMemberLastName || "No Last Name"}
                   </Text>
-                  <Text style={styles.contactEmail}>
-                    {teammember.teamMemberEmail || "No Email"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.noProfileData}>No team members available.</Text>
-          )}
-        </View>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.noProfileData}>
+                No team members available.
+              </Text>
+            )}
+          </View>
 
-        <View style={styles.buttonColumn}>
-          <TouchableOpacity
-            style={styles.startButton}
-            onPress={() => navigation.navigate("EditReviewScreen")}>
-            <Text style={styles.startButtonText}>Edit Your Habit Setting</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonColumn}>
+            <TouchableOpacity
+              style={styles.startButton}
+              onPress={() => navigation.navigate("EditReviewScreen")}>
+              <Text style={styles.startButtonText}>
+                Edit Your Habit Setting
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.viewButton}
-            onPress={() => navigation.navigate("TeamInviteScreen")}>
-            <Text style={styles.viewButtonText}>Invite Team Members</Text>
-          </TouchableOpacity>
-
-          {hasTeamMembers && (
             <TouchableOpacity
               style={styles.viewButton}
-              onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-              <Text style={styles.viewButtonText}>Request Feedback</Text>
+              onPress={() => navigation.navigate("TeamInviteScreen")}>
+              <Text style={styles.viewButtonText}>
+                Invite/Edit Team Members
+              </Text>
             </TouchableOpacity>
-          )}
 
-          {hasFeedback && (
-            <TouchableOpacity
-              style={styles.viewButton}
-              onPress={() => navigation.navigate("FeedbackDataScreen")}>
-              <Text style={styles.viewButtonText}>Review Feedback</Text>
-            </TouchableOpacity>
+            {hasTeamMembers && (
+              <TouchableOpacity
+                style={styles.viewButton}
+                onPress={() => navigation.navigate("FeedbackRequestScreen")}>
+                <Text style={styles.viewButtonText}>Request Feedback</Text>
+              </TouchableOpacity>
+            )}
+
+            {hasFeedback && (
+              <TouchableOpacity
+                style={styles.viewButton}
+                onPress={() => navigation.navigate("FeedbackDataScreen")}>
+                <Text style={styles.viewButtonText}>Review Feedback</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {lastFeedbackRequestDateContext && (
+            <Text style={styles.sectionTitle}>
+              Last feedback request sent:{" "}
+              {new Date(lastFeedbackRequestDateContext).toLocaleDateString()}
+            </Text>
           )}
         </View>
-
-        {lastFeedbackRequestDateContext && (
-          <Text style={styles.sectionTitle}>
-            Last feedback request sent:{" "}
-            {new Date(lastFeedbackRequestDateContext).toLocaleDateString()}
-          </Text>
-        )}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -284,6 +293,7 @@ const styles = StyleSheet.create({
   bodyTitleText: {
     fontSize: 26,
     textAlign: "center",
+    paddingTop: 30,
     paddingBottom: 30,
     fontWeight: "bold",
   },
@@ -301,13 +311,27 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     width: "85%",
   },
-
+  teamMemberProfilePic: {
+    borderWidth: 5,
+    borderColor: "#FFD700",
+    width: 40,
+    height: 40,
+    marginBottom: 15,
+    borderRadius: 30,
+  },
   centeredData: {
     textAlign: "center",
     fontSize: 16,
     marginBottom: 5,
   },
+  teamMemberProfileBox: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 15,
+  },
   teamMemberDataBox: {
+    justifyContent: "center",
+    alignContent: "center",
     borderColor: "#D3D3D3",
     borderWidth: 1,
     paddingVertical: 5,

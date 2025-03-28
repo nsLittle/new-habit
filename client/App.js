@@ -34,6 +34,7 @@ import SuccessfulHabitCompletionScreen from "./screens/SuccessfulHabitCompletion
 import NextTimeScreen from "./screens/NextTimeScreen";
 import DefaultScreen from "./screens/DefaultScreen";
 import Header from "./component/Header";
+import "./globals.css";
 
 const Stack = createStackNavigator();
 

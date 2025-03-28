@@ -213,7 +213,7 @@ export default function TeamInviteScreen() {
                   <Text style={styles.contactName}>
                     {teammember.firstName} {teammember.lastName} {teammember.id}
                   </Text>
-                  <Text style={styles.contactEmail}>{teammember.email}</Text>
+                  {/* <Text style={styles.contactEmail}>{teammember.email}</Text> */}
                 </View>
                 <View style={styles.iconsColumn}>
                   <MaterialIcons
@@ -251,13 +251,13 @@ export default function TeamInviteScreen() {
           ))}
 
           <View style={styles.buttonRow}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.navigate("ReminderScreen")}>
               <Text style={styles.backButtonText} title="Back">
                 ◀ Back
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={[
                 styles.saveButton,
@@ -372,6 +372,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+    borderWidth: 1,
+    backgroundColor: "#FFD700",
   },
   iconsColumn: {
     flexDirection: "row",

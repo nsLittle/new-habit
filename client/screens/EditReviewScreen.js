@@ -221,7 +221,6 @@ export default function EditReviewScreen() {
         console.error("PATCH failed:", errorData);
         setDialogMessage("Failed to save habit changes.");
         setShowDialog(true);
-
         return;
       }
 
@@ -229,6 +228,7 @@ export default function EditReviewScreen() {
       console.log("Habit updated:", data);
       setDialogMessage("Habit updated successfully!");
       setShowDialog(true);
+      navigation.navigate("ReviewScreen");
     } catch (err) {
       console.error("Error updating habit:", err.message);
       setDialogMessage("Error updating habit.");

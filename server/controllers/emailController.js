@@ -2,6 +2,13 @@ const Emails = require("../models/Email");
 const User = require("../models/User");
 const sendgrid = require("@sendgrid/mail");
 const sendEmail = require("../utils/emailSender");
+const jwt = require("jsonwebtoken");
+
+function generateTeamMemberToken(teammemberId) {
+  return jwt.sign({ teammemberId }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+}
 
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -19,20 +26,17 @@ exports.triggerEmailRequest = async (req, res) => {
 
   const { username, habit_id } = req.params;
   const { teamMembers } = req.body;
-  // console.log("Req Params: ", req.params);
-  // console.log("Req Body: ", req.body);
 
   try {
     let failedEmails = [];
 
-    const baseUrl = process.env.BASE_URL || "http://localhost:8081";
-
     for (const member of teamMembers) {
       const { firstName, lastName, email } = member;
-
+      const token = generateTeamMemberToken(member.teamMember_id);
+      const deepLink = `habitapp://FeedbackRequestWelcomeScreen/${member.teamMember_id}/${token}`;
       const recipientEmail = email;
       const subject = `Feedback Request for Habit ${habit_id}`;
-      const body = `Hi ${firstName} ${lastName},\n\n${username} is working on their habit and would love to get your feedback!\nClick the link below to provide your thoughts:\n${baseUrl}/FeedbackRequestWelcomeScreen\n\nThank you!\nYour Habit Formation Team`;
+      const body = `Hi ${firstName} ${lastName},\n\n${username} is working on their habit and would love to get your feedback!\nClick the link below to provide your thoughts:\n${deepLink}\n\nThank you!\nYour Habit Formation Team`;
 
       const msg = {
         to: recipientEmail,
@@ -92,17 +96,17 @@ exports.triggerEmailRequest = async (req, res) => {
   }
 };
 
-exports.sendTestEmail = async (req, res) => {
-  try {
-    const { recipientEmail } = req.body;
-    if (!recipientEmail) {
-      return res.status(400).json({ error: "Email is required" });
-    }
+// exports.sendTestEmail = async (req, res) => {
+//   try {
+//     const { recipientEmail } = req.body;
+//     if (!recipientEmail) {
+//       return res.status(400).json({ error: "Email is required" });
+//     }
 
-    await sendEmail(recipientEmail, "Test Email", "This is a test email.");
-    res.json({ message: `Test email sent to ${recipientEmail}` });
-  } catch (err) {
-    console.error("Error sending test email:", err);
-    res.status(500).json({ error: "Failed to send test email" });
-  }
-};
+//     await sendEmail(recipientEmail, "Test Email", "This is a test email.");
+//     res.json({ message: `Test email sent to ${recipientEmail}` });
+//   } catch (err) {
+//     console.error("Error sending test email:", err);
+//     res.status(500).json({ error: "Failed to send test email" });
+//   }
+// };
