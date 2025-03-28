@@ -47,7 +47,6 @@ exports.triggerEmailRequest = async (req, res) => {
 
       try {
         await sendgrid.send(msg);
-        // console.log(`✅ Email sent to ${firstName} ${lastName}`);
 
         await Emails.create({
           recipient: recipientEmail,
@@ -95,18 +94,3 @@ exports.triggerEmailRequest = async (req, res) => {
       .json({ message: "Server error occurred", error: err.message });
   }
 };
-
-// exports.sendTestEmail = async (req, res) => {
-//   try {
-//     const { recipientEmail } = req.body;
-//     if (!recipientEmail) {
-//       return res.status(400).json({ error: "Email is required" });
-//     }
-
-//     await sendEmail(recipientEmail, "Test Email", "This is a test email.");
-//     res.json({ message: `Test email sent to ${recipientEmail}` });
-//   } catch (err) {
-//     console.error("Error sending test email:", err);
-//     res.status(500).json({ error: "Failed to send test email" });
-//   }
-// };
