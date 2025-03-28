@@ -49,7 +49,19 @@ exports.triggerEmailRequest = async (req, res) => {
         to: recipientEmail,
         from: "notsolittle88@gmail.com",
         subject,
-        html,
+        text: `Hi ${firstName} ${lastName},
+    
+    ${username} is working on their habit and would love to get your feedback!
+    
+    Click here to give feedback:
+    ${deepLink}
+    
+    Or copy and paste this link into your app:
+    ${deepLink}
+    
+    Thank you!
+    Your Habit Formation Team`,
+        html: htmlContent,
       };
 
       try {
