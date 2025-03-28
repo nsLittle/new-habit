@@ -579,11 +579,10 @@ exports.createNewHabitCycle = async (req, res) => {
 
 exports.editHabit = async (req, res) => {
   console.log("I'm here to save all habits....");
-  console.log("Looking for habit with:", { _id: habit_id, username });
 
   const { username, habit_id } = req.params;
   const { habit, description, cadence, reminders } = req.body;
-  console.log("Username: ", username, "Habit Id: ", habit_id);
+  console.log("Looking for habit with:", { _id: habit_id, username });
 
   try {
     const targetHabit = await Habit.findById(habit_id);
