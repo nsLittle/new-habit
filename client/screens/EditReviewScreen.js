@@ -74,6 +74,8 @@ export default function EditReviewScreen() {
   const fetchUserData = async () => {
     try {
       if (!token) throw new Error("Authentication token is missing.");
+      console.log("habitContextId:", habitContextId);
+      console.log("userNameContext:", userNameContext);
 
       const [userResponse, habitsResponse, teamMemberResponse] =
         await Promise.all([

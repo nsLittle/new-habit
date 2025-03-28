@@ -579,16 +579,15 @@ exports.createNewHabitCycle = async (req, res) => {
 
 exports.editHabit = async (req, res) => {
   console.log("I'm here to save all habits....");
+  console.log("Looking for habit with:", { _id: habit_id, username });
 
   const { username, habit_id } = req.params;
   const { habit, description, cadence, reminders } = req.body;
   console.log("Username: ", username, "Habit Id: ", habit_id);
 
   try {
-    const targetHabit = await Habit.findOne({
-      _id: habit_id,
-      username,
-    });
+    const targetHabit = await Habit.findById(habit_id);
+    console.log("Updated habit:", targetHabit);
 
     if (!targetHabit) {
       return res.status(404).json({ error: "Habit not found" });
