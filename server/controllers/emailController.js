@@ -37,7 +37,7 @@ exports.triggerEmailRequest = async (req, res) => {
       console.log("📨 Email deepLink:", deepLink);
       const recipientEmail = email;
       const subject = `Feedback Request for Habit ${habit_id}`;
-      const html = `
+      const text = `
       <p>Hi ${firstName} ${lastName},</p>
       <p>${username} is working on their habit and would love to get your feedback!</p>
       <p><a href="${deepLink}">Click here to give feedback</a></p>
