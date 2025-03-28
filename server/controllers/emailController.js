@@ -57,7 +57,7 @@ exports.triggerEmailRequest = async (req, res) => {
         await Emails.create({
           recipient: recipientEmail,
           subject,
-          body,
+          html,
           sendAt: new Date(),
           status: "sent",
         });
