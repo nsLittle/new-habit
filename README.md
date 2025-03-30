@@ -35,7 +35,7 @@ The application is developed for **Westwood International** and **Greg Zlevor**,
 
 ## 📂 Project Structure
 
-```plaintext
+````plaintext
 habit-app
 │── client/                     # React Native frontend
 │   ├── src/
@@ -63,6 +63,15 @@ habit-app
 
 ## How to Run Habit-App Locally
 
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) installed
+- [MongoDB](https://www.mongodb.com/) running locally or access to a MongoDB Atlas instance
+- [Expo Go](https://expo.dev/client) app installed on your mobile device (iOS or Android)
+
+---
+
+
 1. Clone repo: git clone https://github.com/nsLittle/habit-app.git
 2. Type: mongosh
 3. Find: server
@@ -71,6 +80,30 @@ habit-app
 6. Find: client
 7. Type: npm install
 8. Type: npx expo start
+9. Scan: QR code to run app on phone (OR)
+10. Type: W to run app on browser
+
+---
+
+## Android Build
+
+### Download the Standalone App
+
+You can download the latest Android build here:
+
+[Download Habit App (.apk)](https://expo.dev/artifacts/eas/wUVFxaeNw3eBPpo79Sy9RN.aab)
+
+Note: `.aab` files are intended for publishing to the Google Play Store. If you need a version that can be installed directly on an Android device, use the `.apk` format instead (see below).
+
+---
+
+### For Testing Without Publishing to Play Store
+
+To generate an installable `.apk` for direct distribution:
+
+```bash
+eas build -p android --profile preview
+
 
 ---
 
@@ -88,4 +121,4 @@ habit by Rudez Studio from <a href="https://thenounproject.com/browse/icons/term
 Feel free to reach out for collaboration, job opportunities, or questions about my work!
 
 ---
-```
+````

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -20,127 +19,67 @@ import { UserContext } from "../context/UserContext";
 
 export default function FeedbackRequestScreen() {
   const navigation = useNavigation();
-
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    lastNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-    token,
-  } = userContext || {};
+  const { userContext } = useContext(UserContext) || {};
+  const { userNameContext, token, firstNameContext, habitContextId } =
+    userContext || {};
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
-
-  const [contactData, setContactData] = useState({ teammembers: [] });
-
-  const [isLoading, setIsLoading] = useState("");
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Fetching team membmer data");
     const fetchTeamMembersData = async () => {
       try {
-        if (!token) throw new Error("Authentication token is missing.");
-
-        if (!userNameContext) throw new Error("Username is missing.");
-
+        if (!token || !userNameContext) return;
         const response = await fetch(
           `${BASE_URL}/teammember/${userNameContext}`,
           {
             headers: {
-              "Content-Type": `application/json`,
+              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        if (!response.ok)
-          throw new Error(
-            `Failed to fetch team data. Status: ${response.status}`
-          );
-
         const data = await response.json();
+        const members = Array.isArray(data.teamMembers) ? data.teamMembers : [];
 
-        const teammembers = Array.isArray(data.teamMembers)
-          ? data.teamMembers.map((member) => ({
-              teamMember_id: member._id,
-              firstName: member.teamMemberFirstName,
-              lastName: member.teamMemberLastName,
-              profilePic: member.teamMemberProfilePic,
-              email: member.teamMemberEmail,
-            }))
-          : [];
+        console.log("Route params received:", { token, teammemberId });
+        console.log(
+          "Final team member fetch URL:",
+          `${BASE_URL}/teammember/${userNameContext}/${teammemberId}`
+        );
 
-        setContactData({ teammembers });
-
-        setDialogMessage("Team member feedback requests sent.");
-      } catch (err) {
-        console.error("Error fetching teammembers.", err);
-        setDialogMessage("Error fetching teammembers.");
+        setTeamMembers(members);
+      } catch {
+        setDialogMessage("Failed to load team members.");
+        setShowDialog(true);
       }
     };
     fetchTeamMembersData();
-  }, [userContext]);
-
-  const [selectedTeamMember, setSelectedTeamMember] = useState("");
-
-  const [teammemberId, setTeammemberId] = useState("");
-
-  const sendEmail = (teammember_id, firstName, email) => {
-    if (!teammember_id) {
-      console.warn("Missing team member.");
-      return;
-    }
-
-    const subject = encodeURIComponent("Feedback Request");
-
-    const feedbackLink = `habitapp://FeedbackRequestWelcomeScreen/${teammember_id}/${token}`;
-
-    const body = encodeURIComponent(
-      `Hello ${firstName},\n\n
-      ${firstNameContext} wants to ${habitContextInput}.\n
-      They would like your feedback regarding their progress.\n\n
-      Click the link below to provide feedback:\n
-      ${feedbackLink}\n\n
-      Thank you for considering this request!
-      Your Habit Formation Team`
-    );
-
-    const emailURL = `mailto:${email}?subject=${subject}&body=${body}`;
-
-    Linking.openURL(emailURL).catch((err) =>
-      console.error("Error opening email:", err)
-    );
-  };
+  }, [token, userNameContext]);
 
   const activateFeedbackRequests = async () => {
-    // console.log("Button clicked, triggering feedback request...");
     setIsLoading(true);
-
-    const habitIdToSend = Array.isArray(habitContextId)
-      ? habitContextId[0]
-      : habitContextId;
-    // console.log("habitContextId:", habitContextId);
-    // console.log("userId:", userContext.userIdContext);
-    // console.log("User Name COntext: ", userNameContext);
-    // console.log("Habit Context ID: ", habitContextId);
-
     try {
-      const teamMembersData = contactData.teammembers.map((member) => ({
-        firstName: member.firstName,
-        lastName: member.lastName,
-        email: member.email,
-        teamMember_id: member.teamMember_id,
-      }));
-
-      console.log("team Member Data: ", teamMembersData);
+      const payload = {
+        habitId: habitContextId,
+        userId: userContext.userIdContext,
+        teamMembers: teamMembers.map(
+          ({
+            teamMemberFirstName,
+            teamMemberLastName,
+            teamMemberEmail,
+            _id,
+          }) => ({
+            firstName: teamMemberFirstName,
+            lastName: teamMemberLastName,
+            email: teamMemberEmail,
+            teamMember_id: _id,
+          })
+        ),
+      };
 
       const response = await fetch(
         `${BASE_URL}/email/${userNameContext}/${habitContextId}/trigger-email-request`,
@@ -150,44 +89,18 @@ export default function FeedbackRequestScreen() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            habitId: habitIdToSend,
-            userId: userContext.userIdContext,
-            teamMembers: teamMembersData,
-          }),
+          body: JSON.stringify(payload),
         }
       );
 
-      // console.log("Raw Response:", response);
-
       const data = await response.json();
-      // console.log("Response Data", data);
+      if (!response.ok) throw new Error(data.message);
 
-      if (response.ok) {
-        const formattedDate = new Date(
-          data.lastFeedbackRequestDate
-        ).toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        // console.log("Formatted End Dtae: ", formattedDate);
-
-        setUserContext((prev) => ({
-          ...prev,
-          lastFeedbackRequestDateContext: formattedDate,
-        }));
-
-        navigation.navigate("ReviewScreen");
-      } else {
-        setDialogMessage(`Failure: ${data.message}`);
-        setShowDialog(true);
-      }
-
+      setDialogMessage("Feedback requests sent successfully.");
       setShowDialog(true);
-    } catch (error) {
-      // console.log("Error:", error);
-      setDialogMessage("Error", "Failed to send feedback request.");
+      navigation.navigate("ReviewScreen");
+    } catch (err) {
+      setDialogMessage("Failed to send feedback requests.");
       setShowDialog(true);
     } finally {
       setIsLoading(false);
@@ -200,81 +113,74 @@ export default function FeedbackRequestScreen() {
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
-          style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          style={styles.dialogStyle}>
+          <Dialog.Title>
+            <Text style={styles.dialogTitle}>Notice</Text>
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowDialog(false)}
-              labelStyle={styles.dialogButton}>
-              OK
+            <Button onPress={() => setShowDialog(false)}>
+              <Text style={styles.dialogButton}>OK</Text>
             </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
 
       <View style={styles.body}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Team Feedback Request</Text>
-          <Text>Send Feedback Requests to Team Members</Text>
-        </View>
+        <Text style={styles.title}>Team Feedback Request</Text>
 
-        <View style={styles.dataContainer}>
-          {contactData.teammembers.map((teammember, index) => (
-            <View style={styles.contactPersonButtonContainer} key={index}>
-              <TouchableOpacity style={styles.contactPersonButton}>
-                <View style={styles.contactPersonNameColumn}>
-                  <DefaultProfiler
-                    uri={teammember.profilePic}
-                    style={styles.teamMemberProfilePic}
-                  />
-                  <Text style={styles.contactName}>
-                    {teammember.firstName} {teammember.lastName}{" "}
-                    {teammember._id}
-                  </Text>
-                  <Text style={styles.contactName}>{teammember.email}</Text>
-                </View>
+        {teamMembers.map((member, idx) => (
+          <View key={idx} style={styles.memberBox}>
+            <DefaultProfiler
+              uri={member.teamMemberProfilePic}
+              style={styles.profileImage}
+            />
+            <View style={styles.memberInfo}>
+              <Text style={styles.name}>
+                {member.teamMemberFirstName} {member.teamMemberLastName}
+              </Text>
+              <Text style={styles.email}>{member.teamMemberEmail}</Text>
+
+              <TouchableOpacity
+                style={styles.buttonGray}
+                onPress={() => {
+                  navigation.navigate("FeedbackRequestWelcomeScreen", {
+                    teammemberId: member._id,
+                    token,
+                  });
+                }}>
+                <Text style={styles.buttonText}>Test Feedback UI</Text>
               </TouchableOpacity>
             </View>
-          ))}
-
-          <View style={styles.buttonColumn}>
-            <TouchableOpacity
-              style={styles.sendFeedbackRequestButton}
-              onPress={activateFeedbackRequests}>
-              <Text style={styles.sendFeedbackRequestButtonText} title="Send">
-                Activate Feedback Requests
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.navigate("ReviewScreen")}>
-              <Text style={styles.backButtonText} title="Back">
-                Return to Review Habit Setting
-              </Text>
-            </TouchableOpacity>
           </View>
-        </View>
+        ))}
+
+        <TouchableOpacity
+          style={styles.buttonYellow}
+          onPress={activateFeedbackRequests}
+          disabled={isLoading}>
+          <Text style={styles.buttonText}>Activate Feedback Requests</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
   dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
+    color: "#B22222",
     fontWeight: "bold",
     fontSize: 18,
+  },
+  dialogButton: {
+    color: "#228B22",
+    fontWeight: "bold",
+  },
+  dialogStyle: {
+    backgroundColor: "white",
+    borderRadius: 12,
   },
   container: {
     flexGrow: 1,
@@ -282,113 +188,71 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp("5%"),
   },
   body: {
-    flexGrow: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("15%") : hp("2%"),
+    paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
+    paddingBottom: 60,
   },
-  titleText: {
+  title: {
     fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
     fontWeight: "bold",
+    marginTop: 100,
+    marginBottom: 20,
   },
-  dataContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    paddingBottom: 50,
-  },
-  addPersonButton: {
-    backgroundColor: "#FFD700",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    marginTop: 25,
-    marginBottom: 5,
-    width: 350,
-    height: 45,
+  memberBox: {
     flexDirection: "row",
-  },
-  contactPersonButton: {
-    backgroundColor: "#F8F8F8",
+    alignItems: "center",
     borderColor: "#D3D3D3",
     borderWidth: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    marginTop: 15,
-    marginBottom: 5,
-    width: 350,
-    height: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  contactPersonNameColumn: {
-    flexDirection: "row",
-    alignItem: "center",
-    justifyContent: "space-around",
-  },
-  contactEmail: {
-    fontSize: 10,
-    color: "gray",
+    backgroundColor: "#F9F9F9",
+    borderRadius: 15,
+    padding: 10,
+    marginVertical: 8,
+    width: wp("85%"),
   },
   profileImage: {
     width: 40,
     height: 40,
     borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#FFD700",
+    shadowColor: "#87CEEB",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  contactName: {
-    marginRight: 5,
+  memberInfo: {
+    flex: 1,
+    marginLeft: 10,
   },
-  iconSend: {
-    marginLeft: 5,
+  name: {
+    fontSize: 14,
+    fontWeight: "bold",
   },
-  teamMemberProfilePic: {
-    width: 30,
-    height: 30,
-    marginBottom: 15,
-    borderRadius: 50,
-    color: "light gray",
+  email: {
+    fontSize: 12,
+    color: "gray",
   },
-  buttonColumn: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  sendFeedbackRequestButton: {
+  buttonYellow: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    alignItems: "center",
     width: 300,
-    height: 45,
-    justifyContent: "center",
+    marginTop: 20,
+    alignItems: "center",
   },
-  sendFeedbackRequestButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  backButton: {
+  buttonGray: {
     backgroundColor: "#D3D3D3",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    alignItems: "center",
     width: 300,
-    height: 45,
-    justifyContent: "center",
+    marginTop: 15,
+    alignItems: "center",
   },
-  backButtonText: {
-    color: "black",
+  buttonText: {
     fontSize: 12,
-    textAlign: "center",
+    color: "black",
   },
 });

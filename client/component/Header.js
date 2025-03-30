@@ -49,8 +49,6 @@ export default function Header(props) {
     });
   };
 
-  // console.log("Header rendering on:", currentRoute);
-
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
@@ -59,6 +57,8 @@ export default function Header(props) {
           currentRoute !== "ResetPasswordScreen" &&
           currentRoute !== "LogoutScreen" &&
           currentRoute !== "CreateAccountScreen" &&
+          currentRoute !== "ProfileScreen" &&
+          currentRoute !== "EditAccountScreen" &&
           currentRoute !== "CreateHabitScreen" &&
           currentRoute !== "HabitDescriptionScreen" &&
           currentRoute !== "TeamInviteScreen" &&
@@ -91,13 +91,12 @@ export default function Header(props) {
             </TouchableOpacity>
           )}
 
-        <Text style={styles.headerText}>HabitApp</Text>
+        <Text style={styles.headerText}>Habit</Text>
         {currentRoute !== "WelcomeScreen" &&
           currentRoute !== "LoginScreen" &&
           currentRoute !== "ResetPasswordScreen" &&
           currentRoute !== "LogoutScreen" &&
           currentRoute !== "CreateAccountScreen" &&
-          currentRoute !== "FeedbackRequestScreen" &&
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&
           currentRoute !== "FeedbackRequestThanksRatingScreen" &&
@@ -269,6 +268,14 @@ export default function Header(props) {
             }>
             <Text style={styles.menuItem}>Logout</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigateToScreen("FeedbackRequestWelcomeScreen", {
+                userName: userContext.userName,
+              })
+            }>
+            <Text style={styles.menuItem}>Feedback Request Loop</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -297,7 +304,7 @@ const styles = StyleSheet.create({
   headerText: {
     textAlign: "center",
     flex: 1,
-    fontSize: 30,
+    fontSize: 36,
   },
   menuIcon: {
     color: "#000",

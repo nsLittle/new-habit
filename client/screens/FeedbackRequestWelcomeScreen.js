@@ -1,6 +1,14 @@
 import * as Linking from "expo-linking";
 import { useContext, useEffect, useState } from "react";
-import { Image, Platform, ScrollView, StyleSheet } from "react-native";
+import {
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -32,28 +40,38 @@ export default function FeedbackRequestWelcomeScreen() {
 
   const [teamMemberData, setTeamMemberData] = useState(null);
 
+  // const [deeplinkToken, setDeeplinkToken] = useState(null);
+  // const [deeplinkTeammemberId, setDeeplinkTeammemberId] = useState(null);
+
+  // const route = useRoute();
+  // const { token: paramToken, teammemberId: paramTeammemberId } =
+  //   route.params || {};
+
+  // const token = paramToken || deeplinkToken;
+  // const teammemberId = paramTeammemberId || deeplinkTeammemberId;
+
   const route = useRoute();
-  const token = deeplinkToken;
-  const teammemberId = deeplinkTeammemberId;
+  const { token, teammemberId } = route.params || {};
 
-  const [deeplinkToken, setDeeplinkToken] = useState(null);
-  const [deeplinkTeammemberId, setDeeplinkTeammemberId] = useState(null);
+  // useEffect(() => {
+  //   const getInitialUrl = async () => {
+  //     const initialUrl = await Linking.getInitialURL();
+  //     console.log("initialUrl", initialUrl);
+  //     if (initialUrl) {
+  //       const parsed = Linking.parse(initialUrl);
+  //       console.log("parsed object", parsed);
+  //       const [parsedTeammemberId, parsedToken] = parsed.path
+  //         .split("/")
+  //         .slice(1);
+  //       setDeeplinkToken(parsedToken);
+  //       setDeeplinkTeammemberId(parsedTeammemberId);
 
-  useEffect(() => {
-    const getInitialUrl = async () => {
-      const initialUrl = await Linking.getInitialURL();
-      if (initialUrl) {
-        const parsed = Linking.parse(initialUrl);
-        const [teammemberId, token] = parsed.path.split("/").slice(1);
+  //       console.log("Parsed from deep link:", parsedTeammemberId, parsedToken);
+  //     }
+  //   };
 
-        console.log("Parsed from deep link:", teammemberId, token);
-        setDeeplinkToken(token);
-        setDeeplinkTeammemberId(teammemberId);
-      }
-    };
-
-    getInitialUrl();
-  }, []);
+  //   getInitialUrl();
+  // }, []);
 
   const fetchUserData = async () => {
     try {
@@ -100,8 +118,10 @@ export default function FeedbackRequestWelcomeScreen() {
       const teamMembersData = await teamMembersResponse.json();
       const feedbackData = await feedbackResponse.json();
       const teamMemberData = await teamMemberResponse.json();
+      setTeamMemberData(teamMemberData?.teamMember || teamMemberData);
 
-      setTeamMemberData(teamMemberData);
+      console.log("Raw teamMemberData response:", teamMemberData);
+      console.log("ROUTE PARAMS:", { teammemberId, token });
 
       setUserContext((prev) => ({
         ...prev,
@@ -126,6 +146,7 @@ export default function FeedbackRequestWelcomeScreen() {
       fetchUserData();
     }
   }, [userNameContext]);
+  console.log("TEam member id: ", teamMemberData?._id, "TOken: ", token);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -153,9 +174,20 @@ export default function FeedbackRequestWelcomeScreen() {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.feedbackButton}
+              disabled={!teamMemberData?._id}
               onPress={() => {
+                if (!teamMemberData?._id) {
+                  console.error("❌ No team member ID found. Cannot proceed.");
+                  return;
+                }
+
+                console.log(
+                  "✅ Navigating with teamMemberId:",
+                  teamMemberData._id
+                );
+
                 navigation.navigate("FeedbackRequestRatingScreen", {
-                  teamMemberData,
+                  teammemberId: teamMemberData._id,
                   token,
                 });
               }}>

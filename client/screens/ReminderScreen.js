@@ -45,7 +45,6 @@ export default function ReminderScreen() {
   const [selectedPeriod, setSelectedPeriod] = useState("");
 
   const [reminderProfile, setReminderProfile] = useState({
-    isReminderEnabled: false,
     isEmailReminderEnabled: false,
     isTextReminderEnabled: false,
     selectedDays: [],
@@ -55,7 +54,6 @@ export default function ReminderScreen() {
   });
 
   const [existingReminderProfile, setExistingReminderProfile] = useState({
-    isReminderEnabled: false,
     isEmailReminderEnabled: false,
     isTextReminderEnabled: false,
     selectedDays: [],
@@ -64,39 +62,7 @@ export default function ReminderScreen() {
     selectedPeriod: "",
   });
 
-  useEffect(() => {
-    if (reminderProfile.isReminderEnabled) {
-    }
-  }, [reminderProfile.isReminderEnabled]);
-
-  const toggleReminderSwitch = (value) => {
-    if (reminderProfile.isReminderEnabled && !value) {
-      setDialogMessage(
-        "You already have a reminder set. Are you sure you want to disable it?"
-      );
-      setShowDialog(true);
-    } else {
-      setReminderProfile((prev) => ({
-        ...prev,
-        isReminderEnabled: value,
-        isEmailReminderEnabled: value ? prev.isEmailReminderEnabled : false,
-        isTextReminderEnabled: value ? prev.isTextReminderEnabled : false,
-        selectedDays: value ? prev.selectedDays : [],
-        selectedHour: value ? prev.selectedHour : "",
-        selectedMinute: value ? prev.selectedMinute : "",
-        selectedPeriod: value ? prev.selectedPeriod : "",
-      }));
-    }
-  };
-
   const toggleEmailSwitch = (value) => {
-    if (!reminderProfile.isReminderEnabled) {
-      if (!showDialog) {
-        setDialogMessage("Would you like to enable reminders?");
-        setShowDialog(true);
-      }
-      return;
-    }
     setReminderProfile((prev) => ({
       ...prev,
       isEmailReminderEnabled: value,
@@ -104,13 +70,6 @@ export default function ReminderScreen() {
   };
 
   const toggleTextSwitch = (value) => {
-    if (!reminderProfile.isReminderEnabled) {
-      if (!showDialog) {
-        setDialogMessage("Would you like to enable reminders first?");
-        setShowDialog(true);
-      }
-      return;
-    }
     setReminderProfile((prev) => ({
       ...prev,
       isTextReminderEnabled: value,
@@ -120,13 +79,6 @@ export default function ReminderScreen() {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const toggleDay = (day) => {
-    if (!reminderProfile.isReminderEnabled) {
-      if (!showDialog) {
-        setDialogMessage("Would you like to enable reminders first?");
-        setShowDialog(true);
-      }
-      return;
-    }
     setReminderProfile((prev) => ({
       ...prev,
       selectedDays: prev.selectedDays.includes(day)
@@ -172,7 +124,6 @@ export default function ReminderScreen() {
 
         setReminderProfile((prev) => ({
           ...prev,
-          isReminderEnabled: existingReminder.isReminderEnabled || false,
           isEmailReminderEnabled:
             existingReminder.isEmailReminderEnabled || false,
           isTextReminderEnabled:
@@ -233,12 +184,6 @@ export default function ReminderScreen() {
   }, []);
 
   const handleSave = async () => {
-    if (!reminderProfile.isReminderEnabled) {
-      setDialogMessage("Are you certain you don't want reminders?");
-      setShowDialog(true);
-      return;
-    }
-
     try {
       const response = await fetch(
         `${BASE_URL}/habit/${userNameContext}/${habitContextId}/reminder`,
@@ -250,7 +195,7 @@ export default function ReminderScreen() {
           },
           body: JSON.stringify({
             reminders: {
-              isReminderEnabled: reminderProfile.isReminderEnabled,
+              isReminderEnabled: true,
               isEmailReminderEnabled: reminderProfile.isEmailReminderEnabled,
               isTextReminderEnabled: reminderProfile.isTextReminderEnabled,
               selectedDays: reminderProfile.selectedDays,
@@ -352,23 +297,6 @@ export default function ReminderScreen() {
           </Text>
         </View>
 
-        <View style={styles.toggleSection}>
-          <View style={styles.toggleRow}>
-            <Text style={styles.toggleLabel}>Reminder</Text>
-            <View style={styles.toggleLabelSwitch}>
-              <Switch
-                trackColor={{ false: "#D3D3D3", true: "#81b0ff" }}
-                thumbColor={
-                  reminderProfile.isReminderEnabled ? "#FFD700" : "#f4f3f4"
-                }
-                ios_backgroundColor="#FFD700"
-                onValueChange={toggleReminderSwitch}
-                value={reminderProfile.isReminderEnabled}
-              />
-            </View>
-          </View>
-        </View>
-
         <View style={styles.toggleSectionTwo}>
           <View style={styles.toggleRow}>
             <Text style={styles.toggleLabel}>Email</Text>
@@ -416,12 +344,7 @@ export default function ReminderScreen() {
           <View style={styles.pickerItem}>
             <RNPickerSelect
               onValueChange={(value) => {
-                if (reminderProfile.isReminderEnabled) {
-                  setSelectedHour(value);
-                } else {
-                  setDialogMessage("Would you like to enable reminders first?");
-                  setShowDialog(true);
-                }
+                setSelectedHour(value);
               }}
               items={generateOptions(12).map((hour) => ({
                 label: `${hour.toString().padStart(2, "0")}`,
@@ -434,9 +357,7 @@ export default function ReminderScreen() {
           <View style={styles.pickerItem}>
             <RNPickerSelect
               onValueChange={(value) => {
-                if (reminderProfile.isReminderEnabled) {
-                  setSelectedMinute(value);
-                }
+                setSelectedMinute(value);
               }}
               items={[
                 { label: "00 minutes", value: "00" },
@@ -451,9 +372,7 @@ export default function ReminderScreen() {
           <View style={styles.pickerItem}>
             <RNPickerSelect
               onValueChange={(value) => {
-                if (reminderProfile.isReminderEnabled) {
-                  setSelectedPeriod(value);
-                }
+                setSelectedPeriod(value);
               }}
               items={[
                 { label: "AM", value: "AM" },
@@ -599,7 +518,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 250,
     height: 45,
     justifyContent: "center",
   },

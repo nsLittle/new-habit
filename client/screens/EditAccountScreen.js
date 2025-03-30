@@ -197,10 +197,11 @@ export default function EditAccountScreen() {
 
           <View style={styles.pictureContainer}>
             <TextInput
-              style={[styles.passwordInput, styles.nonEditable]}
+              style={styles.passwordInput}
               placeholder="Username"
               value={userName}
               editable={false}
+              placeholderTextColor="gray"
             />
             <TouchableOpacity
               onPress={() => setShowUsernameDialog(true)}
@@ -216,6 +217,7 @@ export default function EditAccountScreen() {
               value={showPassword ? password : maskedPassword}
               secureTextEntry={!showPassword}
               onChangeText={handlePasswordChange}
+              placeholderTextColor="gray"
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
@@ -230,12 +232,6 @@ export default function EditAccountScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          {/* <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("ProfileScreen")}>
-            <Text style={styles.backButtonText}>◀ Back</Text>
-          </TouchableOpacity> */}
-
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save ▶</Text>
           </TouchableOpacity>
@@ -261,6 +257,7 @@ const styles = StyleSheet.create({
   bodyTitleText: {
     fontSize: 26,
     textAlign: "center",
+    paddingTop: 60,
     paddingBottom: 30,
     fontWeight: "bold",
   },
@@ -271,6 +268,11 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 15,
     borderRadius: 50,
+    shadowColor: "#87CEEB",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 3,
   },
   inputContainer: {
     width: "100%",
@@ -280,10 +282,11 @@ const styles = StyleSheet.create({
     borderColor: "#A9A9A9",
     borderWidth: 1,
     padding: 10,
-    marginBottom: 10,
+    marginVertical: 8,
     borderRadius: 5,
     backgroundColor: "#F0F0F0",
-    width: "100%",
+    width: wp("85%"),
+    alignSelf: "center",
   },
   filledInput: {
     backgroundColor: "#E6FFCC",
@@ -291,12 +294,13 @@ const styles = StyleSheet.create({
   pictureContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
+    width: wp("85%"),
+    alignSelf: "center",
     borderColor: "#A9A9A9",
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: "#F0F0F0",
-    marginBottom: 10,
+    marginVertical: 8,
   },
   iconButton: {
     padding: 10,
@@ -306,9 +310,6 @@ const styles = StyleSheet.create({
     height: 40,
     padding: 10,
     backgroundColor: "transparent",
-  },
-  iconButton: {
-    padding: 10,
   },
   buttonRow: {
     flexDirection: "row",
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 250,
     height: 45,
     justifyContent: "center",
   },
@@ -334,19 +335,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
   },
-  // backButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // backButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  // },
 });

@@ -19,7 +19,6 @@ export default function WelcomeScreen() {
 
   useEffect(() => {
     if (resetUserContext) {
-      // console.log("Resetting UserContext from WelcomeScreen...");
       resetUserContext("WelcomeScreen");
     }
   }, []);
@@ -28,8 +27,6 @@ export default function WelcomeScreen() {
     const checkStorage = async () => {
       const keys = await AsyncStorage.getAllKeys();
       const values = await AsyncStorage.multiGet(keys);
-      // console.log("AsyncStorage keys after clearing:", keys);
-      // console.log("Stored values:", values);
     };
     checkStorage();
   }, []);
@@ -45,10 +42,16 @@ export default function WelcomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>Welcome</Text>
-        <Text style={styles.bodyIntroText}>
-          The proven habit formation method{" "}
-        </Text>
+        <View style={styles.introContainer}>
+          <Text style={styles.welcomeTitle}>Welcome</Text>
+          <Text style={styles.introHeadline}>
+            The <Text style={{ fontWeight: "bold" }}>proven</Text> habit
+            formation method.
+          </Text>
+          <Text style={styles.introSubtext}>
+            Build better habits with feedback from those who know you best.
+          </Text>
+        </View>
 
         <TouchableOpacity onPress={openWebLink}>
           <Text style={styles.bodyIntroInviteText}>Discover</Text>
@@ -85,21 +88,31 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "web" ? 100 : 20,
   },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
+  introContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    alignItems: "center",
   },
-  bodyIntroText: {
+  welcomeTitle: {
+    fontSize: 32,
     textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
+    marginBottom: 30,
   },
+  introHeadline: {
+    fontSize: 16,
+    lineHeight: 26,
+    textAlign: "center",
+  },
+  introSubtext: {
+    fontSize: 16,
+    lineHeight: 26,
+    marginTop: 8,
+    textAlign: "center",
+  },
+
   bodyIntroInviteText: {
     fontSize: 12,
-    paddingTop: 15,
+    paddingTop: 20,
     color: "#6A8CAF",
     textDecorationLine: "underline",
     fontWeight: "bold",

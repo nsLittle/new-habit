@@ -308,6 +308,8 @@ export default function CreateHabitScreen() {
             maxLength={100}
             value={habitInput}
             onChangeText={setHabitInput}
+            multiline={false}
+            numberOfLines={1}
           />
           <Text style={styles.charCount}>{habitInput.length}/50</Text>
         </View>
@@ -366,8 +368,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "#A9A9A9",
     borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 5,
     borderRadius: 5,
     backgroundColor: "#F0F0F0",
     width: "100%",
@@ -393,7 +396,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 250,
     height: 45,
     justifyContent: "center",
   },

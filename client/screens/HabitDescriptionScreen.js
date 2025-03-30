@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "85%",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "flex-start",
     textAlignVertical: "top",
     position: "relative",
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 250,
     height: 45,
     justifyContent: "center",
   },
@@ -374,6 +374,5 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     textAlign: "center",
-    // fontWeight: "bold",
   },
 });

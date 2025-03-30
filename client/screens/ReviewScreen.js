@@ -114,6 +114,8 @@ export default function ReviewScreen() {
     }
   };
 
+  const noHabit = !habitContextInput;
+
   useEffect(() => {
     if (userNameContext) {
       fetchUserData();
@@ -213,10 +215,14 @@ export default function ReviewScreen() {
                 <View
                   key={teammember.teamMemberId}
                   style={styles.teamMemberProfileBox}>
-                  <DefaultProfiler
-                    uri={teammember.teamMemberProfilePic}
-                    style={styles.teamMemberProfilePic}
-                  />
+                  <View style={styles.outerBorder}>
+                    <View style={styles.innerBorder}>
+                      <DefaultProfiler
+                        uri={teammember.teamMemberProfilePic}
+                        style={styles.teamMemberProfilePic}
+                      />
+                    </View>
+                  </View>
                   <Text style={styles.contactName}>
                     {teammember.teamMemberFirstName || "No First Name"}{" "}
                     {teammember.teamMemberLastName || "No Last Name"}
@@ -232,44 +238,43 @@ export default function ReviewScreen() {
 
           <View style={styles.buttonColumn}>
             <TouchableOpacity
-              style={styles.startButton}
+              style={
+                teammembers.length >= 3
+                  ? styles.grayButton
+                  : styles.yellowButton
+              }
               onPress={() => navigation.navigate("EditReviewScreen")}>
-              <Text style={styles.startButtonText}>
-                Edit Your Habit Setting
-              </Text>
+              <Text style={styles.buttonText}>Edit Your Habit Setting</Text>
             </TouchableOpacity>
+
+            {/* <TouchableOpacity
+              style={
+                teammembers.length >= 3
+                  ? styles.grayButton
+                  : styles.yellowButton
+              }
+              onPress={() => navigation.navigate("TeamInviteScreen")}>
+              <Text style={styles.buttonText}>Invite/Edit Team Members</Text>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
-              style={styles.viewButton}
-              onPress={() => navigation.navigate("TeamInviteScreen")}>
-              <Text style={styles.viewButtonText}>
-                Invite/Edit Team Members
-              </Text>
+              style={
+                teammembers.length >= 3
+                  ? styles.yellowButton
+                  : styles.grayButton
+              }
+              onPress={() => navigation.navigate("FeedbackRequestScreen")}>
+              <Text style={styles.buttonText}>Request Feedback</Text>
             </TouchableOpacity>
-
-            {hasTeamMembers && (
-              <TouchableOpacity
-                style={styles.viewButton}
-                onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-                <Text style={styles.viewButtonText}>Request Feedback</Text>
-              </TouchableOpacity>
-            )}
 
             {hasFeedback && (
               <TouchableOpacity
-                style={styles.viewButton}
+                style={styles.grayButton}
                 onPress={() => navigation.navigate("FeedbackDataScreen")}>
-                <Text style={styles.viewButtonText}>Review Feedback</Text>
+                <Text style={styles.buttonText}>Review Feedback</Text>
               </TouchableOpacity>
             )}
           </View>
-
-          {lastFeedbackRequestDateContext && (
-            <Text style={styles.sectionTitle}>
-              Last feedback request sent:{" "}
-              {new Date(lastFeedbackRequestDateContext).toLocaleDateString()}
-            </Text>
-          )}
         </View>
       </ScrollView>
     </View>
@@ -293,15 +298,16 @@ const styles = StyleSheet.create({
   bodyTitleText: {
     fontSize: 26,
     textAlign: "center",
-    paddingTop: 30,
+    paddingTop: 60,
     paddingBottom: 30,
     fontWeight: "bold",
   },
   sectionTitle: {
     fontSize: 14,
-    textAlign: "center",
     fontWeight: "bold",
-    marginVertical: 10,
+    marginBottom: 5,
+    color: "#333",
+    textAlign: "center",
   },
   reviewBox: {
     borderColor: "#D3D3D3",
@@ -312,17 +318,30 @@ const styles = StyleSheet.create({
     width: "85%",
   },
   teamMemberProfilePic: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
     width: 40,
     height: 40,
-    marginBottom: 15,
     borderRadius: 30,
   },
+  outerBorder: {
+    borderColor: "#FFD700",
+    borderWidth: 3,
+    borderRadius: 30,
+    padding: 2,
+    marginBottom: 15,
+  },
+  innerBorder: {
+    borderColor: "#87CEEB",
+    borderWidth: 2,
+    borderRadius: 30,
+    overflow: "hidden",
+  },
   centeredData: {
-    textAlign: "center",
     fontSize: 16,
-    marginBottom: 5,
+    lineHeight: 22,
+    color: "#444",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
   },
   teamMemberProfileBox: {
     alignItems: "center",
@@ -330,16 +349,20 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   teamMemberDataBox: {
-    justifyContent: "center",
-    alignContent: "center",
+    backgroundColor: "#F9F9F9",
     borderColor: "#D3D3D3",
     borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    width: "100%",
-    borderRadius: 10,
-    backgroundColor: "#F9F9F9",
+    borderRadius: 12,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    width: "85%",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   noProfileData: {
     textAlign: "center",
@@ -366,34 +389,39 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 30,
   },
+  yellowButton: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    width: 250,
+    height: 45,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  grayButton: {
+    backgroundColor: "#D3D3D3",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    width: 250,
+    height: 45,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 12,
+    textAlign: "center",
+  },
   startButton: {
     backgroundColor: "#FFD700",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 300,
+    width: 250,
     height: 45,
     justifyContent: "center",
-  },
-  startButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  viewButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 300,
-    height: 45,
-    justifyContent: "center",
-  },
-  viewButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
   },
 });

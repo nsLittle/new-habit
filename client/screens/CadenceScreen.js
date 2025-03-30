@@ -34,23 +34,6 @@ export default function CadenceScreen() {
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [dialogAction, setDialogAction] = useState(null);
@@ -65,8 +48,6 @@ export default function CadenceScreen() {
 
   useEffect(() => {
     const checkForExistingCadence = async () => {
-      // console.log(`Checking for existing cadence...`);
-
       try {
         const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
           method: "GET",
@@ -88,7 +69,6 @@ export default function CadenceScreen() {
 
         const foundCadence = data.habits[0]?.cadence || "";
         "Data: ", data;
-        // consconsole.logole.log("Existing Cadence: ", foundCadence);
         setExistingCadence(foundCadence);
 
         if (
@@ -124,7 +104,6 @@ export default function CadenceScreen() {
     }
 
     try {
-      // console.log("Saving cadence...");
       const response = await fetch(
         `${BASE_URL}/habit/${userNameContext}/${habitContextId}/cadence`,
         {
@@ -143,10 +122,9 @@ export default function CadenceScreen() {
       }
 
       const data = await response.json();
-      // console.log("Data: ", data);
 
       setDialogMessage("Feedback cadence updated successfully.");
-      navigation.navigate("ReminderScreen");
+      navigation.navigate("ReviewScreen");
     } catch (error) {
       console.error("Error updating feedback cadence:", error);
       setDialogMessage("Failed to update feedback cadence. Please try again.");
@@ -245,11 +223,11 @@ export default function CadenceScreen() {
 
         <View style={styles.bodyIntroContainer}>
           <View style={styles.buttonRow}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.navigate("HabitDescriptionScreen")}>
               <Text style={styles.backButtonText}>◀ Back</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Save ▶</Text>
@@ -346,7 +324,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    width: 150,
+    width: 250,
     height: 45,
     justifyContent: "center",
   },
@@ -355,19 +333,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
   },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
 });

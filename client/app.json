@@ -31,15 +31,27 @@
               "host": "feedback-request"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-secure-store"],
+    "plugins": [
+      "expo-secure-store"
+    ],
     "scheme": "habitapp",
-    "deepLinks": ["habitapp://"]
+    "deepLinks": [
+      "habitapp://"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5e441007-ae72-4525-8700-9077b3ed7127"
+      }
+    }
   }
 }

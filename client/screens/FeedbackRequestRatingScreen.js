@@ -54,25 +54,15 @@ export default function FeedbackRequestRatingScreen() {
   const [showDialog, setShowDialog] = useState(false);
 
   const route = useRoute();
-  const {
-    teamMemberRouteId,
-    teamMemberRouteFirstName,
-    teamMemberRouteLastName,
-    teamMemberRouteEmail,
-    teamMemberRouteProfilePic,
-  } = route.params || {};
+  const { teammemberId, token } = route.params || {};
 
-  // console.log("Received from FeedbackWelcomeScreen:", route.params);
-
-  const teammemberId = route.params.teamMemberData.teamMember.teamMemberId;
-  const token = route.params.token;
-
-  // console.log("Team member ID: ", teammemberId);
-  // console.log("Token: ", token);
+  if (!teammemberId) {
+    console.error("❌ ERROR: No teammemberId found in route params.");
+    return null;
+  }
 
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
-  // console.log("Rating Value: ", ratingValue);
 
   const ratings = [
     { value: 1, label: "Significantly Improved", color: "#006400" }, // Dark Green
