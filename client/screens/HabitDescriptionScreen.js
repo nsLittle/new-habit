@@ -75,15 +75,15 @@ export default function HabitDescriptionScreen() {
             habitContextInput: incompleteHabit.habit,
           }));
 
-          if (incompleteHabit.description.trim().length > 0) {
-            setDialogMessage("Do you want to edit your existing description?");
-            setDialogAction("editOrSkip");
-            setShowDialog(true);
+          // if (incompleteHabit.description.trim().length > 0) {
+          //   setDialogMessage("Do you want to edit your existing description?");
+          //   setDialogAction("editOrSkip");
+          //   setShowDialog(true);
 
-            setTimeout(() => {
-              setShowDialog(false);
-            }, 10000);
-          }
+          //   setTimeout(() => {
+          //     setShowDialog(false);
+          //   }, 10000);
+          // }
         }
       } catch (error) {
         console.error("Error checking existing description:", error);
@@ -192,7 +192,7 @@ export default function HabitDescriptionScreen() {
                   onPress={() => {
                     setShowDialog(false);
                   }}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   NO
                 </Button>
                 <Button
@@ -200,7 +200,7 @@ export default function HabitDescriptionScreen() {
                     setShowDialog(false);
                     navigation.navigate("CadenceScreen");
                   }}
-                  labelStyle={styles.dialogButton}>
+                  labelStyle={sharedStyles.dialogButtonConfirm}>
                   YES
                 </Button>
               </>
@@ -211,14 +211,14 @@ export default function HabitDescriptionScreen() {
                     setShowDialog(false);
                     navigation.navigate("CadenceScreen");
                   }}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   NO
                 </Button>
                 <Button
                   onPress={() => {
                     setShowDialog(false);
                   }}
-                  labelStyle={styles.dialogButton}>
+                  labelStyle={sharedStyles.dialogButtonConfirm}>
                   YES
                 </Button>
               </>
@@ -230,7 +230,7 @@ export default function HabitDescriptionScreen() {
                     navigation.navigate("CadenceScreen");
                   }
                 }}
-                labelStyle={styles.dialogButton}>
+                labelStyle={sharedStyles.dialogButtonConfirm}>
                 OK
               </Button>
             )}
@@ -240,12 +240,12 @@ export default function HabitDescriptionScreen() {
 
       <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={sharedStyles.bodyText}>Habit Description</Text>
+          <Text style={sharedStyles.title}>Habit Description</Text>
         </View>
 
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={[sharedStyles.input, { height: 200 }]}
             placeholder="Describe yourself succesfully implementing the habit..."
             maxLength={500}
             value={descriptionInput ?? ""}
@@ -254,7 +254,7 @@ export default function HabitDescriptionScreen() {
             textAlign="left"
             multiline={true}
           />
-          <Text style={styles.charCount}>
+          <Text style={sharedStyles.charCount}>
             {descriptionInput?.length || 0}/500
           </Text>
         </View>
@@ -279,16 +279,16 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
   },
-  dialogButtonNo: {
-    color: "red",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
+  // dialogButtonNo: {
+  //   color: "red",
+  //   fontWeight: "bold",
+  //   fontSize: 18,
+  // },
+  // dialogButton: {
+  //   color: "green",
+  //   fontWeight: "bold",
+  //   fontSize: 18,
+  // },
   // container: {
   //   flexGrow: 1,
   //   backgroundColor: "white",
@@ -317,29 +317,29 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     position: "relative",
   },
-  input: {
-    height: 80,
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    padding: 10,
-    paddingTop: 0,
-    lineHeight: 50,
-    marginBottom: 10,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    width: "100%",
-    textAlignVertical: "top",
-  },
-  charCount: {
-    paddingTop: 5,
-    textAlign: "right",
-    color: "gray",
-    fontSize: 12,
-    alignSelf: "flex-end",
-    position: "absolute",
-    right: 10,
-    bottom: 20,
-  },
+  // input: {
+  //   height: 80,
+  //   borderColor: "#A9A9A9",
+  //   borderWidth: 1,
+  //   padding: 10,
+  //   paddingTop: 0,
+  //   lineHeight: 50,
+  //   marginBottom: 10,
+  //   borderRadius: 5,
+  //   backgroundColor: "#F0F0F0",
+  //   width: "100%",
+  //   textAlignVertical: "top",
+  // },
+  // charCount: {
+  //   paddingTop: 5,
+  //   textAlign: "right",
+  //   color: "gray",
+  //   fontSize: 12,
+  //   alignSelf: "flex-end",
+  //   position: "absolute",
+  //   right: 10,
+  //   bottom: 20,
+  // },
   // buttonRow: {
   //   flexDirection: "row",
   //   justifyContent: "center",

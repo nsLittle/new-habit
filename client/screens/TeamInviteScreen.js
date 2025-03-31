@@ -76,6 +76,13 @@ export default function TeamInviteScreen() {
     }
   };
 
+  console.log("teamMembers:", teamMembers);
+  console.log("teamMembers.length:", teamMembers?.length);
+  console.log("Final button style:", [
+    sharedStyles.buttonYellow,
+    teamMembers.length < 3 && styles.buttonDisabled,
+  ]);
+
   return (
     <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
@@ -92,7 +99,6 @@ export default function TeamInviteScreen() {
 
       <View style={sharedStyles.body}>
         <Text style={sharedStyles.title}>Invite Team Members</Text>
-
         <TouchableOpacity
           style={[
             styles.buttonYellow,
@@ -102,7 +108,6 @@ export default function TeamInviteScreen() {
           onPress={() => navigation.navigate("AddTeammemberScreen")}>
           <Text style={styles.buttonText}>+ Add a Person</Text>
         </TouchableOpacity>
-
         {teamMembers.map((member, idx) => (
           <View key={idx} style={styles.memberBox}>
             <Image
@@ -132,7 +137,7 @@ export default function TeamInviteScreen() {
 
         <TouchableOpacity
           style={[
-            sharedStyles.buttonYellow,
+            sharedStyles.yellowButton,
             teamMembers.length < 3 && styles.buttonDisabled,
           ]}
           disabled={teamMembers.length < 3}
@@ -145,38 +150,18 @@ export default function TeamInviteScreen() {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  // },
-  // body: {
-  //   alignItems: "center",
-  //   paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
-  //   paddingBottom: 60,
-  // },
-  // title: {
-  //   fontSize: 26,
-  //   fontWeight: "bold",
-  //   marginTop: 120,
-  //   marginBottom: 20,
-  // },
-  // buttonYellow: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   width: 250,
-  //   marginBottom: 20,
-  //   alignItems: "center",
-  // },
+  buttonYellow: {
+    backgroundColor: "#FFD700",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    width: 250,
+    marginBottom: 20,
+    alignItems: "center",
+  },
   buttonDisabled: {
     backgroundColor: "#D3D3D3",
   },
-  // buttonText: {
-  //   fontSize: 12,
-  //   color: "black",
-  // },
   memberBox: {
     flexDirection: "row",
     alignItems: "center",

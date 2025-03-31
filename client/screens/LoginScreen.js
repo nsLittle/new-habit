@@ -131,7 +131,7 @@ export default function LoginScreen() {
         </View>
 
         <View style={sharedStyles.inputContainer}>
-          <View style={styles.usernameContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
               style={sharedStyles.passwordInput}
               placeholder="Username"

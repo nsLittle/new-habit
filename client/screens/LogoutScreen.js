@@ -43,7 +43,6 @@ export default function LogoutScreen() {
       setTimeout(() => {
         navigation.navigate("EndingCreditsScreen");
       }, 500);
-      // navigation.navigate("EndingCreditsScreen");
     } catch (error) {
       console.error("Failed to clear AsyncStorage:", error);
     }
@@ -52,11 +51,11 @@ export default function LogoutScreen() {
   return (
     <ScrollView contentContainerStyle={sharedStyles.container}>
       <View style={sharedStyles.body}>
-        <View style={styles.bodyTitleContainer}>
+        <View style={sharedStyles.titleContainer}>
           <Text style={sharedStyles.title}>Thank you!</Text>
         </View>
 
-        <View style={styles.bodyIntroContainer}>
+        <View style={sharedStyles.bodyIntroContainer}>
           <Text style={sharedStyles.bodyText}>
             We hope you enjoyed strengthening your habit.
           </Text>

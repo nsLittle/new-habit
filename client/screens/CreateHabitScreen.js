@@ -8,10 +8,6 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -29,10 +25,10 @@ export default function CreateHabitScreen() {
     emailContext,
     profilePicContext,
     habitContextId,
-    habitContextInput,
-    habitContextEndDate,
-    descriptionContextInput,
-    teamMemberContextId,
+    // habitContextInput,
+    // habitContextEndDate,
+    // descriptionContextInput,
+    // teamMemberContextId,
     token,
   } = userContext || {};
 
@@ -78,11 +74,11 @@ export default function CreateHabitScreen() {
             habitContextEndDate: incompleteHabit.endDate,
           }));
 
-          if (incompleteHabit.habit.trim().length > 0) {
-            setDialogMessage("Do you want to edit your existing habit?");
-            setDialogAction("editOrSkip");
-            setShowDialog(true);
-          }
+          // if (incompleteHabit.habit.trim().length > 0) {
+          //   setDialogMessage("Do you want to edit your existing habit?");
+          //   setDialogAction("editOrSkip");
+          //   setShowDialog(true);
+          // }
         }
       } catch (error) {
         console.error("Error checking existing habit:", error);
@@ -183,7 +179,7 @@ export default function CreateHabitScreen() {
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
-          style={styles.dialog}>
+          style={sharedStyles.dialog}>
           <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Confirm
           </Dialog.Title>
@@ -195,7 +191,7 @@ export default function CreateHabitScreen() {
               <>
                 <Button
                   onPress={() => setShowDialog(false)}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   EDIT
                 </Button>
                 <Button
@@ -214,7 +210,7 @@ export default function CreateHabitScreen() {
                     setShowDialog(false);
                     navigation.navigate("HabitDescriptionScreen");
                   }}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   NO
                 </Button>
                 <Button
@@ -233,7 +229,7 @@ export default function CreateHabitScreen() {
                     setShowDialog(false);
                     navigation.navigate("HabitDescriptionScreen");
                   }}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   OK
                 </Button>
               </>
@@ -258,17 +254,18 @@ export default function CreateHabitScreen() {
           What is the habit you want to practice?
         </Text>
 
-        <View style={styles.inputContainer}>
+        <View style={sharedStyles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={[sharedStyles.input, { height: 120 }]}
             placeholder={habitInput ? habitInput : "I want to become a..."}
             maxLength={100}
             value={habitInput}
             onChangeText={setHabitInput}
-            multiline={false}
+            multiline={true}
+            textAlignVertical="top"
             numberOfLines={1}
           />
-          <Text style={styles.charCount}>{habitInput.length}/50</Text>
+          <Text style={sharedStyles.charCount}>{habitInput.length}/50</Text>
         </View>
 
         <View style={sharedStyles.buttonRow}>
@@ -284,85 +281,13 @@ export default function CreateHabitScreen() {
 }
 
 const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
   dialogTitle: {
     color: "red",
     fontWeight: "bold",
-  },
-  dialogButtonNo: {
-    color: "red",
-    fontWeight: "bold",
-    fontSize: 18,
   },
   dialogButton: {
     color: "green",
     fontWeight: "bold",
     fontSize: 18,
   },
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   alignItems: "center",
-  // },
-  // body: {
-  //   flexGrow: 1,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   backgroundColor: "white",
-  //   width: wp("80%"),
-  //   paddingVertical: hp("5%"),
-  // },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
-  inputContainer: {
-    width: "85%",
-  },
-  input: {
-    height: 40,
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginBottom: 5,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    width: "100%",
-  },
-  charCount: {
-    paddingTop: 5,
-    textAlign: "right",
-    color: "gray",
-    fontSize: 12,
-  },
-  // buttonRow: {
-  //   flexDirection: "row",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   paddingHorizontal: 20,
-  //   gap: 15,
-  //   marginTop: 50,
-  // },
-  // saveButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 250,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // saveButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
 });

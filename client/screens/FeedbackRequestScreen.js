@@ -45,11 +45,8 @@ export default function FeedbackRequestScreen() {
         const data = await response.json();
         const members = Array.isArray(data.teamMembers) ? data.teamMembers : [];
 
-        console.log("Route params received:", { token, teammemberId });
-        console.log(
-          "Final team member fetch URL:",
-          `${BASE_URL}/teammember/${userNameContext}/${teammemberId}`
-        );
+        console.log("Data: ", data);
+        console.log("Team: ", members);
 
         setTeamMembers(members);
       } catch {
@@ -129,7 +126,7 @@ export default function FeedbackRequestScreen() {
       </Portal>
 
       <View style={styles.body}>
-        <Text style={styles.title}>Team Feedback Request</Text>
+        <Text style={styles.title}>Feedback Request</Text>
 
         {teamMembers.map((member, idx) => (
           <View key={idx} style={styles.memberBox}>

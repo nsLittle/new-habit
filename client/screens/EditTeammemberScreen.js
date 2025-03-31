@@ -10,10 +10,6 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -118,20 +114,22 @@ export default function EditTeammemberScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={dialogVisible}
           onDismiss={() => setDialogVisible(false)}
-          style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          style={sharedStyles.dialog}>
+          <Dialog.Title style={sharedStyles.dialogTitleInfo}>
+            Alert
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button
               onPress={() => setDialogVisible(false)}
-              labelStyle={styles.dialogButton}>
+              labelStyle={sharedStyles.dialogButtonConfirm}>
               OK
             </Button>
           </Dialog.Actions>
@@ -144,30 +142,34 @@ export default function EditTeammemberScreen() {
         </View>
 
         {profilePic ? (
-          <Image source={{ uri: profilePic }} style={styles.profilePicMain} />
+          <Image
+            source={{ uri: profilePic }}
+            style={sharedStyles.profilePicMain}
+          />
         ) : null}
 
-        <View>
+        <View style={sharedStyles.inputContainer}>
           <TextInput
-            style={styles.inputField}
+            style={sharedStyles.input}
             placeholder="First name"
             maxLength={150}
             value={editedFirstName}
             onChangeText={setEditedFirstName}></TextInput>
           <TextInput
-            style={styles.inputField}
+            style={sharedStyles.input}
             placeholder="Last name"
             maxLength={150}
             value={editedLastName}
             onChangeText={setEditedLastName}></TextInput>
           <TextInput
-            style={styles.inputField}
+            style={sharedStyles.input}
             placeholder="Email"
             maxLength={150}
+            c
             value={editedEmail}
             onChangeText={setEditedEmail}></TextInput>
           <TextInput
-            style={styles.inputField}
+            style={sharedStyles.input}
             placeholder="ProfilePic"
             value={editedProfilePic}
             onChangeText={setEditedProfilePic}></TextInput>
@@ -187,80 +189,3 @@ export default function EditTeammemberScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  // },
-  // body: {
-  //   flexGrow: 1,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   backgroundColor: "white",
-  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  // },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  inputField: {
-    height: 40,
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    width: 400,
-    padding: 10,
-    backgroundColor: "#F0F0F0",
-    borderRadius: 5,
-    marginVertical: 10,
-    color: "gray",
-  },
-  // buttonRow: {
-  //   flexDirection: "row",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   paddingHorizontal: 20,
-  //   gap: 15,
-  //   marginTop: 50,
-  // },
-  // saveButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // saveButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
-});

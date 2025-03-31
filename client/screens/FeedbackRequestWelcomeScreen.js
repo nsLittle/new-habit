@@ -93,7 +93,7 @@ export default function FeedbackRequestWelcomeScreen() {
         fetch(`${BASE_URL}/habit/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${BASE_URL}teammember/${userNameContext}`, {
+        fetch(`${BASE_URL}/teammember/${userNameContext}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`, {
@@ -142,10 +142,18 @@ export default function FeedbackRequestWelcomeScreen() {
   };
 
   useEffect(() => {
+    console.log(
+      "🟡 useEffect triggered with userNameContext:",
+      userNameContext
+    );
     if (userNameContext) {
+      console.log("🟢 Calling fetchUserData");
       fetchUserData();
+    } else {
+      console.log("🔴 Skipping fetchUserData due to missing userNameContext");
     }
   }, [userNameContext]);
+
   console.log("TEam member id: ", teamMemberData?._id, "TOken: ", token);
 
   return (

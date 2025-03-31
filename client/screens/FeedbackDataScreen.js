@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,13 +7,10 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function FeedbackDataScreen() {
   const navigation = useNavigation();
@@ -41,7 +37,6 @@ export default function FeedbackDataScreen() {
 
         if (!response.ok) throw new Error("Failed to fetch feedback data.");
         const data = await response.json();
-        // console.log("Data: ", data);
         setFeedbackData(data.feedback || []);
       } catch (error) {
         console.error("Error fetching feedback data:", error);
@@ -50,6 +45,13 @@ export default function FeedbackDataScreen() {
 
     if (userNameContext) fetchFeedbackData();
   }, [userNameContext]);
+
+  const getRatingColor = (avgRating) => {
+    const rating = parseFloat(avgRating);
+    if (rating <= 2) return "#006400"; // Dark Green
+    if (rating <= 4) return "#4B4B4B"; // Neutral Gray
+    return "#DC143C"; // Crimson
+  };
 
   const getOrdinalSuffix = (n) => {
     const j = n % 10,
@@ -80,12 +82,10 @@ export default function FeedbackDataScreen() {
       grouped[key].thanksTotal += fb.feedbackThanksRating;
     });
 
-    // Step 1: sort oldest to newest
     const sortedGroups = Object.values(grouped).sort(
       (a, b) => a.cadenceStart - b.cadenceStart
     );
 
-    // Step 2: assign correct ordinal labels
     const labeled = sortedGroups.map((group, index, arr) => {
       const count = group.feedbacks.length;
       const averageRating = (group.ratingTotal / count).toFixed(1);
@@ -117,7 +117,8 @@ export default function FeedbackDataScreen() {
       const cycle = getOrdinalSuffix(index + 1);
 
       return {
-        dateRange: `${start} – ${end} (${cycle} set of feedbacks)`,
+        dateRange: `${start} – ${end}`,
+        cycleLable: `(${cycle} set of feedbacks)`,
         averageRating,
         averageThanksRating,
         feedbackTexts: group.feedbacks.map((fb) => fb.feedbackText),
@@ -125,23 +126,22 @@ export default function FeedbackDataScreen() {
       };
     });
 
-    // Step 3: reverse again for display (most recent first)
     return labeled.reverse();
   };
 
   const processedFeedback = processFeedback();
 
-  // console.log("Processed feedback count:", processedFeedback.length);
-
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <View style={sharedStyles.container}>
+      <ScrollView contentContainerStyle={sharedStyles.scrollContainer}>
         <Portal>
           <Dialog
             visible={showDialog}
             onDismiss={() => setShowDialog(false)}
-            style={styles.dialog}>
-            <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+            style={sharedStyles.dialog}>
+            <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+              Confirm
+            </Dialog.Title>
             <Dialog.Content>
               <Text>
                 {dialogMessage ||
@@ -153,7 +153,7 @@ export default function FeedbackDataScreen() {
                 <>
                   <Button
                     onPress={() => setShowDialog(false)}
-                    labelStyle={styles.dialogButtonNo}>
+                    labelStyle={sharedStyles.dialogButtonCancel}>
                     No
                   </Button>
                   <Button
@@ -161,14 +161,14 @@ export default function FeedbackDataScreen() {
                       setShowDialog(false);
                       navigation.navigate("FinalReviewScreen");
                     }}
-                    labelStyle={styles.dialogButton}>
+                    labelStyle={sharedStyles.dialogButtonConfirm}>
                     Yes
                   </Button>
                 </>
               ) : (
                 <Button
                   onPress={() => setShowDialog(false)}
-                  labelStyle={styles.dialogButton}>
+                  labelStyle={sharedStyles.dialogButtonConfirm}>
                   OK
                 </Button>
               )}
@@ -176,24 +176,31 @@ export default function FeedbackDataScreen() {
           </Dialog>
         </Portal>
 
-        <View style={styles.body}>
-          <Text style={styles.title}>Feedback Data</Text>
+        <View style={sharedStyles.body}>
+          <Text style={sharedStyles.title}>Feedback Data</Text>
           {processedFeedback.length ? (
             processedFeedback.map((entry, idx) => (
               <View key={idx} style={styles.feedbackPeriod}>
-                <Text style={styles.feedbackHeader}>{entry.dateRange}</Text>
-                <Text style={styles.prominentMetric}>
-                  Avg Rating: {entry.averageRating}
-                  {entry.ratingTrend === "up" && (
-                    <Text style={styles.upArrow}> ↑</Text>
-                  )}
-                  {entry.ratingTrend === "down" && (
-                    <Text style={styles.downArrow}> ↓</Text>
-                  )}
-                </Text>
-                <Text style={styles.prominentMetric}>
-                  Avg Thanks: {entry.averageThanksRating}
-                </Text>
+                <Text style={styles.dateRange}>{entry.dateRange}</Text>
+                <Text style={styles.ordinalLabel}>{entry.ordinalLabel}</Text>
+                <View style={styles.metricRow}>
+                  <View style={styles.metricBox}>
+                    <Text
+                      style={[
+                        styles.metricNumber,
+                        { color: getRatingColor(entry.averageRating) },
+                      ]}>
+                      {entry.averageRating}
+                    </Text>
+                    <Text style={styles.metricLabel}>Rating</Text>
+                  </View>
+                  <View style={styles.metricBox}>
+                    <Text style={styles.metricNumber}>
+                      {entry.averageThanksRating}
+                    </Text>
+                    <Text style={styles.metricLabel}>Thanks</Text>
+                  </View>
+                </View>
                 {entry.feedbackTexts.map((text, i) => (
                   <Text key={i} style={styles.feedbackText}>
                     "{text}"
@@ -206,9 +213,9 @@ export default function FeedbackDataScreen() {
           )}
 
           {processedFeedback.length >= 1 && (
-            <View style={styles.buttonRow}>
+            <View style={sharedStyles.buttonRow}>
               <TouchableOpacity
-                style={styles.saveButton}
+                style={sharedStyles.yellowButton}
                 onPress={() => {
                   setDialogMessage(
                     "Do you want to complete your habit and view the final review?"
@@ -216,7 +223,9 @@ export default function FeedbackDataScreen() {
                   setDialogAction("completeHabit");
                   setShowDialog(true);
                 }}>
-                <Text style={styles.buttonText}>Review & Complete Habit</Text>
+                <Text style={sharedStyles.buttonText}>
+                  Review & Complete Habit
+                </Text>
               </TouchableOpacity>
             </View>
           )}
@@ -227,99 +236,52 @@ export default function FeedbackDataScreen() {
 }
 
 const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButtonNo: {
-    color: "red",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  button: {
-    marginTop: 40,
-    width: "90%",
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingTop: 220,
-    paddingBottom: 100,
-  },
-  title: {
-    fontSize: 26,
-    textAlign: "center",
-    fontWeight: "bold",
-    marginTop: 20,
-  },
   feedbackPeriod: {
     marginTop: 20,
     padding: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    width: "90%",
-    borderColor: "#ccc",
+    borderWidth: 2,
+    borderRadius: 6,
+    width: 300,
+    borderColor: "#aaa",
     backgroundColor: "#f9f9f9",
   },
-  feedbackHeader: {
+  dateRange: {
     textAlign: "center",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 5,
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 0,
   },
-  prominentMetric: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginVertical: 5,
-    color: "#4B0082",
+  ordinalLabel: {
     textAlign: "center",
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#555",
+    marginBottom: 10,
+  },
+  metricRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 10,
+  },
+  metricBox: {
+    alignItems: "center",
+    padding: 12,
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: "#aaa",
+    width: 125,
+  },
+  metricNumber: {
+    fontSize: 36,
+    fontWeight: "bold",
+  },
+  metricLabel: {
+    fontSize: 14,
+    color: "#666",
   },
   feedbackText: {
     textAlign: "center",
     fontStyle: "italic",
     marginVertical: 3,
-  },
-  upArrow: {
-    color: "green",
-    fontSize: 28,
-  },
-  downArrow: {
-    color: "red",
-    fontSize: 28,
-  },
-  buttonRow: {
-    marginTop: 40,
-    alignItems: "center",
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-  },
-  buttonText: {
-    color: "black",
-    fontSize: 14,
-    textAlign: "center",
   },
 });

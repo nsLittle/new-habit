@@ -15,6 +15,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function EditReviewScreen() {
   const navigation = useNavigation();
@@ -61,16 +62,16 @@ export default function EditReviewScreen() {
   const habit = profileData.habits?.[0];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.body}>
-        <Text style={styles.title}>Edit Review</Text>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
+      <View style={sharedStyles.body}>
+        <Text style={[sharedStyles.title, { marginTop: 40 }]}>Edit Review</Text>
 
         <View style={styles.section}>
           <Text style={styles.label}>Your Habit:</Text>
           <Text style={styles.value}>{habit?.habit || "Not set"}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate("CreateHabitScreen")}>
-            <Text style={styles.link}>Edit Habit</Text>
+            <Text style={sharedStyles.linkText}>Edit Habit</Text>
           </TouchableOpacity>
         </View>
 
@@ -79,7 +80,7 @@ export default function EditReviewScreen() {
           <Text style={styles.value}>{habit?.description || "Not set"}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate("HabitDescriptionScreen")}>
-            <Text style={styles.link}>Edit Description</Text>
+            <Text style={sharedStyles.linkText}>Edit Description</Text>
           </TouchableOpacity>
         </View>
 
@@ -88,7 +89,7 @@ export default function EditReviewScreen() {
           <Text style={styles.value}>{habit?.cadence || "Not set"}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate("CadenceScreen")}>
-            <Text style={styles.link}>Edit Cadence</Text>
+            <Text style={sharedStyles.linkText}>Edit Cadence</Text>
           </TouchableOpacity>
         </View>
 
@@ -112,25 +113,14 @@ export default function EditReviewScreen() {
           )}
           <TouchableOpacity
             onPress={() => navigation.navigate("ReminderScreen")}>
-            <Text style={styles.link}>Edit Reminder</Text>
+            <Text style={sharedStyles.linkText}>Edit Reminder</Text>
           </TouchableOpacity>
         </View>
 
-        {/* <View style={styles.section}>
-          <Text style={styles.label}>Your Team:</Text>
-          <Text style={styles.value}>
-            Invite people who will support your habit.
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("TeamInviteScreen")}>
-            <Text style={styles.link}>Invite Team Members</Text>
-          </TouchableOpacity>
-        </View> */}
-
         <TouchableOpacity
-          style={styles.saveButton}
+          style={sharedStyles.yellowButton}
           onPress={() => navigation.navigate("ReviewScreen")}>
-          <Text style={styles.saveButtonText}>Save ▶</Text>
+          <Text style={sharedStyles.buttonText}>Save ▶</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -138,22 +128,22 @@ export default function EditReviewScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    alignItems: "center",
-    paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
-    paddingBottom: 60,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginTop: 80,
-    marginBottom: 30,
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  // },
+  // body: {
+  //   alignItems: "center",
+  //   paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
+  //   paddingBottom: 60,
+  // },
+  // title: {
+  //   fontSize: 26,
+  //   fontWeight: "bold",
+  //   marginTop: 80,
+  //   marginBottom: 30,
+  // },
   section: {
     marginBottom: 20,
     width: wp("85%"),
@@ -169,27 +159,27 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8,
   },
-  link: {
-    fontSize: 12,
-    color: "#6A8CAF",
-    textDecorationLine: "underline",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 300,
-    height: 45,
-    justifyContent: "center",
-    marginTop: 40,
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
+  // link: {
+  //   fontSize: 12,
+  //   color: "#6A8CAF",
+  //   textDecorationLine: "underline",
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
+  // saveButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 300,
+  //   height: 45,
+  //   justifyContent: "center",
+  //   marginTop: 40,
+  // },
+  // saveButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
 });

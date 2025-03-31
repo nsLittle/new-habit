@@ -388,78 +388,59 @@ exports.saveReflection = async (req, res) => {
     }
 
     const habit = await Habit.findById(habit_id);
-    console.log("Habit: ", habit);
-    console.log("Habit End: ", habit.endDate);
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
     }
 
     const today = new Date();
     const finalPeriodEnd = new Date(habit.endDate);
-    const finalPeriodOver = today >= finalPeriodEnd;
-
-    console.log("📅 Today:", today.toISOString());
-    console.log("📅 Final Period End:", finalPeriodEnd.toISOString());
-    console.log("✅ Final Period is Over:", finalPeriodOver);
-
-    if (!finalPeriodOver) {
-      return res.status(400).json({
-        message:
-          "You cannot submit a reflection before the final feedback period ends.",
-      });
-    }
+    const cadenceDays = habit.cadenceLength || 30;
+    const finalPeriodStart = new Date(finalPeriodEnd);
+    finalPeriodStart.setDate(finalPeriodEnd.getDate() - cadenceDays);
 
     const feedbacks = await Feedback.find({ habitId: habit._id });
     const hasFinalFeedback = feedbacks.some((fb) => {
       const fbDate = new Date(fb.createdAt);
-      return (
-        fbDate <= today &&
-        fbDate >=
-          finalPeriodEnd.setDate(finalPeriodEnd.getDate() - habit.cadenceLength)
-      );
+      return fbDate >= finalPeriodStart && fbDate <= today;
     });
 
-    if (!hasFinalFeedback) {
-      return res.status(400).json({
-        message:
-          "You must have at least one feedback from the final period before submitting a reflection.",
-      });
-    }
-
+    // Always save the reflection (even if it's early)
     habit.reflections.push({
       text,
-      createdAt: new Date(),
+      createdAt: today,
     });
 
-    const current = habit.currentCycle;
-    const isNumber = typeof current === "number" && !isNaN(current);
-    const nextCycle = isNumber ? current + 1 : 2;
+    // Only advance cycle or complete if mastered is explicitly passed
+    if (typeof mastered === "boolean") {
+      const current = habit.currentCycle || 1;
+      const nextCycle = current + 1;
 
-    if (mastered || current >= habit.maxCycles) {
-      console.log("✅ Marking habit as complete");
-      habit.completed = true;
+      if (mastered || current >= habit.maxCycles) {
+        console.log("✅ Marking habit as complete");
+        habit.completed = true;
 
-      habit.habitCycles.push({
-        cycleNumber: current,
-        startDate: habit.startDate,
-        completionDate: today,
-      });
-    } else {
-      console.log("🔄 Extending to next cycle:", nextCycle);
+        habit.habitCycles.push({
+          cycleNumber: current,
+          startDate: habit.startDate,
+          completionDate: today,
+        });
+      } else {
+        console.log("🔄 Extending to next cycle:", nextCycle);
 
-      const newStart = new Date();
-      const newEnd = new Date(newStart);
-      newEnd.setDate(newEnd.getDate() + habit.cadenceLength);
+        const newStart = new Date();
+        const newEnd = new Date(newStart);
+        newEnd.setDate(newEnd.getDate() + cadenceDays);
 
-      habit.currentCycle = nextCycle;
-      habit.startDate = newStart;
-      habit.endDate = newEnd;
-      habit.reviewDate = newEnd;
+        habit.currentCycle = nextCycle;
+        habit.startDate = newStart;
+        habit.endDate = newEnd;
+        habit.reviewDate = newEnd;
 
-      habit.habitCycles.push({
-        cycleNumber: nextCycle,
-        startDate: newStart,
-      });
+        habit.habitCycles.push({
+          cycleNumber: nextCycle,
+          startDate: newStart,
+        });
+      }
     }
 
     await habit.save();
@@ -472,6 +453,116 @@ exports.saveReflection = async (req, res) => {
       .json({ message: "Server error", error: error.message });
   }
 };
+
+// exports.saveReflection = async (req, res) => {
+//   console.log("📝 Saving user reflection...");
+
+//   try {
+//     const { username, habit_id } = req.params;
+//     const { text, mastered } = req.body;
+
+//     if (!text?.trim()) {
+//       return res.status(400).json({ message: "Reflection text is required" });
+//     }
+
+//     const habit = await Habit.findById(habit_id);
+//     console.log("Habit: ", habit);
+//     console.log("Habit End: ", habit.endDate);
+//     if (!habit) {
+//       return res.status(404).json({ message: "Habit not found" });
+//     }
+
+//     const today = new Date();
+//     const finalPeriodEnd = new Date(habit.endDate);
+//     const finalPeriodOver = today >= finalPeriodEnd;
+
+//     console.log("📅 Today:", today.toISOString());
+//     console.log("📅 Final Period End:", finalPeriodEnd.toISOString());
+//     console.log("✅ Final Period is Over:", finalPeriodOver);
+
+//     // if (!finalPeriodOver) {
+//     //   return res.status(400).json({
+//     //     message:
+//     //       "You cannot submit a reflection before the final feedback period ends.",
+//     //   });
+//     // }
+
+//     const allowEarlyReflection = !finalPeriodOver;
+//     if (allowEarlyReflection && typeof mastered !== "boolean") {
+//       habit.reflections.push({
+//         text,
+//         createdAt: new Date(),
+//       });
+
+//       await habit.save();
+//       return res
+//         .status(201)
+//         .json({ message: "Early reflection saved", habit, early: true });
+//     }
+
+//     const feedbacks = await Feedback.find({ habitId: habit._id });
+//     const hasFinalFeedback = feedbacks.some((fb) => {
+//       const fbDate = new Date(fb.createdAt);
+//       return (
+//         fbDate <= today &&
+//         fbDate >=
+//           finalPeriodEnd.setDate(finalPeriodEnd.getDate() - habit.cadenceLength)
+//       );
+//     });
+
+//     if (!hasFinalFeedback) {
+//       return res.status(400).json({
+//         message:
+//           "You must have at least one feedback from the final period before submitting a reflection.",
+//       });
+//     }
+
+//     habit.reflections.push({
+//       text,
+//       createdAt: new Date(),
+//     });
+
+//     const current = habit.currentCycle;
+//     const isNumber = typeof current === "number" && !isNaN(current);
+//     const nextCycle = isNumber ? current + 1 : 2;
+
+//     if (mastered || current >= habit.maxCycles) {
+//       console.log("✅ Marking habit as complete");
+//       habit.completed = true;
+
+//       habit.habitCycles.push({
+//         cycleNumber: current,
+//         startDate: habit.startDate,
+//         completionDate: today,
+//       });
+//     } else {
+//       console.log("🔄 Extending to next cycle:", nextCycle);
+
+//       const newStart = new Date();
+//       const newEnd = new Date(newStart);
+//       newEnd.setDate(newEnd.getDate() + habit.cadenceLength);
+
+//       habit.currentCycle = nextCycle;
+//       habit.startDate = newStart;
+//       habit.endDate = newEnd;
+//       habit.reviewDate = newEnd;
+
+//       habit.habitCycles.push({
+//         cycleNumber: nextCycle,
+//         startDate: newStart,
+//       });
+//     }
+
+//     await habit.save();
+
+//     return res.status(201).json({ message: "Reflection saved!", habit });
+//   } catch (error) {
+//     console.error("💥 Error saving reflection:", error);
+//     return res
+//       .status(500)
+//       .json({ message: "Server error", error: error.message });
+//   }
+// };
 
 exports.getReflections = async (req, res) => {
   // console.log("I'm here in teh back getting reflecdtions...");

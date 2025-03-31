@@ -7,10 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import DefaultProfiler from "../component/DefaultProfiler";
 import { BASE_URL } from "../constants/config";
@@ -141,7 +137,7 @@ export default function ReviewScreen() {
         style={{ flex: 1, backgroundColor: "white" }}
         contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
         <View style={sharedStyles.body}>
-          <Text style={sharedStyles.title}>Review</Text>
+          <Text style={[sharedStyles.title, { marginTop: 80 }]}>Review</Text>
 
           <View style={styles.teamMemberDataBox}>
             <Text style={styles.sectionTitle}>Your Habit:</Text>
@@ -241,7 +237,7 @@ export default function ReviewScreen() {
             <TouchableOpacity
               style={
                 teammembers.length >= 3
-                  ? sharedStyles.grayButton
+                  ? sharedStyles.greyButton
                   : sharedStyles.yellowButton
               }
               onPress={() => navigation.navigate("EditReviewScreen")}>
@@ -250,15 +246,11 @@ export default function ReviewScreen() {
               </Text>
             </TouchableOpacity>
 
-            {/* <TouchableOpacity
-              style={
-                teammembers.length >= 3
-                  ? styles.grayButton
-                  : styles.yellowButton
-              }
+            <TouchableOpacity
+              style={sharedStyles.greyButton}
               onPress={() => navigation.navigate("TeamInviteScreen")}>
-              <Text style={styles.buttonText}>Invite/Edit Team Members</Text>
-            </TouchableOpacity> */}
+              <Text style={sharedStyles.buttonText}>Edit Team Members</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={
@@ -272,7 +264,7 @@ export default function ReviewScreen() {
 
             {hasFeedback && (
               <TouchableOpacity
-                style={styles.grayButton}
+                style={sharedStyles.greyButton}
                 onPress={() => navigation.navigate("FeedbackDataScreen")}>
                 <Text style={sharedStyles.buttonText}>Review Feedback</Text>
               </TouchableOpacity>
@@ -285,26 +277,6 @@ export default function ReviewScreen() {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  //   overflow: "auto",
-  // },
-  // body: {
-  //   flexGrow: 1,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   backgroundColor: "white",
-  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  // },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingTop: 60,
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
   sectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
@@ -383,48 +355,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
-  // buttonColumn: {
-  //   flexDirection: "column",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   paddingHorizontal: 20,
-  //   gap: 15,
-  //   marginTop: 30,
-  // },
-  // yellowButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   width: 250,
-  //   height: 45,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  // grayButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   width: 250,
-  //   height: 45,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  // buttonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  // },
-  // startButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 250,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
 });

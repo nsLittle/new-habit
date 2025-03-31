@@ -6,6 +6,13 @@ import {
 
 export const sharedStyles = StyleSheet.create({
   // LAYLOUT
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: 220,
+    paddingBottom: 100,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "white",
@@ -39,6 +46,7 @@ export const sharedStyles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
     textAlign: "center",
+    paddingBottom: 10,
   },
   buttonText: {
     fontSize: 12,
@@ -51,6 +59,7 @@ export const sharedStyles = StyleSheet.create({
     color: "#6A8CAF",
     textDecorationLine: "underline",
     fontWeight: "bold",
+    textAlign: "center",
   },
 
   // BUTTONS
@@ -96,6 +105,8 @@ export const sharedStyles = StyleSheet.create({
   // INPUT FIELDS
   inputContainer: {
     width: "85%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   input: {
     height: 40,
@@ -105,7 +116,9 @@ export const sharedStyles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
     backgroundColor: "#F0F0F0",
-    width: "100%",
+    width: "85%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   filledInput: {
     backgroundColor: "#E6FFCC",
@@ -113,11 +126,12 @@ export const sharedStyles = StyleSheet.create({
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
+    width: "85%",
     borderColor: "#A9A9A9",
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: "#F0F0F0",
+    marginBottom: 10,
   },
   passwordInput: {
     flex: 1,
@@ -172,8 +186,16 @@ export const sharedStyles = StyleSheet.create({
     fontSize: 18,
   },
 
-  // Icons
+  // ICONS
   iconButton: {
     padding: 10,
+  },
+
+  // ETC
+  charCount: {
+    paddingTop: 5,
+    textAlign: "right",
+    color: "gray",
+    fontSize: 12,
   },
 });

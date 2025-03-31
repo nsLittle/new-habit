@@ -272,7 +272,7 @@ export default function CreateAccountScreen() {
           />
           <TextInput
             style={[
-              sharedStyless.input,
+              sharedStyles.input,
               filledFields.email && sharedStyles.filledInput,
             ]}
             placeholder="Email"
@@ -282,7 +282,7 @@ export default function CreateAccountScreen() {
             onBlur={() => handleBlur("email", email)}
           />
 
-          <View style={sharedStyles.pictureContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
               style={[
                 sharedStyles.passwordInput,

@@ -10,10 +10,6 @@ import {
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
 import RNPickerSelect from "react-native-picker-select";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -144,39 +140,39 @@ export default function ReminderScreen() {
         );
         setSelectedPeriod(existingReminder.selectedTime?.period || "AM");
 
-        if (
-          existingReminder.selectedTime?.hour !== undefined &&
-          existingReminder.selectedTime.hour !== ""
-        ) {
-          const formattedHour = existingReminder.selectedTime.hour
-            .toString()
-            .padStart(2, "0");
-          setSelectedHour(
-            existingReminder.selectedTime.hour.toString().padStart(2, "0")
-          );
-        }
+        // if (
+        //   existingReminder.selectedTime?.hour !== undefined &&
+        //   existingReminder.selectedTime.hour !== ""
+        // ) {
+        //   const formattedHour = existingReminder.selectedTime.hour
+        //     .toString()
+        //     .padStart(2, "0");
+        //   setSelectedHour(
+        //     existingReminder.selectedTime.hour.toString().padStart(2, "0")
+        //   );
+        // }
 
-        if (existingReminder.selectedTime?.minute !== undefined) {
-          setSelectedMinute(
-            existingReminder.selectedTime.minute.toString().padStart(2, "0")
-          );
-        }
+        // if (existingReminder.selectedTime?.minute !== undefined) {
+        //   setSelectedMinute(
+        //     existingReminder.selectedTime.minute.toString().padStart(2, "0")
+        //   );
+        // }
 
-        if (existingReminder.selectedTime?.period !== undefined) {
-          setSelectedPeriod(String(existingReminder.selectedTime.period));
-        }
+        // if (existingReminder.selectedTime?.period !== undefined) {
+        //   setSelectedPeriod(String(existingReminder.selectedTime.period));
+        // }
 
-        if (existingReminder.isReminderEnabled === true) {
-          setDialogMessage(
-            "Do you want to edit your existing reminder setting?"
-          );
-          setDialogAction("editOrSkip");
-          setShowDialog(true);
+        // if (existingReminder.isReminderEnabled === true) {
+        //   setDialogMessage(
+        //     "Do you want to edit your existing reminder setting?"
+        //   );
+        //   setDialogAction("editOrSkip");
+        //   setShowDialog(true);
 
-          setTimeout(() => {
-            setShowDialog(false);
-          }, 10000);
-        }
+        //   setTimeout(() => {
+        //     setShowDialog(false);
+        //   }, 10000);
+        // }
       } catch (error) {
         console.error("Error checking existing reminders:", error);
       }
@@ -236,7 +232,7 @@ export default function ReminderScreen() {
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
-          style={styles.dialog}>
+          style={sharedStyles.dialog}>
           <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Confirm
           </Dialog.Title>
@@ -292,10 +288,10 @@ export default function ReminderScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>SELECT REMINDERS</Text>
-          <Text style={styles.subText}>
+          <Text style={sharedStyles.title}>SELECT REMINDERS</Text>
+          <Text style={sharedStyles.bodyText}>
             Set reminders to help you practice your behavior
           </Text>
         </View>
@@ -404,51 +400,15 @@ export default function ReminderScreen() {
 }
 
 const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButtonNo: {
-    color: "red",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
   dialogButton: {
     color: "green",
     fontWeight: "bold",
     fontSize: 18,
   },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
   bodyIntroContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-  },
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
   },
   toggleSection: {
     flexDirection: "column",
@@ -507,31 +467,5 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontWeight: "bold",
     textAlign: "center",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    alignItems: "center",
-    fontWeight: "bold",
   },
 });

@@ -8,10 +8,10 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+// import {
+//   heightPercentageToDP as hp,
+//   widthPercentageToDP as wp,
+// } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -81,15 +81,15 @@ export default function CadenceScreen() {
           setExistingCadence(foundCadence);
           setIncompleteHabit(incompleteHabit);
 
-          if (foundCadence) {
-            setDialogMessage("Do you want to edit your existing cadence?");
-            setDialogAction("editOrSkip");
-            setShowDialog(true);
+          // if (foundCadence) {
+          //   setDialogMessage("Do you want to edit your existing cadence?");
+          //   setDialogAction("editOrSkip");
+          //   setShowDialog(true);
 
-            setTimeout(() => {
-              setShowDialog(false);
-            }, 10000);
-          }
+          //   setTimeout(() => {
+          //     setShowDialog(false);
+          //   }, 10000);
+          // }
         }
       } catch (error) {
         console.error("Error checking existing cadence:", error);
@@ -133,12 +133,12 @@ export default function CadenceScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
-          style={styles.dialog}>
+          style={sharedStyles.dialog}>
           <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Confirm
           </Dialog.Title>
@@ -150,7 +150,7 @@ export default function CadenceScreen() {
               <>
                 <Button
                   onPress={() => setShowDialog(false)}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   NO
                 </Button>
                 <Button
@@ -169,7 +169,7 @@ export default function CadenceScreen() {
                     setShowDialog(false);
                     navigation.navigate("ReminderScreen");
                   }}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   NO
                 </Button>
                 <Button
@@ -239,45 +239,15 @@ export default function CadenceScreen() {
 }
 
 const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
   dialogTitle: {
     color: "red",
     fontWeight: "bold",
-  },
-  dialogButtonNo: {
-    color: "red",
-    fontWeight: "bold",
-    fontSize: 18,
   },
   dialogButton: {
     color: "green",
     fontWeight: "bold",
     fontSize: 18,
   },
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  // },
-  // body: {
-  //   flexGrow: 1,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   backgroundColor: "white",
-  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  // },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
-  // subText: {
-  //   fontSize: 18,
-  //   paddingBottom: 30,
-  // },
   optionsContainer: {
     marginBottom: 30,
   },
@@ -308,43 +278,4 @@ const styles = StyleSheet.create({
     borderColor: "#FFD700",
     backgroundColor: "#FFD700",
   },
-  // buttonRow: {
-  //   flexDirection: "row",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   paddingHorizontal: 20,
-  //   gap: 15,
-  //   marginTop: 50,
-  // },
-  // saveButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 250,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // saveButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  // },
-  // backButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // backButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  // },
 });
