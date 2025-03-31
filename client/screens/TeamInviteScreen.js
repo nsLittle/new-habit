@@ -17,6 +17,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function TeamInviteScreen() {
   const navigation = useNavigation();
@@ -76,7 +77,7 @@ export default function TeamInviteScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog visible={showDialog} onDismiss={() => setShowDialog(false)}>
           <Dialog.Title>Notice</Dialog.Title>
@@ -89,8 +90,8 @@ export default function TeamInviteScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
-        <Text style={styles.title}>Invite Team Members</Text>
+      <View style={sharedStyles.body}>
+        <Text style={sharedStyles.title}>Invite Team Members</Text>
 
         <TouchableOpacity
           style={[
@@ -131,12 +132,12 @@ export default function TeamInviteScreen() {
 
         <TouchableOpacity
           style={[
-            styles.buttonYellow,
+            sharedStyles.buttonYellow,
             teamMembers.length < 3 && styles.buttonDisabled,
           ]}
           disabled={teamMembers.length < 3}
           onPress={() => navigation.navigate("ReviewScreen")}>
-          <Text style={styles.buttonText}>Save ▶</Text>
+          <Text style={sharedStyles.buttonText}>Save ▶</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -144,38 +145,38 @@ export default function TeamInviteScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    alignItems: "center",
-    paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
-    paddingBottom: 60,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginTop: 120,
-    marginBottom: 20,
-  },
-  buttonYellow: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    width: 250,
-    marginBottom: 20,
-    alignItems: "center",
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  // },
+  // body: {
+  //   alignItems: "center",
+  //   paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
+  //   paddingBottom: 60,
+  // },
+  // title: {
+  //   fontSize: 26,
+  //   fontWeight: "bold",
+  //   marginTop: 120,
+  //   marginBottom: 20,
+  // },
+  // buttonYellow: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   width: 250,
+  //   marginBottom: 20,
+  //   alignItems: "center",
+  // },
   buttonDisabled: {
     backgroundColor: "#D3D3D3",
   },
-  buttonText: {
-    fontSize: 12,
-    color: "black",
-  },
+  // buttonText: {
+  //   fontSize: 12,
+  //   color: "black",
+  // },
   memberBox: {
     flexDirection: "row",
     alignItems: "center",

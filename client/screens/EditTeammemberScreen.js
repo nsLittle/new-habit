@@ -17,6 +17,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function EditTeammemberScreen() {
   const navigation = useNavigation();
@@ -45,10 +46,7 @@ export default function EditTeammemberScreen() {
   const [userData, setUserData] = useState("");
 
   useEffect(() => {
-    // console.log(`I'm here to reset passed team member data...`);
     setEditedFirstName(firstName);
-    // console.log("Edited first name: ", editedFirstName);
-    // console.log("Old First Name: ", firstName);
     setEditedLastName(lastName);
     setEditedEmail(email);
     setEditedProfilePic(profilePic);
@@ -56,38 +54,20 @@ export default function EditTeammemberScreen() {
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userIdContext,
+    // userIdContext,
     userNameContext,
-    firstNameContext,
-    lastNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
+    // firstNameContext,
+    // lastNameContext,
+    // emailContext,
+    // profilePicContext,
+    // habitContextId,
+    // habitContextInput,
+    // descriptionContextInput,
+    // teamMemberContextId,
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const handleSave = async () => {
-    // console.log(`I'm here to save your team member edits...`);
     try {
       const updates = {
         firstName: editedFirstName,
@@ -95,14 +75,10 @@ export default function EditTeammemberScreen() {
         email: editedEmail,
         profilePic: editedProfilePic,
       };
-      // console.log("Updated User Data: ", updates);
 
       if (!token) throw new Error("Authentication token is missing.");
 
-      // console.log("Team Member Id: ", teamMember_id);
       const routeCheck = `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`;
-      // console.log("Route Check: ", routeCheck);
-
       const response = await fetch(
         `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`,
         {
@@ -121,9 +97,7 @@ export default function EditTeammemberScreen() {
       );
 
       const data = await response.json();
-      // console.log("Edit Response:", data);
       setEditedFirstName(data.firstName);
-      // console.log("Edited First Name; ", editedFirstName);
 
       if (!response.ok) throw new Error("Failed to update user data");
       setUserData(data.teamMember);
@@ -164,9 +138,9 @@ export default function EditTeammemberScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Edit Team Member</Text>
+          <Text style={sharedStyles.title}>Edit Team Member</Text>
         </View>
 
         {profilePic ? (
@@ -199,22 +173,14 @@ export default function EditTeammemberScreen() {
             onChangeText={setEditedProfilePic}></TextInput>
         </View>
 
-        <View style={styles.buttonRow}>
-          {/* <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("TeamInviteScreen")}>
-            <Text style={styles.backButtonText} title="Back">
-              ◀ Back
-            </Text>
-          </TouchableOpacity> */}
-
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.saveButton}
+            style={sharedStyles.yellowButton}
             onPress={() => {
               console.log("Save button pressed");
               handleSave();
             }}>
-            <Text style={styles.saveButtonText}>Save ▶</Text>
+            <Text style={sharedStyles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -235,24 +201,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
   },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  // },
+  // body: {
+  //   flexGrow: 1,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   backgroundColor: "white",
+  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+  // },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
   profilePicMain: {
     borderWidth: 5,
     borderColor: "#FFD700",
@@ -272,33 +238,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: "gray",
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  // backButton: {
-  //   backgroundColor: "#D3D3D3",
+  // buttonRow: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   paddingHorizontal: 20,
+  //   gap: 15,
+  //   marginTop: 50,
+  // },
+  // saveButton: {
+  //   backgroundColor: "#FFD700",
   //   borderRadius: 25,
   //   paddingVertical: 15,
   //   paddingHorizontal: 20,
@@ -307,7 +257,7 @@ const styles = StyleSheet.create({
   //   height: 45,
   //   justifyContent: "center",
   // },
-  // backButtonText: {
+  // saveButtonText: {
   //   color: "black",
   //   fontSize: 12,
   //   textAlign: "center",

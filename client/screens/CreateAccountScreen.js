@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,30 +9,27 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function CreateAccountScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-    token,
+    // userIdContext,
+    // userNameContext,
+    // firstNameContext,
+    // emailContext,
+    // profilePicContext,
+    // habitContextId,
+    // habitContextInput,
+    // descriptionContextInput,
+    // teamMemberContextId,
+    // token,
   } = userContext || {};
 
   const resetUserContext = () => {
@@ -86,7 +82,6 @@ export default function CreateAccountScreen() {
         return false;
       }
 
-      console.log("Username is available.");
       return true;
     } catch (error) {
       console.error("Error checking for duplicate username", error);
@@ -141,8 +136,6 @@ export default function CreateAccountScreen() {
       password,
     };
 
-    console.log("Sending signup request:", JSON.stringify(userData));
-    //
     try {
       const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
@@ -180,24 +173,20 @@ export default function CreateAccountScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "red", fontWeight: "bold" }}>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Alert
           </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}
-              onPress={() => setShowDialog(false)}>
-              OK
-            </Button>
+            <Button labelStyle={sharedStyles.dialogButtonConfirm}>OK</Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -205,18 +194,14 @@ export default function CreateAccountScreen() {
           visible={showPictureDialog}
           onDismiss={() => setShowPictureDialog(false)}
           style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "blue", fontWeight: "bold" }}>
-            Picture Generation
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Profile Image
           </Dialog.Title>
           <Dialog.Content>
-            <Text>Enter an image url!</Text>
+            <Text>Enter an url that points to your profile image.</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowPictureDialog(false)}
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
-              Close
-            </Button>
+            <Button labelStyle={sharedStyles.dialogButtonConfirm}>Close</Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -224,7 +209,7 @@ export default function CreateAccountScreen() {
           visible={showPasswordDialog}
           onDismiss={() => setShowPasswordDialog(false)}
           style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "blue", fontWeight: "bold" }}>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Password Requirements
           </Dialog.Title>
           <Dialog.Content>
@@ -233,11 +218,7 @@ export default function CreateAccountScreen() {
             <Text>• At least one number</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowPasswordDialog(false)}
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
-              Close
-            </Button>
+            <Button labelStyle={sharedStyles.dialogButtonConfirm}>Close</Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -245,31 +226,33 @@ export default function CreateAccountScreen() {
           visible={showUsernameDialog}
           onDismiss={() => setShowUsernameDialog(false)}
           style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "blue", fontWeight: "bold" }}>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Username
           </Dialog.Title>
           <Dialog.Content>
             <Text>Once created username can not be changed.</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              onPress={() => setShowUsernameDialog(false)}
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}>
-              Close
-            </Button>
+            <Button labelStyle={sharedStyles.dialogButtonConfirm}>Close</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>Create Account</Text>
+      <View style={sharedStyles.body}>
+        <Text style={sharedStyles.title}>Create Account</Text>
         {profilePic ? (
-          <Image source={{ uri: profilePic }} style={styles.profilePicMain} />
+          <Image
+            source={{ uri: profilePic }}
+            style={sharedStyles.profilePicMain}
+          />
         ) : null}
 
-        <View style={styles.inputContainer}>
+        <View style={sharedStyles.inputContainer}>
           <TextInput
-            style={[styles.input, filledFields.firstName && styles.filledInput]}
+            style={[
+              sharedStyles.input,
+              filledFields.firstName && sharedStyles.filledInput,
+            ]}
             placeholder="First Name"
             value={firstName}
             onChangeText={setFirstName}
@@ -277,7 +260,10 @@ export default function CreateAccountScreen() {
             onBlur={() => handleBlur("firstName", firstName)}
           />
           <TextInput
-            style={[styles.input, filledFields.lastName && styles.filledInput]}
+            style={[
+              sharedStyles.input,
+              filledFields.lastName && sharedStyles.filledInput,
+            ]}
             placeholder="Last Name"
             value={lastName}
             onChangeText={setLastName}
@@ -285,7 +271,10 @@ export default function CreateAccountScreen() {
             onBlur={() => handleBlur("lastName", lastName)}
           />
           <TextInput
-            style={[styles.input, filledFields.email && styles.filledInput]}
+            style={[
+              sharedStyless.input,
+              filledFields.email && sharedStyles.filledInput,
+            ]}
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
@@ -293,11 +282,11 @@ export default function CreateAccountScreen() {
             onBlur={() => handleBlur("email", email)}
           />
 
-          <View style={styles.pictureContainer}>
+          <View style={sharedStyles.pictureContainer}>
             <TextInput
               style={[
-                styles.passwordInput,
-                filledFields.profilePic && styles.filledInput,
+                sharedStyles.passwordInput,
+                filledFields.profilePic && sharedStyles.filledInput,
               ]}
               placeholder="Profile Picture"
               value={profilePic}
@@ -307,16 +296,16 @@ export default function CreateAccountScreen() {
             />
             <TouchableOpacity
               onPress={() => setShowPictureDialog(true)}
-              style={styles.iconButton}>
+              style={sharedStyles.iconButton}>
               <MaterialIcons name="info-outline" size={20} color="gray" />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.usernameContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
               style={[
-                styles.passwordInput,
-                filledFields.password && styles.filledInput,
+                sharedStyles.passwordInput,
+                filledFields.password && sharedStyles.filledInput,
               ]}
               placeholder="Username"
               value={username}
@@ -326,16 +315,16 @@ export default function CreateAccountScreen() {
             />
             <TouchableOpacity
               onPress={() => setShowUsernameDialog(true)}
-              style={styles.iconButton}>
+              style={sharedStyles.iconButton}>
               <MaterialIcons name="info-outline" size={20} color="gray" />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.passwordContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
               style={[
-                styles.passwordInput,
-                filledFields.password && styles.filledInput,
+                sharedStyles.passwordInput,
+                filledFields.password && sharedStyles.filledInput,
               ]}
               placeholder="Password"
               value={password}
@@ -346,7 +335,7 @@ export default function CreateAccountScreen() {
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
-              style={styles.iconButton}>
+              style={sharedStyles.iconButton}>
               <MaterialIcons
                 name={showPassword ? "visibility" : "visibility-off"}
                 size={20}
@@ -356,152 +345,26 @@ export default function CreateAccountScreen() {
 
             <TouchableOpacity
               onPress={() => setShowPasswordDialog(true)}
-              style={styles.iconButton}>
+              style={sharedStyles.iconButton}>
               <MaterialIcons name="info-outline" size={20} color="gray" />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.backButton}
+            style={sharedStyles.greyButton}
             onPress={() => navigation.navigate("WelcomeScreen")}>
-            <Text style={styles.backButtonText}>◀ Back</Text>
+            <Text style={sharedStyles.buttonText}>◀ Back</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save ▶</Text>
+          <TouchableOpacity
+            style={sharedStyles.yellowButton}
+            onPress={handleSave}>
+            <Text style={sharedStyles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
-  profilePicMain: {
-    borderWidth: 5,
-    borderColor: "#FFD700",
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    borderRadius: 50,
-  },
-  inputContainer: {
-    width: "100%",
-  },
-  input: {
-    height: 40,
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    width: "100%",
-  },
-  filledInput: {
-    backgroundColor: "#E6FFCC",
-  },
-  pictureContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    marginBottom: 10,
-  },
-  usernameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#E6FFCC",
-    marginBottom: 10,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-    placeholderTextColor: "gray",
-  },
-  iconButton: {
-    padding: 10,
-  },
-  passwordInput: {
-    flex: 1,
-    height: 40,
-    padding: 10,
-    backgroundColor: "transparent",
-  },
-  iconButton: {
-    padding: 10,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-});

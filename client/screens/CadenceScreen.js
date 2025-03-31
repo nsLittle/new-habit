@@ -15,6 +15,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function CadenceScreen() {
   const navigation = useNavigation();
@@ -138,7 +139,9 @@ export default function CadenceScreen() {
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Confirm
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
@@ -191,10 +194,10 @@ export default function CadenceScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Feedback Cadence</Text>
-          <Text style={styles.subText}>
+          <Text style={sharedStyles.title}>Feedback Cadence</Text>
+          <Text style={sharedStyles.bodyText}>
             How often would you like feedback from your team?
           </Text>
         </View>
@@ -222,15 +225,11 @@ export default function CadenceScreen() {
         </View>
 
         <View style={styles.bodyIntroContainer}>
-          <View style={styles.buttonRow}>
-            {/* <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.navigate("HabitDescriptionScreen")}>
-              <Text style={styles.backButtonText}>◀ Back</Text>
-            </TouchableOpacity> */}
-
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save ▶</Text>
+          <View style={sharedStyles.buttonRow}>
+            <TouchableOpacity
+              style={sharedStyles.yellowButton}
+              onPress={handleSave}>
+              <Text style={sharedStyles.buttonText}>Save ▶</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -257,28 +256,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
   },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
-  subText: {
-    fontSize: 18,
-    paddingBottom: 30,
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  // },
+  // body: {
+  //   flexGrow: 1,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   backgroundColor: "white",
+  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+  // },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
+  // subText: {
+  //   fontSize: 18,
+  //   paddingBottom: 30,
+  // },
   optionsContainer: {
     marginBottom: 30,
   },
@@ -309,30 +308,30 @@ const styles = StyleSheet.create({
     borderColor: "#FFD700",
     backgroundColor: "#FFD700",
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
+  // buttonRow: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   paddingHorizontal: 20,
+  //   gap: 15,
+  //   marginTop: 50,
+  // },
+  // saveButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 250,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // saveButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
   // backButton: {
   //   backgroundColor: "#D3D3D3",
   //   borderRadius: 25,

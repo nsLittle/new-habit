@@ -7,13 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function LogoutScreen() {
   const navigation = useNavigation();
@@ -46,27 +43,29 @@ export default function LogoutScreen() {
       setTimeout(() => {
         navigation.navigate("EndingCreditsScreen");
       }, 500);
-      navigation.navigate("EndingCreditsScreen");
+      // navigation.navigate("EndingCreditsScreen");
     } catch (error) {
       console.error("Failed to clear AsyncStorage:", error);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.body}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Thank you!</Text>
+          <Text style={sharedStyles.title}>Thank you!</Text>
         </View>
 
         <View style={styles.bodyIntroContainer}>
-          <Text style={styles.bodyIntroText}>
+          <Text style={sharedStyles.bodyText}>
             We hope you enjoyed strengthening your habit.
           </Text>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-              <Text style={styles.logoutButtonText}>Logout</Text>
+          <View style={sharedStyles.buttonRow}>
+            <TouchableOpacity
+              style={sharedStyles.yellowButton}
+              onPress={logout}>
+              <Text style={sharedStyles.buttonText}>Logout</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -74,50 +73,3 @@ export default function LogoutScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-  },
-  body: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: hp("15%"),
-    backgroundColor: "white",
-  },
-  bodyTitleText: {
-    textAlign: "center",
-    fontSize: 18,
-    paddingBottom: 15,
-  },
-  bodyIntroText: {
-    textAlign: "center",
-    fontSize: 14,
-    paddingBottom: 15,
-    width: 225,
-  },
-  buttonRow: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    marginTop: 50,
-  },
-  logoutButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    height: 45,
-    width: 150,
-  },
-  logoutButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-});

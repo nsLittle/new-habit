@@ -17,6 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function AddTeammemberScreen() {
   const navigation = useNavigation();
@@ -151,9 +152,9 @@ export default function AddTeammemberScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Add Team Member</Text>
+          <Text style={sharedStyles.title}>Add Team Member</Text>
         </View>
 
         {teamMemberProfilePic ? (
@@ -193,21 +194,21 @@ export default function AddTeammemberScreen() {
             onChangeText={setTeamMemberProfilePic}></TextInput>
         </View>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.backButton}
+            style={sharedStyles.greyButton}
             onPress={() => navigation.navigate("TeamInviteScreen")}>
-            <Text style={styles.backButtonText} title="Back">
+            <Text style={sharedStyles.buttonText} title="Back">
               ◀ Back
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.saveButton}
+            style={sharedStyles.yellowButton}
             onPress={() => {
               handleSave();
             }}>
-            <Text style={styles.saveButtonText}>Save ▶</Text>
+            <Text style={sharedStyles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -228,24 +229,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
   },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
   profilePicMain: {
     borderWidth: 5,
     borderColor: "#FFD700",
@@ -264,44 +247,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 10,
     color: "gray",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
   },
 });

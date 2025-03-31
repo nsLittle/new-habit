@@ -16,6 +16,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function HabitDescriptionScreen() {
   const navigation = useNavigation();
@@ -172,13 +173,15 @@ export default function HabitDescriptionScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Confirm
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
@@ -235,9 +238,9 @@ export default function HabitDescriptionScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Habit Description</Text>
+          <Text style={sharedStyles.bodyText}>Habit Description</Text>
         </View>
 
         <View style={styles.inputContainer}>
@@ -256,9 +259,11 @@ export default function HabitDescriptionScreen() {
           </Text>
         </View>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.saveButton} onPress={saveDescription}>
-            <Text style={styles.buttonText}>Save ▶</Text>
+        <View style={sharedStyles.buttonRow}>
+          <TouchableOpacity
+            style={sharedStyles.yellowButton}
+            onPress={saveDescription}>
+            <Text style={sharedStyles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -284,22 +289,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
   },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  // },
+  // body: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+  // },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
   bodyTitleContainer: {
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
     alignItems: "center",
@@ -335,44 +340,44 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 20,
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
+  // buttonRow: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   paddingHorizontal: 20,
+  //   gap: 15,
+  //   marginTop: 50,
+  // },
+  // backButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 150,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // backButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
+  // saveButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 250,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // saveButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
 });

@@ -17,6 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function ReminderScreen() {
   const navigation = useNavigation();
@@ -230,13 +231,15 @@ export default function ReminderScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Confirm
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
@@ -389,9 +392,11 @@ export default function ReminderScreen() {
         <Text style={styles.resetText}>Reset</Text>
       </TouchableOpacity>
 
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.buttonText}>Save Changes ▶</Text>
+      <View style={sharedStyles.buttonRow}>
+        <TouchableOpacity
+          style={sharedStyles.yellowButton}
+          onPress={handleSave}>
+          <Text style={sharedStyles.buttonText}>Save Changes ▶</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

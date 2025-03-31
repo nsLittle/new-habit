@@ -8,10 +8,9 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
@@ -23,14 +22,6 @@ export default function WelcomeScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    const checkStorage = async () => {
-      const keys = await AsyncStorage.getAllKeys();
-      const values = await AsyncStorage.multiGet(keys);
-    };
-    checkStorage();
-  }, []);
-
   const openWebLink = async () => {
     try {
       await Linking.openURL("https://www.westwoodintl.com/");
@@ -40,120 +31,37 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.body}>
-        <View style={styles.introContainer}>
-          <Text style={styles.welcomeTitle}>Welcome</Text>
-          <Text style={styles.introHeadline}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
+      <View style={sharedStyles.body}>
+        <View style={sharedStyles.titleContainer}>
+          <Text style={sharedStyles.title}>Welcome</Text>
+          <Text style={sharedStyles.bodyText}>
             The <Text style={{ fontWeight: "bold" }}>proven</Text> habit
             formation method.
           </Text>
-          <Text style={styles.introSubtext}>
+          <Text style={sharedStyles.bodyText}>
             Build better habits with feedback from those who know you best.
           </Text>
         </View>
 
         <TouchableOpacity onPress={openWebLink}>
-          <Text style={styles.bodyIntroInviteText}>Discover</Text>
+          <Text style={sharedStyles.linkText}>Discover</Text>
         </TouchableOpacity>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.loginButton}
+            style={sharedStyles.yellowButton}
             onPress={() => navigation.navigate("LoginScreen")}>
-            <Text style={styles.loginButtonText}>Login ▶</Text>
+            <Text style={sharedStyles.buttonText}>Login ▶</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.createAccountButton}
+            style={sharedStyles.greyButton}
             onPress={() => navigation.navigate("CreateAccountScreen")}>
-            <Text style={styles.createAccountButtonText}>Create Account ▶</Text>
+            <Text style={sharedStyles.buttonText}>Create Account ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: 20,
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? 100 : 20,
-  },
-  introContainer: {
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    alignItems: "center",
-  },
-  welcomeTitle: {
-    fontSize: 32,
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  introHeadline: {
-    fontSize: 16,
-    lineHeight: 26,
-    textAlign: "center",
-  },
-  introSubtext: {
-    fontSize: 16,
-    lineHeight: 26,
-    marginTop: 8,
-    textAlign: "center",
-  },
-
-  bodyIntroInviteText: {
-    fontSize: 12,
-    paddingTop: 20,
-    color: "#6A8CAF",
-    textDecorationLine: "underline",
-    fontWeight: "bold",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  loginButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  loginButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  createAccountButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  createAccountButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-});

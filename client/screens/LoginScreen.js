@@ -9,14 +9,11 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -24,15 +21,15 @@ export default function LoginScreen() {
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
     userIdContext,
-    userNameContext,
-    firstNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-    token,
+    // userNameContext,
+    // firstNameContext,
+    // emailContext,
+    // profilePicContext,
+    // habitContextId,
+    // habitContextInput,
+    // descriptionContextInput,
+    // teamMemberContextId,
+    // token,
   } = userContext || {};
 
   useEffect(() => {
@@ -50,8 +47,8 @@ export default function LoginScreen() {
       emailContext: null,
       profilePicContext: null,
       habitIdContext: [],
-      habitInputContext: [],
-      descriptionInputContext: "",
+      habitContextInput: [],
+      descriptionContextInput: "",
       teamMemberIdContext: "",
       token: null,
     });
@@ -63,8 +60,6 @@ export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const [email, setEmail] = useState("");
 
   const login = async () => {
     try {
@@ -112,37 +107,33 @@ export default function LoginScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={{ backgroundColor: "white" }}>
-          <Dialog.Title style={{ color: "red", fontWeight: "bold" }}>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
             Alert
           </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button
-              labelStyle={{ color: "green", fontWeight: "bold", fontSize: 18 }}
-              onPress={() => setShowDialog(false)}>
-              OK
-            </Button>
+            <Button labelStyle={sharedStyles.dialogButtonConfirm}>OK</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Login</Text>
+          <Text style={sharedStyles.title}>Login</Text>
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={sharedStyles.inputContainer}>
           <View style={styles.usernameContainer}>
             <TextInput
-              style={styles.passwordInput}
+              style={sharedStyles.passwordInput}
               placeholder="Username"
               value={username}
               onChangeText={(text) => setUsername(text)}
@@ -150,9 +141,9 @@ export default function LoginScreen() {
             />
           </View>
 
-          <View style={styles.passwordContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
-              style={styles.passwordInput}
+              style={sharedStyles.passwordInput}
               placeholder="Password"
               secureTextEntry={!showPassword}
               value={password}
@@ -182,17 +173,17 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.backButton}
+            style={sharedStyles.greyButton}
             onPress={() => navigation.navigate("WelcomeScreen")}>
-            <Text style={styles.backButtonText} title="Back">
+            <Text style={sharedStyles.buttonText} title="Back">
               ◀ Back
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.loginButton} onPress={login}>
-            <Text style={styles.loginButtonText}>Login ▶</Text>
+          <TouchableOpacity style={sharedStyles.yellowButton} onPress={login}>
+            <Text style={sharedStyles.buttonText}>Login ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -201,27 +192,9 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    width: "85%",
-  },
+  // inputContainer: {
+  //   width: "85%",
+  // },
   usernameContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -232,15 +205,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     marginBottom: 10,
   },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#A9A9A9",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#F0F0F0",
-  },
   infoIcon: {
     padding: 10,
   },
@@ -249,12 +213,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     justifyContent: "flex-end",
     alignItems: "center",
-  },
-  passwordInput: {
-    flex: 1,
-    height: 40,
-    padding: 10,
-    backgroundColor: "transparent",
   },
   resetContainer: {
     alignItems: "center",
@@ -266,44 +224,5 @@ const styles = StyleSheet.create({
     color: "#6A8CAF",
     textDecorationLine: "underline",
     fontWeight: "bold",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  backButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  backButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  loginButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  loginButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
   },
 });

@@ -15,6 +15,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function CreateHabitScreen() {
   const navigation = useNavigation();
@@ -34,32 +35,6 @@ export default function CreateHabitScreen() {
     teamMemberContextId,
     token,
   } = userContext || {};
-
-  // useEffect(() => {
-  //   if (!userContext) {
-  //     console.error("UserContext is NULL in CreateHabitScreen!");
-  //   } else {
-  //     console.log("UserContext in CreateHabitScreen:", userContext);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Habit End Date Context: ", habitContextEndDate);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -90,15 +65,9 @@ export default function CreateHabitScreen() {
         }
 
         const data = await response.json();
-        // console.log("Data: ", data);
         const incompleteHabit = data.habits.find((habit) => !habit.completed);
 
         if (incompleteHabit) {
-          // console.log(
-          //   "Existing Incomplete Habit Found:",
-          //   incompleteHabit.habit
-          // );
-          // console.log("Existing Habit ID Found:", incompleteHabit._id);
           setHabitInput(incompleteHabit.habit);
           setExistingHabit(incompleteHabit.habit);
           setIncompleteHabit(incompleteHabit);
@@ -123,14 +92,6 @@ export default function CreateHabitScreen() {
   }, []);
 
   const saveHabit = async () => {
-    // console.log(`Attempting to save habit.`);
-    // console.log("Habit Input:", habitInput);
-    // console.log("Existing Habit: ", existingHabit);
-    // console.log("User Id:", userIdContext);
-    // console.log("Habit Id:", habitContextId);
-    // console.log("Username: ", userNameContext);
-    // console.log("End Date: ", habitContextEndDate);
-
     if (!habitInput.trim()) {
       setDialogMessage("You must enter a habit.");
       setShowDialog(true);
@@ -168,8 +129,6 @@ export default function CreateHabitScreen() {
         method = "POST";
       }
 
-      // console.log(`Sending ${method} request to:`, url);
-
       response = await fetch(url, {
         method: method,
         headers: {
@@ -185,9 +144,6 @@ export default function CreateHabitScreen() {
         );
 
       const responseData = await response.json();
-      // console.log("Response Data: ", responseData);
-      // console.log("Habit Input: ", responseData.habit);
-      // console.log("Habit Id: ", responseData.habitId);
 
       setUserContext((prevContext) => {
         const updatedContext = {
@@ -195,7 +151,6 @@ export default function CreateHabitScreen() {
           habitContextId: responseData.habitId,
           habitContextInput: responseData.habit,
         };
-        // console.log("Updated UserContext: ", updatedContext);
         return updatedContext;
       });
 
@@ -223,13 +178,15 @@ export default function CreateHabitScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Confirm
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
@@ -296,8 +253,8 @@ export default function CreateHabitScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>
+      <View style={sharedStyles.body}>
+        <Text style={sharedStyles.title}>
           What is the habit you want to practice?
         </Text>
 
@@ -314,9 +271,11 @@ export default function CreateHabitScreen() {
           <Text style={styles.charCount}>{habitInput.length}/50</Text>
         </View>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.saveButton} onPress={saveHabit}>
-            <Text style={styles.buttonText}>Save Changes ▶</Text>
+        <View style={sharedStyles.buttonRow}>
+          <TouchableOpacity
+            style={sharedStyles.yellowButton}
+            onPress={saveHabit}>
+            <Text style={sharedStyles.buttonText}>Save Changes ▶</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -342,25 +301,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
   },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    width: wp("80%"),
-    paddingVertical: hp("5%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   alignItems: "center",
+  // },
+  // body: {
+  //   flexGrow: 1,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   backgroundColor: "white",
+  //   width: wp("80%"),
+  //   paddingVertical: hp("5%"),
+  // },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
   inputContainer: {
     width: "85%",
   },
@@ -381,29 +340,29 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 12,
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  // buttonRow: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   paddingHorizontal: 20,
+  //   gap: 15,
+  //   marginTop: 50,
+  // },
+  // saveButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 250,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // saveButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
 });

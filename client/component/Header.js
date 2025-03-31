@@ -95,7 +95,6 @@ export default function Header(props) {
         {currentRoute !== "WelcomeScreen" &&
           currentRoute !== "LoginScreen" &&
           currentRoute !== "ResetPasswordScreen" &&
-          currentRoute !== "LogoutScreen" &&
           currentRoute !== "CreateAccountScreen" &&
           currentRoute !== "FeedbackRequestWelcomeScreen" &&
           currentRoute !== "FeedbackRequestRatingScreen" &&

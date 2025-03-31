@@ -14,6 +14,7 @@ import {
 import { Button, Dialog, Portal } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function SuccessfulHabitCompletionScreen() {
   const navigation = useNavigation();
@@ -34,36 +35,20 @@ export default function SuccessfulHabitCompletionScreen() {
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Habit End Date Context: ", habitContextEndDate);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [dialogAction, setDialogAction] = useState(null);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Confirm</Dialog.Title>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Confirm
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage || "Are you sure?"}</Text>
           </Dialog.Content>
@@ -72,7 +57,7 @@ export default function SuccessfulHabitCompletionScreen() {
               <>
                 <Button
                   onPress={() => setShowDialog(false)}
-                  labelStyle={styles.dialogButtonNo}>
+                  labelStyle={sharedStyles.dialogButtonCancel}>
                   EDIT
                 </Button>
                 <Button
@@ -80,7 +65,7 @@ export default function SuccessfulHabitCompletionScreen() {
                     setShowDialog(false);
                     navigation.navigate("HabitDescriptionScreen");
                   }}
-                  labelStyle={styles.dialogButton}>
+                  labelStyle={sharedStyles.dialogButtonConfirm}>
                   KEEP
                 </Button>
               </>
@@ -92,24 +77,24 @@ export default function SuccessfulHabitCompletionScreen() {
                     navigation.navigate("HabitDescriptionScreen");
                   }
                 }}
-                labelStyle={styles.dialogButton}>
+                labelStyle={sharedStyles.dialogButtonConfirm}>
                 OK
               </Button>
             )}
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <View style={styles.body}>
-        <Text style={styles.bodyTitleText}>SUCCESS!!!</Text>
-        <Text style={styles.bodyTitleText}>
+      <View style={sharedStyles.body}>
+        <Text style={sharedStyles.bodyText}>SUCCESS!!!</Text>
+        <Text style={sharedStyles.bodyText}>
           Your habit is now a part of your life
         </Text>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.saveButton}
+            style={sharedStyles.yellowButton}
             onPress={() => navigation.navigate("LogoutScreen")}>
-            <Text style={styles.saveButtonText}>Logout</Text>
+            <Text style={sharedStyles.buttonText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -118,11 +103,6 @@ export default function SuccessfulHabitCompletionScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
   dialog: {
     backgroundColor: "white",
   },
@@ -139,33 +119,5 @@ const styles = StyleSheet.create({
     color: "green",
     fontWeight: "bold",
     fontSize: 18,
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: hp("10%"),
-    backgroundColor: "white",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
   },
 });

@@ -1,14 +1,10 @@
-import { useContext, useEffect } from "react";
-import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useContext } from "react";
+import { Platform, ScrollView, StyleSheet, View, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-// import {
-//   widthPercentageToDP as wp,
-//   heightPercentageToDP as hp,
-// } from "react-native-responsive-screen";
 import { UserContext } from "../context/UserContext";
 import { sharedStyles } from "../styles/sharedStyles";
 
-export default function NoThankYouScreen() {
+export default function ThankYouScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext, resetUserContext } =

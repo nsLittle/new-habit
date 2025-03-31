@@ -27,6 +27,7 @@ import FeedbackRequestRatingScreen from "./screens/FeedbackRequestRatingScreen";
 import FeedbackRequestThanksRatingScreen from "./screens/FeedbackRequestThanksRatingScreen";
 import FeedbackRequestQualitativeScreen from "./screens/FeedbackRequestQualitativeScreen";
 import FeedbackDataScreen from "./screens/FeedbackDataScreen";
+import ThankYouScreen from "./screens/ThankYouScreen";
 import NoThankYouScreen from "./screens/NoThankYouScreen";
 import EndingCreditsScreen from "./screens/EndingCreditsScreen";
 import FinalReviewScreen from "./screens/FinalReviewScreen";
@@ -176,6 +177,7 @@ export default function App() {
               name="EndingCreditsScreen"
               component={EndingCreditsScreen}
             />
+            <Stack.Screen name="ThankYouScreen" component={ThankYouScreen} />
             <Stack.Screen
               name="NoThankYouScreen"
               component={NoThankYouScreen}

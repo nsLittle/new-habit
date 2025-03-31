@@ -1,42 +1,42 @@
 import { useContext, useEffect, useState } from "react";
 import {
   Image,
-  Linking,
-  Platform,
+  // Linking,
+  // Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+// import {
+//   heightPercentageToDP as hp,
+//   widthPercentageToDP as wp,
+// } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
 
   const routes = navigation.getState().routes;
   const currentRoute = routes[routes.length - 1]?.name;
-  // console.log("Current Route:", currentRoute);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
-    userIdContext,
+    // userIdContext,
     userNameContext,
     firstNameContext,
     lastNameContext,
     emailContext,
     profilePicContext,
     habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    habitContextEndDate,
-    teamMemberContextId,
+    // habitContextInput,
+    // descriptionContextInput,
+    // habitContextEndDate,
+    // teamMemberContextId,
     token,
   } = userContext || {};
 
@@ -82,19 +82,6 @@ export default function ProfileScreen() {
       const habitData = await habitsResponse.json();
       const teamMemberData = await teamMemberResponse.json();
 
-      // console.log("User Data: ", userData);
-      // console.log("User Data - Username: ", userData[0]?.username);
-      // console.log("User Data - First Name: ", userData[0]?.firstName);
-      // console.log("Habit Data: ", habitData);
-      // console.log("Habit Data - Habit: ", habitData.habits[0]?.habit);
-      // console.log(
-      //   "Habit Data - Description: ",
-      //   habitData.habits[0]?.description
-      // );
-      // console.log("Habit Data - Habit Id: ", habitData.habits[0]?._id);
-      // console.log("Habit End Dte: ", habitData.habits[0]?.endDate);
-      // console.log("Team Member Data: ", teamMemberData);
-
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
       );
@@ -121,7 +108,6 @@ export default function ProfileScreen() {
   useEffect(() => {
     if (userNameContext) {
       fetchUserData();
-      // console.log(userNameContext);
     }
   }, []);
 
@@ -134,20 +120,20 @@ export default function ProfileScreen() {
   const testImage =
     "https://media.wired.com/photos/5cdefc28b2569892c06b2ae4/master/w_2560%2Cc_limit/Culture-Grumpy-Cat-487386121-2.jpg";
 
-  const sendEmail = (emailContext) => {
-    if (email) {
-      const mailtoURL = `mailto:${email}`;
-      Linking.openURL(mailtoURL).catch((err) =>
-        console.error("Failed to open email client", err)
-      );
-      setDialogMessage("Failed to open email client.");
-      setShowDialog(true);
-    } else {
-      console.error("No email address provided");
-      setDialogMessage("No email address provided");
-      setShowDialog(true);
-    }
-  };
+  // const sendEmail = (emailContext) => {
+  //   if (email) {
+  //     const mailtoURL = `mailto:${email}`;
+  //     Linking.openURL(mailtoURL).catch((err) =>
+  //       console.error("Failed to open email client", err)
+  //     );
+  //     setDialogMessage("Failed to open email client.");
+  //     setShowDialog(true);
+  //   } else {
+  //     console.error("No email address provided");
+  //     setDialogMessage("No email address provided");
+  //     setShowDialog(true);
+  //   }
+  // };
 
   useEffect(() => {
     if (currentRoute !== "ProfileScreen") return;
@@ -178,8 +164,8 @@ export default function ProfileScreen() {
   }, [userContext, currentRoute]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.body}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
+      <View style={sharedStyles.body}>
         <View style={styles.profileDataBox}>
           {profilePicContext ? (
             <Image
@@ -188,7 +174,7 @@ export default function ProfileScreen() {
             />
           ) : null}
 
-          <Text style={styles.bodyTitleTextSub}>{userNameContext}</Text>
+          <Text style={sharedStyles.bodyText}>{userNameContext}</Text>
 
           <View style={styles.profileDetails}>
             <View style={styles.profileMain}>
@@ -200,11 +186,11 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.saveButton}
+            style={sharedStyles.yellowButton}
             onPress={() => navigation.navigate("ReviewScreen")}>
-            <Text style={styles.saveButtonText}>Review Habit Settings</Text>
+            <Text style={sharedStyles.buttonText}>Review Habit Settings</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -213,28 +199,28 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleTextSub: {
-    fontSize: 18,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  sectionTitle: {
-    fontSize: 14,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  // },
+  // body: {
+  //   flexGrow: 1,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   backgroundColor: "white",
+  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+  // },
+  // bodyTitleTextSub: {
+  //   fontSize: 18,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
+  // sectionTitle: {
+  //   fontSize: 14,
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
   profileDataBox: {
     flexDirection: "column",
     alignItems: "center",
@@ -257,28 +243,28 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 16,
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 300,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
+  // buttonRow: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   paddingHorizontal: 20,
+  //   gap: 15,
+  //   marginTop: 50,
+  // },
+  // saveButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 300,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
+  // saveButtonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
 });

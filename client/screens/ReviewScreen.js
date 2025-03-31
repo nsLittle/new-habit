@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import DefaultProfiler from "../component/DefaultProfiler";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function ReviewScreen() {
   const navigation = useNavigation();
@@ -128,7 +129,7 @@ export default function ReviewScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.body}>
+      <View style={sharedStyles.body}>
         <Text>Loading...</Text>
       </View>
     );
@@ -139,8 +140,8 @@ export default function ReviewScreen() {
       <ScrollView
         style={{ flex: 1, backgroundColor: "white" }}
         contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
-        <View style={styles.body}>
-          <Text style={styles.bodyTitleText}>Review</Text>
+        <View style={sharedStyles.body}>
+          <Text style={sharedStyles.title}>Review</Text>
 
           <View style={styles.teamMemberDataBox}>
             <Text style={styles.sectionTitle}>Your Habit:</Text>
@@ -236,15 +237,17 @@ export default function ReviewScreen() {
             )}
           </View>
 
-          <View style={styles.buttonColumn}>
+          <View style={sharedStyles.buttonColumn}>
             <TouchableOpacity
               style={
                 teammembers.length >= 3
-                  ? styles.grayButton
-                  : styles.yellowButton
+                  ? sharedStyles.grayButton
+                  : sharedStyles.yellowButton
               }
               onPress={() => navigation.navigate("EditReviewScreen")}>
-              <Text style={styles.buttonText}>Edit Your Habit Setting</Text>
+              <Text style={sharedStyles.buttonText}>
+                Edit Your Habit Setting
+              </Text>
             </TouchableOpacity>
 
             {/* <TouchableOpacity
@@ -260,18 +263,18 @@ export default function ReviewScreen() {
             <TouchableOpacity
               style={
                 teammembers.length >= 3
-                  ? styles.yellowButton
-                  : styles.grayButton
+                  ? sharedStyles.yellowButton
+                  : sharedStyles.greyButton
               }
               onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-              <Text style={styles.buttonText}>Request Feedback</Text>
+              <Text style={sharedStyles.buttonText}>Request Feedback</Text>
             </TouchableOpacity>
 
             {hasFeedback && (
               <TouchableOpacity
                 style={styles.grayButton}
                 onPress={() => navigation.navigate("FeedbackDataScreen")}>
-                <Text style={styles.buttonText}>Review Feedback</Text>
+                <Text style={sharedStyles.buttonText}>Review Feedback</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -282,26 +285,26 @@ export default function ReviewScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-    overflow: "auto",
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  },
-  bodyTitleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingTop: 60,
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
+  // container: {
+  //   flexGrow: 1,
+  //   backgroundColor: "white",
+  //   paddingHorizontal: wp("5%"),
+  //   overflow: "auto",
+  // },
+  // body: {
+  //   flexGrow: 1,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   backgroundColor: "white",
+  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
+  // },
+  // bodyTitleText: {
+  //   fontSize: 26,
+  //   textAlign: "center",
+  //   paddingTop: 60,
+  //   paddingBottom: 30,
+  //   fontWeight: "bold",
+  // },
   sectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
@@ -380,48 +383,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
-  buttonColumn: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 30,
-  },
-  yellowButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  grayButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  startButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 250,
-    height: 45,
-    justifyContent: "center",
-  },
+  // buttonColumn: {
+  //   flexDirection: "column",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   width: "100%",
+  //   paddingHorizontal: 20,
+  //   gap: 15,
+  //   marginTop: 30,
+  // },
+  // yellowButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   width: 250,
+  //   height: 45,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // grayButton: {
+  //   backgroundColor: "#D3D3D3",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   width: 250,
+  //   height: 45,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // buttonText: {
+  //   color: "black",
+  //   fontSize: 12,
+  //   textAlign: "center",
+  // },
+  // startButton: {
+  //   backgroundColor: "#FFD700",
+  //   borderRadius: 25,
+  //   paddingVertical: 15,
+  //   paddingHorizontal: 20,
+  //   alignItems: "center",
+  //   width: 250,
+  //   height: 45,
+  //   justifyContent: "center",
+  // },
 });
