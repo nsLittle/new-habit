@@ -404,6 +404,7 @@ export default function FinalReviewScreen() {
                   onPress={() => {
                     setShowDialog(false);
                     submitReflection(true);
+                    navigation.navigate("SuccessfulHabitCompletionScreen");
                   }}
                   labelStyle={sharedStyles.dialogButtonConfirm}>
                   YES
@@ -412,6 +413,7 @@ export default function FinalReviewScreen() {
                   onPress={() => {
                     setShowDialog(false);
                     submitReflection(false);
+                    navigation.navigate("NextTimeScreen");
                   }}
                   labelStyle={sharedStyles.dialogButtonCancel}>
                   NO

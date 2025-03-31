@@ -140,6 +140,7 @@ export default function ProfileScreen() {
 
     const checkData = async () => {
       if (!habitContextId || !userNameContext || !token) return;
+      console.log(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`);
 
       try {
         const feedbackResponse = await fetch(
@@ -149,12 +150,9 @@ export default function ProfileScreen() {
           }
         );
         const feedbacks = await feedbackResponse.json();
+        console.log("Feedbacks: ", feedbacks);
 
-        if (feedbacks.feedback && feedbacks.feedback.length > 0) {
-          navigation.navigate("FeedbackDataScreen");
-        } else {
-          navigation.navigate("ReviewScreen");
-        }
+        navigation.navigate("ReviewScreen");
       } catch (error) {
         console.error("Error during login check:", error);
       }

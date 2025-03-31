@@ -1,6 +1,6 @@
-in# Habit-App - Community-Driven Habit Formation
+# Habit-App - Community-Driven Habit Formation
 
-## 🚀 Overview
+## Overview
 
 **Habit-App** is a **habit formation tool** that reinforces behavior change through **community engagement**. Designed for **corporate teams**, it allows users to set personal habits and receive **feedback** from their selected support network.
 
@@ -8,32 +8,27 @@ The application is developed for **Westwood International** and **Greg Zlevor**,
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **React Native** (with Expo) – Mobile-first development framework
 - **Node.js & Express** – Backend API for authentication and data management
 - **MongoDB** – Stores user data, habits, and team feedback
 - **JWT Authentication** – Secure login with token-based authentication
 - **Expo** – Simplifies mobile development workflow
-- **Nodemailer & Twilio** – Enables email/SMS notifications for habit feedback
 
 ---
 
-## 📌 Features
+## Features
 
-- **User Accounts**: Secure login with JWT authentication (username & password)
-- **Habit Declaration**: Users define personal habits to track
-- **Community Feedback**: Send text/email prompts to selected team members
-- **Feedback Storage**: Users and team members can review past responses
-- **Review Dashboard**: Track progress and insights over time
-- **Future Enhancements**:
-  - **Google Authentication**: Alternative login option
-  - **Gamification**: Habit streaks and milestone rewards
-  - **Enhanced UI/UX**: Improved team member engagement tools
+- **User Authentication** – Simple username + password login
+- **Habit Tracking** – Users define a custom habit
+- **Feedback Flow** – Users invite team members to submit ratings & notes
+- **Progress Review** – View cycles of feedback and reflect after each cycle
+- **Reminders** – Optional text/email prompts for consistency
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ````plaintext
 habit-app
@@ -61,7 +56,7 @@ habit-app
 
 ---
 
-## How to Run Habit-App Locally
+## How to Run Locally
 
 ### Prerequisites
 
@@ -70,7 +65,6 @@ habit-app
 - [Expo Go](https://expo.dev/client) app installed on your mobile device (iOS or Android)
 
 ---
-
 
 1. Clone repo: git clone https://github.com/nsLittle/habit-app.git
 2. Type: mongosh
@@ -82,6 +76,28 @@ habit-app
 8. Type: npx expo start
 9. Scan: QR code to run app on phone (OR)
 10. Type: W to run app on browser
+
+---
+
+## Demo Login (Seeded User)
+
+To test the app immediately without creating a new account:
+
+1. Find: server
+2. Type: node scripts/seed.js
+3. Login credentials:
+    **Username**: `Sheep`
+    **Password**: `Password1!`
+
+This account includes:
+- **Habit**: *"I want to become a sheep dog like Babe"*
+- **Description**: *"I will herd sheep in cool formations and bring home blue ribbons galore"*
+- **Cadence**: Biweekly (every 14 days)
+- **Reminder**: Email on Wednesdays at 3pm
+- **Team**:
+  - 🐱 Kitty Kat
+  - 🐶 Doggy Dog
+  - 🐭 Mousey Mouse
 
 ---
 
@@ -107,16 +123,11 @@ eas build -p android --profile preview
 
 ---
 
-### Image Attribution
+## Contact Me
 
-habit by Rudez Studio from <a href="https://thenounproject.com/browse/icons/term/habit/" target="_blank" title="habit Icons">Noun Project</a> (CC BY 3.0)---
-
----
-
-## 💡 Contact Me
-
-🔗 [GitHub](https://github.com/nsLittle)
-🔗 [LinkedIn](https://www.linkedin.com/in/mutsumihata)
+[GitHub](https://github.com/nsLittle)
+[LinkedIn](https://www.linkedin.com/in/mutsumihata)
+[Portfolio](https://www.mutsumi.io)
 
 Feel free to reach out for collaboration, job opportunities, or questions about my work!
 

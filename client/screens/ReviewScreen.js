@@ -121,7 +121,12 @@ export default function ReviewScreen() {
 
   const { habits, teammembers, feedback } = profileData;
   const hasTeamMembers = teammembers.length > 0;
-  const hasFeedback = feedback.some((fb) => fb.habitId === habitContextId);
+  const hasFeedback = feedback.some(
+    (fb) => String(fb.habitId) === String(habitContextId)
+  );
+
+  console.log("Feedback Data: ", feedback);
+  console.log("Has Feedback: ", hasFeedback);
 
   if (isLoading) {
     return (

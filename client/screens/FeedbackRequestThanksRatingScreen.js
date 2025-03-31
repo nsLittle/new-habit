@@ -75,11 +75,11 @@ export default function FeedbackRequestThanksRatingScreen() {
   // console.log("Rating Value: ", ratingValue);
 
   const ratings = [
-    { value: 5, label: "No perceptible follow-up", color: "#DC143C" }, // Crimson
-    { value: 4, label: "Little follow-up", color: "#FF4500" }, // Red-Orange
-    { value: 3, label: "Some follow-up", color: "#FFD700" }, // Yellow
-    { value: 3, label: "Frequent follow-up", color: "#90EE90" }, // Light Green
     { value: 1, label: "Constructive follow-up", color: "#008000" }, // Green
+    { value: 2, label: "Frequent follow-up", color: "#90EE90" }, // Light Green
+    { value: 3, label: "Some follow-up", color: "#FFD700" }, // Yellow
+    { value: 4, label: "Little follow-up", color: "#FF4500" }, // Red-Orange
+    { value: 5, label: "No perceptible follow-up", color: "#DC143C" }, // Crimson
   ];
 
   useEffect(() => {
