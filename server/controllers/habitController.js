@@ -404,13 +404,11 @@ exports.saveReflection = async (req, res) => {
       return fbDate >= finalPeriodStart && fbDate <= today;
     });
 
-    // Always save the reflection (even if it's early)
     habit.reflections.push({
       text,
       createdAt: today,
     });
 
-    // Only advance cycle or complete if mastered is explicitly passed
     if (typeof mastered === "boolean") {
       const current = habit.currentCycle || 1;
       const nextCycle = current + 1;

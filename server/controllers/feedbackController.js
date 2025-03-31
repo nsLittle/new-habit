@@ -219,11 +219,11 @@ exports.editFeedbackTextRating = async (req, res) => {
 };
 
 exports.getFeedback = async (req, res) => {
-  // console.log("I'm here to get feedback...");
+  console.log("I'm here to get feedback...");
   try {
-    const { habit_id } = req.params;
+    const { username, habit_id } = req.params;
 
-    // console.log("Received Params:", req.params);
+    console.log("Received Params:", req.params);
 
     if (!mongoose.Types.ObjectId.isValid(habit_id)) {
       return res.status(400).json({ error: "Invalid habit ID format" });
