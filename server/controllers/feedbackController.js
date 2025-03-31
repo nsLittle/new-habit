@@ -231,7 +231,7 @@ exports.getFeedback = async (req, res) => {
 
     const feedback = await Feedback.find({ habitId: habit_id });
 
-    // console.log("Feedback:", feedback);
+    console.log("Feedback:", feedback);
 
     if (!feedback.length) {
       return res
@@ -239,13 +239,13 @@ exports.getFeedback = async (req, res) => {
         .json({ message: "No feedback found for this habit", feedback: [] });
     }
 
-    // console.log("Right before sneding feedback response...");
+    console.log("Right before sneding feedback response...");
 
     res.status(200).json({
       message: "Feedback retrieved successfully",
       feedback,
     });
-    // console.log("Right afetr sneding feedback response...");
+    console.log("Right afetr sneding feedback response...");
   } catch (error) {
     console.error("❌ Error fetching feedback:", error);
     res.status(500).json({ error: "Failed to retrieve feedback" });
