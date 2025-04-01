@@ -267,14 +267,14 @@ export default function Header(props) {
             }>
             <Text style={styles.menuItem}>Logout</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() =>
               navigateToScreen("FeedbackRequestWelcomeScreen", {
                 userName: userContext.userName,
               })
             }>
             <Text style={styles.menuItem}>Feedback Request Loop</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
     </View>

@@ -15,6 +15,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function FeedbackRequestRatingScreen() {
   const navigation = useNavigation();
@@ -32,23 +33,6 @@ export default function FeedbackRequestRatingScreen() {
     descriptionContextInput,
     teamMemberContextId,
   } = userContext || {};
-
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -77,8 +61,6 @@ export default function FeedbackRequestRatingScreen() {
 
   useEffect(() => {
     const checkForExistingRating = async () => {
-      // console.log(`Checking for existing rating...`);
-
       try {
         const response = await fetch(
           `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
@@ -99,7 +81,6 @@ export default function FeedbackRequestRatingScreen() {
         }
 
         const data = await response.json();
-        // console.log("Data: ", data);
       } catch (error) {
         console.error("Error checking existing rating:", error);
       }
@@ -108,8 +89,6 @@ export default function FeedbackRequestRatingScreen() {
   }, []);
 
   const handleSave = async () => {
-    // console.log("I'm here saving...");
-
     if (!ratingValue) {
       setDialogMessage("Please select a feedback rating.");
       setShowDialog(true);
@@ -117,17 +96,7 @@ export default function FeedbackRequestRatingScreen() {
     }
 
     try {
-      // console.log("Saving rating...");
-      // console.log(
-      //   "Username: ",
-      //   userNameContext,
-      //   "and Habit Id: ",
-      //   habitContextId[0],
-      //   "from Team Member Id: ",
-      //   teammemberId
-      // );
       const feedbackRating = ratingValue;
-      // console.log("Feedback Rating :", feedbackRating);
 
       if (!teammemberId) {
         console.error(
@@ -138,10 +107,7 @@ export default function FeedbackRequestRatingScreen() {
         return;
       }
 
-      // console.log("✅ Using Team Member Id:", teammemberId);
       const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`;
-
-      // console.log("Fetching from: ", url);
 
       const response = await fetch(
         `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`,
@@ -161,13 +127,9 @@ export default function FeedbackRequestRatingScreen() {
       );
 
       const data = await response.json();
-      // console.log("Data: ", data);
 
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);
-      // console.log("Navigating with params:", {
-      //   teamMemberRouteId: teammemberId,
-      // });
       navigation.navigate("FeedbackRequestThanksRatingScreen", {
         teamMemberRouteId: teammemberId,
       });
@@ -178,29 +140,31 @@ export default function FeedbackRequestRatingScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
-          style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          style={sharedStyles.dialog}>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Alert
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button
               onPress={() => setShowDialog(false)}
-              labelStyle={styles.dialogButton}>
+              labelStyle={sharedStyles.dialogButton}>
               OK
             </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>
+      <View style={sharedStyles.body}>
+        <View style={sharedStyles.titleContainer}>
+          <Text style={styles.title}>
             Rate how well {firstNameContext} has been living their goal
           </Text>
         </View>
@@ -237,24 +201,22 @@ export default function FeedbackRequestRatingScreen() {
           ))}
         </View>
 
-        <View style={styles.buttonRow}>
+        <View style={sharedStyles.buttonColumn}>
           <TouchableOpacity
-            style={styles.saveButton}
+            style={sharedStyles.yellowButton}
             onPress={() => {
-              // console.log("Save button pressed");
               handleSave();
             }}>
-            <Text style={styles.saveButtonText}>Save ▶</Text>
+            <Text style={sharedStyles.buttonText}>Save ▶</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.noThanksButton}
+            style={sharedStyles.greyButton}
             onPress={() => {
-              // console.log("Team member declines feedback request.");
               navigation.navigate("NoThankYouScreen", {});
             }}>
-            <Text style={styles.noThanksButtonText} title="No Thanks">
-              No Thnaks
+            <Text style={sharedStyles.buttonText} title="No Thanks">
+              No Thanks
             </Text>
           </TouchableOpacity>
         </View>
@@ -264,36 +226,6 @@ export default function FeedbackRequestRatingScreen() {
 }
 
 const styles = StyleSheet.create({
-  dialog: {
-    backgroundColor: "white",
-  },
-  dialogTitle: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  dialogButton: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  container: {
-    flexGrow: 1,
-    backgroundColor: "white",
-    paddingHorizontal: wp("5%"),
-  },
-  body: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "web" ? hp("15%") : hp("2%"),
-  },
-  titleText: {
-    fontSize: 26,
-    textAlign: "center",
-    paddingBottom: 30,
-    fontWeight: "bold",
-  },
   ratingContainer: {
     flexDirection: "column",
     alignItems: "center",
@@ -327,45 +259,5 @@ const styles = StyleSheet.create({
   number: {
     color: "white",
     fontWeight: "bold",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
-    gap: 15,
-    marginTop: 50,
-  },
-  saveButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 300,
-    height: 45,
-    justifyContent: "center",
-  },
-  saveButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  noThanksButton: {
-    backgroundColor: "#D3D3D3",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    width: 150,
-    height: 45,
-    justifyContent: "center",
-  },
-  noThanksButtonText: {
-    color: "black",
-    fontSize: 12,
-    textAlign: "center",
   },
 });

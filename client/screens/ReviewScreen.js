@@ -76,7 +76,7 @@ export default function ReviewScreen() {
       const teamMemberData = await teamMemberResponse.json();
       const feedbackData = await feedbackResponse.json();
 
-      console.log("TEAM MEMBER DATA: ", teamMemberData);
+      console.log("FEEDBACK DATA: ", feedbackData);
 
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
@@ -87,7 +87,9 @@ export default function ReviewScreen() {
         teammembers: Array.isArray(teamMemberData.teamMembers)
           ? teamMemberData.teamMembers
           : [],
-        feedback: Array.isArray(feedbackData) ? feedbackData : [],
+        feedback: Array.isArray(feedbackData.feedback)
+          ? feedbackData.feedback
+          : [],
       });
 
       setUserContext((prev) => ({
@@ -142,7 +144,7 @@ export default function ReviewScreen() {
         style={{ flex: 1, backgroundColor: "white" }}
         contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
         <View style={sharedStyles.body}>
-          <Text style={[sharedStyles.title, { marginTop: 80 }]}>Review</Text>
+          <Text style={[sharedStyles.title, { marginTop: 120 }]}>Review</Text>
 
           <View style={styles.teamMemberDataBox}>
             <Text style={styles.sectionTitle}>Your Habit:</Text>

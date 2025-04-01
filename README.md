@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Habit-App** is a **habit formation tool** that reinforces behavior change through **community engagement**. Designed for **corporate teams**, it allows users to set personal habits and receive **feedback** from their selected support network.
+**Habit-App** is a **habit formation tool** that reinforces behavior change through **team engagement**. Designed for **corporate teams**, it allows individuals to set and build consistent habits with the support of their community.
 
 The application is developed for **Westwood International** and **Greg Zlevor**, with **design leadership from Image Makers and Dan Holmgren**.
 
@@ -15,6 +15,7 @@ The application is developed for **Westwood International** and **Greg Zlevor**,
 - **MongoDB** – Stores user data, habits, and team feedback
 - **JWT Authentication** – Secure login with token-based authentication
 - **Expo** – Simplifies mobile development workflow
+- **Render** – Backend hosting
 
 ---
 
@@ -67,15 +68,11 @@ habit-app
 ---
 
 1. Clone repo: git clone https://github.com/nsLittle/habit-app.git
-2. Type: mongosh
-3. Find: server
-4. Type: npm install
-5. Type: npm run dev
-6. Find: client
-7. Type: npm install
-8. Type: npx expo start
-9. Scan: QR code to run app on phone (OR)
-10. Type: W to run app on browser
+2. Find: client
+3. Type: npm install
+4. Type: npx expo start
+5. Scan: QR code to run app on phone (OR)
+6. Type: W to run app on browser
 
 ---
 
@@ -88,6 +85,7 @@ To test the app immediately without creating a new account:
 3. Login credentials:
     **Username**: `Sheep`
     **Password**: `Password1!`
+    **First login will take time
 
 This account includes:
 - **Habit**: *"I want to become a sheep dog like Babe"*
@@ -98,6 +96,14 @@ This account includes:
   - 🐱 Kitty Kat
   - 🐶 Doggy Dog
   - 🐭 Mousey Mouse
+
+---
+
+## Deployment
+
+- **Render**: Backend
+- **Expo**: Frontend
+- **Seeded Demo User**: User with team members and habits
 
 ---
 

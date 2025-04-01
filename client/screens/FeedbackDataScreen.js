@@ -212,7 +212,7 @@ export default function FeedbackDataScreen() {
             <Text>No feedback available.</Text>
           )}
 
-          {processedFeedback.length >= 1 && (
+          {processedFeedback.lewngth >= 1 && (
             <View style={sharedStyles.buttonRow}>
               <TouchableOpacity
                 style={sharedStyles.yellowButton}
@@ -223,9 +223,12 @@ export default function FeedbackDataScreen() {
                   setDialogAction("completeHabit");
                   setShowDialog(true);
                 }}>
-                <Text style={sharedStyles.buttonText}>
-                  Review & Complete Habit
-                </Text>
+                <Text style={sharedStyles.buttonText}>Complete Habit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={sharedStyles.greyButton}
+                onPress={() => navigation.navigate("ReviewScreen")}>
+                <Text style={sharedStyles.buttonText}>Review Habit</Text>
               </TouchableOpacity>
             </View>
           )}
