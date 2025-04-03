@@ -128,28 +128,19 @@ export default function FeedbackRequestScreen() {
       <View style={styles.body}>
         <Text style={styles.title}>Feedback Request</Text>
 
-        {teamMembers.map((member, idx) => (
-          <View key={idx} style={styles.memberBox}>
-            <DefaultProfiler
-              uri={member.teamMemberProfilePic}
-              style={styles.profileImage}
-            />
-            <View style={styles.memberInfo}>
-              <Text style={styles.name}>
-                {member.teamMemberFirstName} {member.teamMemberLastName}
-              </Text>
-              <Text style={styles.email}>{member.teamMemberEmail}</Text>
-
-              {/* <TouchableOpacity
-                style={styles.buttonGray}
-                onPress={() => {
-                  navigation.navigate("FeedbackRequestWelcomeScreen", {
-                    teammemberId: member._id,
-                    token,
-                  });
-                }}>
-                <Text style={styles.buttonText}>Test Feedback UI</Text>
-              </TouchableOpacity> */}
+        {teamMembers.map((member, index) => (
+          <View key={index} style={styles.memberBox}>
+            <View style={styles.memberInnerContent}>
+              <DefaultProfiler
+                uri={member.teamMemberProfilePic}
+                style={styles.profileImage}
+              />
+              <View style={styles.memberInfo}>
+                <Text style={styles.name}>
+                  {member.teamMemberFirstName} {member.teamMemberLastName}
+                </Text>
+                {/* <Text style={styles.email}>{member.teamMemberEmail}</Text> */}
+              </View>
             </View>
           </View>
         ))}
@@ -198,13 +189,20 @@ const styles = StyleSheet.create({
   memberBox: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
     borderColor: "#D3D3D3",
     borderWidth: 1,
     backgroundColor: "#F9F9F9",
     borderRadius: 15,
     padding: 10,
     marginVertical: 8,
-    width: wp("85%"),
+    width: wp("65%"),
+  },
+  memberInnerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   profileImage: {
     width: 40,

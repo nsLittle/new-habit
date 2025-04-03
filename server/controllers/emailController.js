@@ -40,6 +40,16 @@ exports.triggerEmailRequest = async (req, res) => {
       const htmlContent = `
   <p>Hi ${firstName} ${lastName},</p>
   <p>${username} is working on their habit and would love to get your feedback!</p>
+
+  <p>
+Until the app is available in the Apple App Store, the link below won’t open automatically when tapped. But you can still help:</p>
+<ul>  
+<li>1. Open the Habit App manually (via Expo Go or Android install).</li>
+<li>2. Navigate to the “Feedback Request” screen.</li>
+<li>3. Web preview (for testers only):</li>
+<li>http://localhost:8081/FeedbackRequestWelcomeScreen/${member.teamMember_id}/${token}
+</li>
+</ul>
   <p><a href="${deepLink}">Click here to give feedback</a></p>
   <p>Or copy and paste this link into your app:<br>${deepLink}</p>
   <p>Thank you!<br>Your Habit Formation Team</p>

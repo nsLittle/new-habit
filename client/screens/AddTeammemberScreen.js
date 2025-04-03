@@ -132,13 +132,15 @@ export default function AddTeammemberScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
           onDismiss={() => setShowDialog(false)}
           style={styles.dialog}>
-          <Dialog.Title style={styles.dialogTitle}>Alert</Dialog.Title>
+          <Dialog.Title style={sharedStyles.dialogTitleAlert}>
+            Alert
+          </Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
           </Dialog.Content>

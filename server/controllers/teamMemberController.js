@@ -50,11 +50,8 @@ exports.addTeamMember = async (req, res) => {
 };
 
 exports.getAllTeamMembers = async (req, res) => {
-  // console.log("I'm getting team members!");
   try {
     const { username } = req.params;
-    // console.log("Fetching team members for:", username);
-
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -76,9 +73,6 @@ exports.getAllTeamMembers = async (req, res) => {
 exports.getTeamMember = async (req, res) => {
   try {
     const { username, teamMember_id } = req.params;
-
-    // console.log(`Fetching team member ${teamMember_id} for user ${username}`);
-
     const user = await User.findOne({ username });
 
     if (!user) {

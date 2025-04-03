@@ -119,6 +119,15 @@ Note: `.aab` files are intended for publishing to the Google Play Store. If you 
 
 ---
 
+### Why This App Isn't a Standalone on iPhone
+
+The Android app is available as a standalone build (via `.apk` and `.aab`).
+The iOS version has not yet been submitted to TestFlight or the App Store because I’m waiting on a full code review before finalizing deep link handling and Apple-specific setup.
+
+Once the codebase is stable, I’ll register the iOS app and complete the required Apple team configuration and Universal Link setup.
+
+---
+
 ### For Testing Without Publishing to Play Store
 
 To generate an installable `.apk` for direct distribution:

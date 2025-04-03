@@ -271,7 +271,7 @@ export default function ReviewScreen() {
 
             <TouchableOpacity
               style={
-                teammembers.length < 3
+                teammembers.length >= 3
                   ? sharedStyles.yellowButton
                   : sharedStyles.greyButton
               }

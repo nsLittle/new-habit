@@ -76,17 +76,13 @@ export default function TeamInviteScreen() {
     }
   };
 
-  console.log("teamMembers:", teamMembers);
-  console.log("teamMembers.length:", teamMembers?.length);
-  console.log("Final button style:", [
-    sharedStyles.buttonYellow,
-    teamMembers.length < 3 && styles.buttonDisabled,
-  ]);
-
   return (
     <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
-        <Dialog visible={showDialog} onDismiss={() => setShowDialog(false)}>
+        <Dialog
+          visible={showDialog}
+          onDismiss={() => setShowDialog(false)}
+          style={{ backgroundColor: "white" }}>
           <Dialog.Title>Notice</Dialog.Title>
           <Dialog.Content>
             <Text>{dialogMessage}</Text>
@@ -135,6 +131,10 @@ export default function TeamInviteScreen() {
           </View>
         ))}
 
+        <Text style={styles.note}>
+          You must have at least 3 team members to proceed
+        </Text>
+
         <TouchableOpacity
           style={[
             sharedStyles.yellowButton,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 8,
     width: wp("65%"),
-    marginBottom: 50,
+    marginBottom: 20,
   },
   profileImage: {
     width: 40,
@@ -203,5 +203,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 20,
     marginRight: 50,
+  },
+  note: {
+    marginBottom: 35,
   },
 });
