@@ -120,7 +120,11 @@ export default function LoginScreen() {
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button labelStyle={sharedStyles.dialogButtonConfirm}>OK</Button>
+            <Button
+              onPress={() => setShowDialog(false)}
+              labelStyle={sharedStyles.dialogButtonConfirm}>
+              OK
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

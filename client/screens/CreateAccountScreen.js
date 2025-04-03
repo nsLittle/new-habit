@@ -162,9 +162,11 @@ export default function CreateAccountScreen() {
 
       setDialogMessage("Account created successfully!");
       setShowDialog(true);
+
       setTimeout(() => {
         navigation.navigate("CreateHabitScreen");
       }, 500);
+      return;
     } catch (error) {
       setDialogMessage("Signup error. Please try again.");
       setShowDialog(true);
@@ -206,7 +208,7 @@ export default function CreateAccountScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() => setShowDialog(false)}
+              onPress={() => setShowPictureDialog(false)}
               labelStyle={sharedStyles.dialogButtonConfirm}>
               OK
             </Button>
@@ -226,7 +228,11 @@ export default function CreateAccountScreen() {
             <Text>• At least one number</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button labelStyle={sharedStyles.dialogButtonConfirm}>Close</Button>
+            <Button
+              onPress={() => setShowPasswordDialog(false)}
+              labelStyle={sharedStyles.dialogButtonConfirm}>
+              Close
+            </Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -241,7 +247,11 @@ export default function CreateAccountScreen() {
             <Text>Once created username can not be changed.</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button labelStyle={sharedStyles.dialogButtonConfirm}>Close</Button>
+            <Button
+              onPress={() => setShowUsernameDialog(false)}
+              labelStyle={sharedStyles.dialogButtonConfirm}>
+              Close
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

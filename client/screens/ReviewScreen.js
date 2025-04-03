@@ -122,6 +122,12 @@ export default function ReviewScreen() {
   }, [userNameContext]);
 
   const { habits, teammembers, feedback } = profileData;
+  const currentHabit = habits[0];
+  const isHabitSettingsComplete =
+    habitContextInput &&
+    descriptionContextInput &&
+    currentHabit?.cadence &&
+    currentHabit?.reminders?.isReminderEnabled;
   const hasTeamMembers = teammembers.length > 0;
   const hasFeedback = feedback.some(
     (fb) => String(fb.habitId) === String(habitContextId)
@@ -243,7 +249,7 @@ export default function ReviewScreen() {
           <View style={sharedStyles.buttonColumn}>
             <TouchableOpacity
               style={
-                teammembers.length >= 3
+                isHabitSettingsComplete
                   ? sharedStyles.greyButton
                   : sharedStyles.yellowButton
               }
@@ -254,14 +260,18 @@ export default function ReviewScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={sharedStyles.greyButton}
+              style={
+                teammembers.length < 3
+                  ? sharedStyles.yellowButton
+                  : sharedStyles.greyButton
+              }
               onPress={() => navigation.navigate("TeamInviteScreen")}>
               <Text style={sharedStyles.buttonText}>Edit Team Members</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={
-                teammembers.length >= 3
+                teammembers.length < 3
                   ? sharedStyles.yellowButton
                   : sharedStyles.greyButton
               }

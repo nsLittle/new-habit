@@ -140,7 +140,7 @@ export default function FeedbackRequestScreen() {
               </Text>
               <Text style={styles.email}>{member.teamMemberEmail}</Text>
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.buttonGray}
                 onPress={() => {
                   navigation.navigate("FeedbackRequestWelcomeScreen", {
@@ -149,7 +149,7 @@ export default function FeedbackRequestScreen() {
                   });
                 }}>
                 <Text style={styles.buttonText}>Test Feedback UI</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         ))}

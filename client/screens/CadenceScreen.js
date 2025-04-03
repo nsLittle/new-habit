@@ -80,16 +80,6 @@ export default function CadenceScreen() {
           setCadenceInput(foundCadence);
           setExistingCadence(foundCadence);
           setIncompleteHabit(incompleteHabit);
-
-          // if (foundCadence) {
-          //   setDialogMessage("Do you want to edit your existing cadence?");
-          //   setDialogAction("editOrSkip");
-          //   setShowDialog(true);
-
-          //   setTimeout(() => {
-          //     setShowDialog(false);
-          //   }, 10000);
-          // }
         }
       } catch (error) {
         console.error("Error checking existing cadence:", error);
@@ -125,7 +115,7 @@ export default function CadenceScreen() {
       const data = await response.json();
 
       setDialogMessage("Feedback cadence updated successfully.");
-      navigation.navigate("ReviewScreen");
+      navigation.navigate("ReminderScreen");
     } catch (error) {
       console.error("Error updating feedback cadence:", error);
       setDialogMessage("Failed to update feedback cadence. Please try again.");

@@ -171,7 +171,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
     marginVertical: 8,
-    width: wp("85%"),
+    width: wp("65%"),
+    marginBottom: 50,
   },
   profileImage: {
     width: 40,
@@ -184,10 +185,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3,
     elevation: 2,
+    marginLeft: 100,
   },
   memberInfo: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 30,
   },
   name: {
     fontSize: 14,
@@ -199,6 +201,7 @@ const styles = StyleSheet.create({
   },
   iconGroup: {
     flexDirection: "row",
-    gap: 10,
+    gap: 20,
+    marginRight: 50,
   },
 });

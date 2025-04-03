@@ -19,13 +19,24 @@ export default function EditTeammemberScreen() {
   const navigation = useNavigation();
 
   const route = useRoute();
-  const { firstName, lastName, email, profilePic, teamMember_id } =
-    route.params || {};
+  const {
+    teamMemberFirstName,
+    teamMemberLastName,
+    teamMemberEmail,
+    teamMemberProfilePic,
+    _id,
+  } = route.params || {};
 
-  const [editedFirstName, setEditedFirstName] = useState(firstName || "");
-  const [editedLastName, setEditedLastName] = useState(lastName || "");
-  const [editedEmail, setEditedEmail] = useState(email || "");
-  const [editedProfilePic, setEditedProfilePic] = useState(profilePic || "");
+  const [editedFirstName, setEditedFirstName] = useState(
+    teamMemberFirstName || ""
+  );
+  const [editedLastName, setEditedLastName] = useState(
+    teamMemberLastName || ""
+  );
+  const [editedEmail, setEditedEmail] = useState(teamMemberEmail || "");
+  const [editedProfilePic, setEditedProfilePic] = useState(
+    teamMemberProfilePic || ""
+  );
 
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -40,13 +51,6 @@ export default function EditTeammemberScreen() {
     }
   };
   const [userData, setUserData] = useState("");
-
-  useEffect(() => {
-    setEditedFirstName(firstName);
-    setEditedLastName(lastName);
-    setEditedEmail(email);
-    setEditedProfilePic(profilePic);
-  }, []);
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
@@ -74,9 +78,9 @@ export default function EditTeammemberScreen() {
 
       if (!token) throw new Error("Authentication token is missing.");
 
-      const routeCheck = `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`;
+      const routeCheck = `${BASE_URL}/teammember/${userNameContext}/${_id}`;
       const response = await fetch(
-        `${BASE_URL}/teammember/${userNameContext}/${teamMember_id}`,
+        `${BASE_URL}/teammember/${userNameContext}/${_id}`,
         {
           method: "PATCH",
           headers: {
@@ -137,13 +141,13 @@ export default function EditTeammemberScreen() {
       </Portal>
 
       <View style={sharedStyles.body}>
-        <View style={styles.bodyTitleContainer}>
+        <View style={sharedStyles.bodyTitleContainer}>
           <Text style={sharedStyles.title}>Edit Team Member</Text>
         </View>
 
-        {profilePic ? (
+        {editedProfilePic ? (
           <Image
-            source={{ uri: profilePic }}
+            source={{ uri: editedProfilePic }}
             style={sharedStyles.profilePicMain}
           />
         ) : null}

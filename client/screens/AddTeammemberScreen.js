@@ -153,7 +153,7 @@ export default function AddTeammemberScreen() {
       </Portal>
 
       <View style={sharedStyles.body}>
-        <View style={styles.bodyTitleContainer}>
+        <View style={sharedStyles.bodyTitleContainer}>
           <Text style={sharedStyles.title}>Add Team Member</Text>
         </View>
 
