@@ -120,8 +120,16 @@ export const sharedStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  passwordInput: {
+    flex: 1,
+    height: 40,
+    padding: 10,
+    backgroundColor: "transparent",
+  },
   filledInput: {
-    backgroundColor: "#E6FFCC",
+    backgroundColor: "#E6F0FF",
+    borderColor: "#87CEFA",
+    borderWidth: 1,
   },
   passwordContainer: {
     flexDirection: "row",
@@ -132,15 +140,7 @@ export const sharedStyles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "#F0F0F0",
     marginBottom: 10,
-  },
-  passwordInput: {
-    flex: 1,
-    height: 40,
-    padding: 10,
-    backgroundColor: "transparent",
-  },
-  filledInput: {
-    backgroundColor: "#E6FFCC",
+    overflow: "hidden",
   },
 
   // PICTURES
@@ -189,6 +189,9 @@ export const sharedStyles = StyleSheet.create({
   // ICONS
   iconButton: {
     padding: 10,
+    height: "100%",
+    justifyContent: "center",
+    backgroundColor: "transparent",
   },
 
   // ETC

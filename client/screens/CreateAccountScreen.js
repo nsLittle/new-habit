@@ -186,7 +186,11 @@ export default function CreateAccountScreen() {
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button labelStyle={sharedStyles.dialogButtonConfirm}>OK</Button>
+            <Button
+              onPress={() => setShowDialog(false)}
+              labelStyle={sharedStyles.dialogButtonConfirm}>
+              OK
+            </Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -201,7 +205,11 @@ export default function CreateAccountScreen() {
             <Text>Enter an url that points to your profile image.</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button labelStyle={sharedStyles.dialogButtonConfirm}>Close</Button>
+            <Button
+              onPress={() => setShowDialog(false)}
+              labelStyle={sharedStyles.dialogButtonConfirm}>
+              OK
+            </Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -282,12 +290,14 @@ export default function CreateAccountScreen() {
             onBlur={() => handleBlur("email", email)}
           />
 
-          <View style={sharedStyles.passwordContainer}>
+          <View
+            style={[
+              sharedStyles.passwordContainer,
+              filledFields.profilePic && sharedStyles.filledInput,
+            ]}>
             <TextInput
-              style={[
-                sharedStyles.passwordInput,
-                filledFields.profilePic && sharedStyles.filledInput,
-              ]}
+              style={sharedStyles.passwordInput}
+              v
               placeholder="Profile Picture"
               value={profilePic}
               onChangeText={setProfilePic}
