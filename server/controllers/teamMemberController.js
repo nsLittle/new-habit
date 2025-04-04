@@ -198,6 +198,7 @@ exports.deleteTeamMember = async (req, res) => {
 };
 
 exports.getUserByTeamMemberId = async (req, res) => {
+  console.log("I'm here to get user my team member id");
   try {
     const { teammemberId } = req.params;
 
