@@ -44,27 +44,26 @@ export default function FeedbackRequestWelcomeScreen() {
   // const [deeplinkTeammemberId, setDeeplinkTeammemberId] = useState(null);
 
   const route = useRoute();
-  const { token, teammemberId } = route.params || {};
+  const { token, teamMemberId } = route.params || {};
   console.log("Route Params: ", route.params);
-  const teamMemberId = route.params.teamMemberId;
   console.log("TEam member ID: ", teamMemberId);
 
   const fetchUserData = async () => {
     try {
-      if (!token || !teammemberId) {
+      if (!token || !teamMemberId) {
         console.warn("Missing token or teammemberId — skipping fetch.");
         return;
       }
 
-      console.log("Fetching:", `${BASE_URL}/teammember/${teammemberId}`);
-      console.log("userResponse status:", userResponse.status);
+      console.log("Fetching:", `${BASE_URL}/teammember/${teamMemberId}`);
 
       const userResponse = await fetch(
-        `${BASE_URL}/teammember/${teammemberId}`,
+        `${BASE_URL}/teammember/${teamMemberId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log("userResponse status:", userResponse.status);
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       const userData = await userResponse.json();
@@ -85,7 +84,7 @@ export default function FeedbackRequestWelcomeScreen() {
         fetch(`${BASE_URL}/feedback/${username}/${habitContextId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${BASE_URL}/teammember/${username}/${teammemberId}`, {
+        fetch(`${BASE_URL}/teammember/${username}/${teamMemberId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -132,13 +131,13 @@ export default function FeedbackRequestWelcomeScreen() {
       teamMemberId,
     });
 
-    if (userNameContext && token && teamMemberId) {
+    if (token && teamMemberId) {
       console.log("🟢 All required values present. Calling fetchUserData.");
       fetchUserData();
     } else {
       console.log("🔴 Missing data — skipping fetchUserData.");
     }
-  }, [userNameContext, token, teammemberId]);
+  }, [userNameContext, token, teamMemberId]);
 
   console.log("TEam member id: ", teamMemberId, "Token: ", token);
 
