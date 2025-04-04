@@ -16,7 +16,7 @@ router.get("/:username/:teamMember_id", protect, getTeamMember);
 router.patch("/:username/:teamMember_id", protect, updateTeamMember);
 router.delete("/:username/:teamMember_id", protect, deleteTeamMember);
 router.get(
-  "/:teamMember_id" / get - via - teammember,
+  "/:teamMember_id/get-from-teammember",
   protect,
   getUserByTeamMemberId
 );
