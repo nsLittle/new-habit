@@ -21,8 +21,8 @@ import { sharedStyles } from "../styles/sharedStyles";
 export default function ProfileScreen() {
   const navigation = useNavigation();
 
-  const routes = navigation.getState().routes;
-  const currentRoute = routes[routes.length - 1]?.name;
+  // const routes = navigation.getState().routes;
+  // const currentRoute = routes[routes.length - 1]?.name;
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
   const {
@@ -120,46 +120,31 @@ export default function ProfileScreen() {
   const testImage =
     "https://media.wired.com/photos/5cdefc28b2569892c06b2ae4/master/w_2560%2Cc_limit/Culture-Grumpy-Cat-487386121-2.jpg";
 
-  // const sendEmail = (emailContext) => {
-  //   if (email) {
-  //     const mailtoURL = `mailto:${email}`;
-  //     Linking.openURL(mailtoURL).catch((err) =>
-  //       console.error("Failed to open email client", err)
-  //     );
-  //     setDialogMessage("Failed to open email client.");
-  //     setShowDialog(true);
-  //   } else {
-  //     console.error("No email address provided");
-  //     setDialogMessage("No email address provided");
-  //     setShowDialog(true);
-  //   }
-  // };
+  // useEffect(() => {
+  //   if (currentRoute !== "ProfileScreen") return;
 
-  useEffect(() => {
-    if (currentRoute !== "ProfileScreen") return;
+  //   const checkData = async () => {
+  //     if (!habitContextId || !userNameContext || !token) return;
+  //     console.log(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`);
 
-    const checkData = async () => {
-      if (!habitContextId || !userNameContext || !token) return;
-      console.log(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`);
+  //     try {
+  //       const feedbackResponse = await fetch(
+  //         `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
+  //         {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }
+  //       );
+  //       const feedbacks = await feedbackResponse.json();
+  //       console.log("Feedbacks: ", feedbacks);
 
-      try {
-        const feedbackResponse = await fetch(
-          `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const feedbacks = await feedbackResponse.json();
-        console.log("Feedbacks: ", feedbacks);
+  //       navigation.navigate("ReviewScreen");
+  //     } catch (error) {
+  //       console.error("Error during login check:", error);
+  //     }
+  //   };
 
-        navigation.navigate("ReviewScreen");
-      } catch (error) {
-        console.error("Error during login check:", error);
-      }
-    };
-
-    checkData();
-  }, [userContext, currentRoute]);
+  //   checkData();
+  // }, [userContext, currentRoute]);
 
   return (
     <ScrollView contentContainerStyle={sharedStyles.container}>

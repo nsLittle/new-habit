@@ -98,7 +98,7 @@ export default function LoginScreen() {
       }));
 
       setTimeout(() => {
-        navigation.navigate("ProfileScreen");
+        navigation.navigate("ReviewScreen");
       }, 200);
     } catch (error) {
       setDialogMessage("Something went wrong");

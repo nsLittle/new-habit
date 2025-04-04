@@ -37,50 +37,53 @@ export default function ReviewScreen() {
     try {
       if (!token) throw new Error("Authentication token is missing.");
 
-      const [
-        userResponse,
-        habitsResponse,
-        teamMemberResponse,
-        feedbackResponse,
-      ] = await Promise.all([
-        fetch(`${BASE_URL}/user/${userNameContext}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${BASE_URL}/habit/${userNameContext}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${BASE_URL}/teammember/${userNameContext}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+      const [userResponse, habitsResponse, teamMemberResponse] =
+        await Promise.all([
+          fetch(`${BASE_URL}/user/${userNameContext}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${BASE_URL}/habit/${userNameContext}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${BASE_URL}/teammember/${userNameContext}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-      console.log("user:", userResponse.status);
-      console.log("habits:", habitsResponse.status);
-      console.log("teamMembers:", teamMemberResponse.status);
-      console.log("feedback:", feedbackResponse.status);
+      console.log("user:", userResponse);
+      console.log("habits:", habitsResponse);
+      console.log("teamMembers:", teamMemberResponse);
 
-      if (
-        !userResponse.ok ||
-        !habitsResponse.ok ||
-        !teamMemberResponse.ok ||
-        !feedbackResponse.ok
-      ) {
+      if (!userResponse.ok || !habitsResponse.ok || !teamMemberResponse.ok) {
         throw new Error("One or more requests failed.");
       }
 
       const userData = await userResponse.json();
       const habitData = await habitsResponse.json();
       const teamMemberData = await teamMemberResponse.json();
-      const feedbackData = await feedbackResponse.json();
 
-      console.log("FEEDBACK DATA: ", feedbackData);
+      console.log("User Dadta: ", userData);
+      console.log("Habit Data: ", habitData);
+      console.log("Team member Data: ", teamMemberData);
 
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
       );
+      const currentHabitId = incompleteHabits[0]?._id;
+
+      const feedbackResponse = await fetch(
+        `${BASE_URL}/feedback/${userNameContext}/${currentHabitId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!feedbackResponse.ok) {
+        throw new Error("Feedback request failed.");
+      }
+
+      const feedbackData = await feedbackResponse.json();
+      console.log("Feedback Data: ", feedbackData);
 
       setProfileData({
         habits: incompleteHabits,
@@ -144,6 +147,10 @@ export default function ReviewScreen() {
     );
   }
 
+  console.log("currentHabit:", currentHabit);
+  console.log("habitContextInput (from context):", habitContextInput);
+  console.log("profileData.habits:", profileData.habits);
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
@@ -156,12 +163,10 @@ export default function ReviewScreen() {
             <Text style={styles.sectionTitle}>Your Habit:</Text>
             {Array.isArray(habits) && habits.length > 0 ? (
               <View>
-                <Text style={styles.centeredData}>
-                  {habitContextInput || "No Habit Available"}
-                </Text>
+                <Text>{currentHabit?.habit || "No Habit Available"}</Text>
                 <Text style={styles.sectionTitle}>What that looks like:</Text>
                 <Text style={styles.centeredData}>
-                  {descriptionContextInput || "No Description Available"}
+                  {currentHabit?.description || "No Description Available"}
                 </Text>
               </View>
             ) : (
