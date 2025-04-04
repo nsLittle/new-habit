@@ -103,22 +103,15 @@ exports.getTeamMember = async (req, res) => {
 };
 
 exports.updateTeamMember = async (req, res) => {
-  // console.log("I'm updating team members!");
-  // console.log("req.params:", req.params);
   try {
     const { username, teamMember_id } = req.params;
-    // console.log("Username:", username);
-    // console.log("Team Member ID:", teamMember_id);
-
     const user = await User.findOne({ username });
-    // console.log("User: ", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     if (!mongoose.Types.ObjectId.isValid(teamMember_id)) {
-      // console.log("Invalid teamMember_id format");
       return res.status(400).json({ message: "Invalid teamMember_id format" });
     }
 
@@ -135,8 +128,6 @@ exports.updateTeamMember = async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-
-    // console.log("Updated team member:", updatedTeamMember);
 
     if (!updatedTeamMember) {
       return res.status(404).json({ message: "Team member not updated" });
@@ -155,14 +146,10 @@ exports.updateTeamMember = async (req, res) => {
 };
 
 exports.deleteTeamMember = async (req, res) => {
-  // console.log("I'm here to delete a team member...");
   try {
     const { teamMember_id } = req.params;
-    console.log("Req Params: ", req.params);
+    // console.log("Req Params: ", req.params);
     const userIdFromToken = req.user.id;
-
-    // console.log("Received DELETE request for teamMember_id:", teamMember_id);
-    // console.log("Authenticated User ID:", userIdFromToken);
 
     if (!mongoose.Types.ObjectId.isValid(teamMember_id)) {
       console.error("Invalid ObjectId format:", teamMember_id);
@@ -173,8 +160,6 @@ exports.deleteTeamMember = async (req, res) => {
       _id: new mongoose.Types.ObjectId(teamMember_id),
       user: new mongoose.Types.ObjectId(userIdFromToken),
     });
-
-    // console.log("Fetched Team Member:", teamMember);
 
     if (!teamMember) {
       console.warn("Team member not found or does not belong to user.");
@@ -190,7 +175,6 @@ exports.deleteTeamMember = async (req, res) => {
       return res.status(500).json({ error: "Failed to delete team member." });
     }
 
-    // console.log("Deleted Team Member:", teamMember);
     res.status(200).json({ message: "Team member deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete team member" });
@@ -200,14 +184,14 @@ exports.deleteTeamMember = async (req, res) => {
 exports.getUserByTeamMemberId = async (req, res) => {
   console.log("I'm here to get user by team member id");
   try {
-    const { teammemberId } = req.params;
-    console.log("Team member Id: ", teammemberId);
+    const { teamMember_id } = req.params;
+    console.log("Team member Id: ", teamMember_id);
 
-    if (!mongoose.Types.ObjectId.isValid(teammemberId)) {
+    if (!mongoose.Types.ObjectId.isValid(teamMember_id)) {
       return res.status(400).json({ message: "Invalid teammember ID" });
     }
 
-    const teamMember = await TeamMember.findById(teammemberId);
+    const teamMember = await TeamMember.findById(teamMember_id);
     if (!teamMember) {
       return res.status(404).json({ message: "Team member not found" });
     }
