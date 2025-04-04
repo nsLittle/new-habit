@@ -61,7 +61,7 @@ export default function FeedbackRequestWelcomeScreen() {
       );
 
       const userResponse = await fetch(
-        `${BASE_URL}/teammember/${teamMemberId}`,
+        `${BASE_URL}/teammember/${teamMemberId}/get-from-teammember`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
