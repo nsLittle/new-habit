@@ -149,6 +149,7 @@ export default function ProfileScreen() {
   return (
     <ScrollView contentContainerStyle={sharedStyles.container}>
       <View style={sharedStyles.body}>
+        <Text style={[sharedStyles.title, { marginTop: 120 }]}>Profile</Text>
         <View style={styles.profileDataBox}>
           {profilePicContext ? (
             <Image

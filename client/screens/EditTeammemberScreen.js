@@ -106,7 +106,7 @@ export default function EditTeammemberScreen() {
 
       setTimeout(() => {
         setDialogVisible(false);
-        navigation.navigate("ProfileScreen", { userNameContext });
+        navigation.navigate("ReviewScreen", { userNameContext });
       }, 1000);
     } catch (err) {
       console.log("Error", err.message);

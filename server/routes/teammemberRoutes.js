@@ -15,6 +15,10 @@ router.post("/:username", protect, addTeamMember);
 router.get("/:username/:teamMember_id", protect, getTeamMember);
 router.patch("/:username/:teamMember_id", protect, updateTeamMember);
 router.delete("/:username/:teamMember_id", protect, deleteTeamMember);
-router.get("/:teamMember_id", protect, getUserByTeamMemberId);
+router.get(
+  "/:teamMember_id" / get - via - teammember,
+  protect,
+  getUserByTeamMemberId
+);
 
 module.exports = router;

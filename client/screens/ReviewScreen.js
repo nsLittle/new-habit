@@ -163,7 +163,9 @@ export default function ReviewScreen() {
             <Text style={styles.sectionTitle}>Your Habit:</Text>
             {Array.isArray(habits) && habits.length > 0 ? (
               <View>
-                <Text>{currentHabit?.habit || "No Habit Available"}</Text>
+                <Text style={styles.centeredData}>
+                  {currentHabit?.habit || "No Habit Available"}
+                </Text>
                 <Text style={styles.sectionTitle}>What that looks like:</Text>
                 <Text style={styles.centeredData}>
                   {currentHabit?.description || "No Description Available"}
