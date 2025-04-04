@@ -56,6 +56,9 @@ export default function FeedbackRequestWelcomeScreen() {
         return;
       }
 
+      console.log("Fetching:", `${BASE_URL}/teammember/${teammemberId}`);
+      console.log("userResponse status:", userResponse.status);
+
       const userResponse = await fetch(
         `${BASE_URL}/teammember/${teammemberId}`,
         {
