@@ -70,20 +70,22 @@ export default function FeedbackRequestWelcomeScreen() {
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       const userData = await userResponse.json();
+      console.log("User data: ", userData);
+      console.log("Profile Pic: ", userData.profilePic);
       const username = userData.username;
 
       const [
         habitsResponse,
-        teamMembersResponse,
+        // teamMembersResponse,
         feedbackResponse,
         teamMemberResponse,
       ] = await Promise.all([
         fetch(`${BASE_URL}/habit/${username}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${BASE_URL}/teammember/${username}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        // fetch(`${BASE_URL}/teammember/${username}`, {
+        //   headers: { Authorization: `Bearer ${token}` },
+        // }),
         fetch(`${BASE_URL}/feedback/${username}/${habitContextId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
@@ -91,22 +93,21 @@ export default function FeedbackRequestWelcomeScreen() {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
+      console.log("Habit Response: ", habitsResponse);
+      console.log("feedbackResponse:", feedbackResponse);
 
       if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
-      if (!teamMembersResponse.ok)
-        throw new Error("Failed to fetch team members.");
       if (!feedbackResponse.ok) throw new Error("Failed to fetch feedback.");
       if (!teamMemberResponse.ok)
         throw new Error("Failed to fetch team member details.");
 
       const habitData = await habitsResponse.json();
-      const teamMembersData = await teamMembersResponse.json();
+      console.log("Habit Data: ", habitData);
       const feedbackData = await feedbackResponse.json();
       const teamMemberData = await teamMemberResponse.json();
 
       setTeamMemberData(teamMemberData?.teamMember || teamMemberData);
 
-      // ✅ Set minimal context based on fetched user info
       setUserContext((prev) => ({
         ...prev,
         username: userData.username,
@@ -117,7 +118,7 @@ export default function FeedbackRequestWelcomeScreen() {
         profilePic: userData.profilePic,
         habits: habitData.habit || [],
         habitId: habitData?.habits[0]?._id,
-        teammembers: teamMembersData.teamMembers || [],
+        teammembers: teamMemberData.teamMembers || [],
         feedbacks: feedbackData.feedback || [],
       }));
 

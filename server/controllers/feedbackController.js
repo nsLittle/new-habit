@@ -233,11 +233,11 @@ exports.getFeedback = async (req, res) => {
 
     console.log("Feedback:", feedback);
 
-    if (!feedback.length) {
-      return res
-        .status(200)
-        .json({ message: "No feedback found for this habit", feedback: [] });
-    }
+    // if (!feedback.length) {
+    //   return res
+    //     .status(200)
+    //     .json({ message: "No feedback found for this habit", feedback: [] });
+    // }
 
     console.log("Right before sneding feedback response...");
 
