@@ -43,86 +43,65 @@ export default function FeedbackRequestWelcomeScreen() {
   // const [deeplinkToken, setDeeplinkToken] = useState(null);
   // const [deeplinkTeammemberId, setDeeplinkTeammemberId] = useState(null);
 
-  // const route = useRoute();
-  // const { token: paramToken, teammemberId: paramTeammemberId } =
-  //   route.params || {};
-
-  // const token = paramToken || deeplinkToken;
-  // const teammemberId = paramTeammemberId || deeplinkTeammemberId;
-
   const route = useRoute();
   const { token, teammemberId } = route.params || {};
-
-  // useEffect(() => {
-  //   const getInitialUrl = async () => {
-  //     const initialUrl = await Linking.getInitialURL();
-  //     console.log("initialUrl", initialUrl);
-  //     if (initialUrl) {
-  //       const parsed = Linking.parse(initialUrl);
-  //       console.log("parsed object", parsed);
-  //       const [parsedTeammemberId, parsedToken] = parsed.path
-  //         .split("/")
-  //         .slice(1);
-  //       setDeeplinkToken(parsedToken);
-  //       setDeeplinkTeammemberId(parsedTeammemberId);
-
-  //       console.log("Parsed from deep link:", parsedTeammemberId, parsedToken);
-  //     }
-  //   };
-
-  //   getInitialUrl();
-  // }, []);
+  console.log("Route Params: ", route.params);
+  const teamMemberId = route.params.teamMemberId;
+  console.log("TEam member ID: ", teamMemberId);
 
   const fetchUserData = async () => {
     try {
-      if (!token) {
-        console.warn("Authentication token is missing. Skipping API calls.");
+      if (!token || !teammemberId) {
+        console.warn("Missing token or teammemberId — skipping fetch.");
         return;
       }
 
+      const userResponse = await fetch(
+        `${BASE_URL}/teammember/${teammemberId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
+      const userData = await userResponse.json();
+      const username = userData.username;
+
       const [
-        userResponse,
         habitsResponse,
         teamMembersResponse,
         feedbackResponse,
         teamMemberResponse,
       ] = await Promise.all([
-        fetch(`${BASE_URL}/user/${userNameContext}`, {
+        fetch(`${BASE_URL}/habit/${username}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${BASE_URL}/habit/${userNameContext}`, {
+        fetch(`${BASE_URL}/teammember/${username}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${BASE_URL}/teammember/${userNameContext}`, {
+        fetch(`${BASE_URL}/feedback/${username}/${habitContextId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${BASE_URL}/feedback/${userNameContext}/${habitContextId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${BASE_URL}/teammember/${userNameContext}/${teammemberId}`, {
+        fetch(`${BASE_URL}/teammember/${username}/${teammemberId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
 
-      if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
       if (!teamMembersResponse.ok)
-        throw new Error("Failed to fetch team members data.");
-      if (!feedbackResponse.ok)
-        throw new Error("Failed to fetch feedback data.");
+        throw new Error("Failed to fetch team members.");
+      if (!feedbackResponse.ok) throw new Error("Failed to fetch feedback.");
       if (!teamMemberResponse.ok)
-        throw new Error("Failed to fetch team member data.");
+        throw new Error("Failed to fetch team member details.");
 
-      const userData = await userResponse.json();
       const habitData = await habitsResponse.json();
       const teamMembersData = await teamMembersResponse.json();
       const feedbackData = await feedbackResponse.json();
       const teamMemberData = await teamMemberResponse.json();
+
       setTeamMemberData(teamMemberData?.teamMember || teamMemberData);
 
-      console.log("Raw teamMemberData response:", teamMemberData);
-      console.log("ROUTE PARAMS:", { teammemberId, token });
-
+      // ✅ Set minimal context based on fetched user info
       setUserContext((prev) => ({
         ...prev,
         username: userData.username,
@@ -132,29 +111,33 @@ export default function FeedbackRequestWelcomeScreen() {
         email: userData.email,
         profilePic: userData.profilePic,
         habits: habitData.habit || [],
-        habitId: habitData?.habits[0]._id,
-        teammembers: teamMemberData.teamMembers || [],
+        habitId: habitData?.habits[0]?._id,
+        teammembers: teamMembersData.teamMembers || [],
         feedbacks: feedbackData.feedback || [],
       }));
+
+      console.log("✅ Successfully hydrated context from token-based access.");
     } catch (error) {
-      console.error("Error with data retrieval:", error);
+      console.error("❌ Error with data retrieval:", error);
     }
   };
 
   useEffect(() => {
-    console.log(
-      "🟡 useEffect triggered with userNameContext:",
-      userNameContext
-    );
-    if (userNameContext) {
-      console.log("🟢 Calling fetchUserData");
+    console.log("🟡 useEffect triggered with:", {
+      userNameContext,
+      token,
+      teamMemberId,
+    });
+
+    if (userNameContext && token && teamMemberId) {
+      console.log("🟢 All required values present. Calling fetchUserData.");
       fetchUserData();
     } else {
-      console.log("🔴 Skipping fetchUserData due to missing userNameContext");
+      console.log("🔴 Missing data — skipping fetchUserData.");
     }
-  }, [userNameContext]);
+  }, [userNameContext, token, teammemberId]);
 
-  console.log("TEam member id: ", teamMemberData?._id, "TOken: ", token);
+  console.log("TEam member id: ", teamMemberId, "Token: ", token);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
