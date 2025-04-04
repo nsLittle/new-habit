@@ -198,9 +198,10 @@ exports.deleteTeamMember = async (req, res) => {
 };
 
 exports.getUserByTeamMemberId = async (req, res) => {
-  console.log("I'm here to get user my team member id");
+  console.log("I'm here to get user by team member id");
   try {
     const { teammemberId } = req.params;
+    console.log("Team member Id: ", teammemberId);
 
     if (!mongoose.Types.ObjectId.isValid(teammemberId)) {
       return res.status(400).json({ message: "Invalid teammember ID" });
@@ -210,6 +211,7 @@ exports.getUserByTeamMemberId = async (req, res) => {
     if (!teamMember) {
       return res.status(404).json({ message: "Team member not found" });
     }
+    console.log("TEam Member: ", teamMember);
 
     const user = await User.findById(teamMember.user);
     console.log("I'm here to find user using team memeber id...");
