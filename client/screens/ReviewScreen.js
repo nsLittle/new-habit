@@ -33,6 +33,8 @@ export default function ReviewScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [showStartPrompt, setShowStartPrompt] = useState(false);
+
   const fetchUserData = async () => {
     try {
       if (!token) throw new Error("Authentication token is missing.");
@@ -69,6 +71,20 @@ export default function ReviewScreen() {
       const incompleteHabits = habitData.habits.filter(
         (habit) => !habit.completed
       );
+
+      if (incompleteHabits.length === 0) {
+        setProfileData({
+          habits: [],
+          teammembers: Array.isArray(teamMemberData.teamMembers)
+            ? teamMemberData.teamMembers
+            : [],
+          feedback: [],
+        });
+        setShowStartPrompt(true);
+        setIsLoading(false);
+        return;
+      }
+
       const currentHabitId = incompleteHabits[0]?._id;
 
       const feedbackResponse = await fetch(
@@ -159,141 +175,158 @@ export default function ReviewScreen() {
         <View style={sharedStyles.body}>
           <Text style={[sharedStyles.title, { marginTop: 120 }]}>Review</Text>
 
-          <View style={styles.teamMemberDataBox}>
-            <Text style={styles.sectionTitle}>Your Habit:</Text>
-            {Array.isArray(habits) && habits.length > 0 ? (
-              <View>
-                <Text style={styles.centeredData}>
-                  {currentHabit?.habit || "No Habit Available"}
-                </Text>
-                <Text style={styles.sectionTitle}>What that looks like:</Text>
-                <Text style={styles.centeredData}>
-                  {currentHabit?.description || "No Description Available"}
-                </Text>
-              </View>
-            ) : (
-              <Text style={styles.noProfileData}>No habits available.</Text>
-            )}
-          </View>
-
-          <View style={styles.teamMemberDataBox}>
-            <Text style={styles.sectionTitle}>Your Feedback Cadence:</Text>
-            {Array.isArray(habits) && habits.length > 0 ? (
-              habits.map((habit) => (
-                <Text key={habit._id} style={styles.centeredData}>
-                  {habit.cadence || "No Feedback Cadence Available"}
-                </Text>
-              ))
-            ) : (
-              <Text style={styles.noProfileData}>
-                No feedback cadence available.
+          {showStartPrompt ? (
+            <>
+              <Text style={styles.completedMessage}>
+                🎉 You’ve completed your last habit! Ready to start a new one?
               </Text>
-            )}
-          </View>
-
-          <View style={styles.teamMemberDataBox}>
-            <Text style={styles.sectionTitle}>Your Reminder Cadence:</Text>
-            {Array.isArray(habits) && habits.length > 0 ? (
-              habits.map((habit) => (
-                <Text key={habit._id} style={styles.centeredData}>
-                  {habit.reminders && habit.reminders.isReminderEnabled
-                    ? `You will receive a ${
-                        habit.reminders.isTextReminderEnabled
-                          ? "text reminder"
-                          : habit.reminders.isEmailReminderEnabled
-                          ? "email reminder"
-                          : "reminder"
-                      } on ${
-                        Array.isArray(habit.reminders.selectedDays) &&
-                        habit.reminders.selectedDays.length > 0
-                          ? habit.reminders.selectedDays.join(", ")
-                          : "No days selected"
-                      } at ${
-                        habit.reminders.selectedTime?.hour ?? "--"
-                      }:${String(
-                        habit.reminders.selectedTime?.minute ?? "00"
-                      ).padStart(2, "0")} ${
-                        habit.reminders.selectedTime?.period ?? "--"
-                      }.`
-                    : "No Reminder Cadence Available"}
-                </Text>
-              ))
-            ) : (
-              <Text style={styles.noProfileData}>
-                No reminder schedule available.
-              </Text>
-            )}
-          </View>
-
-          <View style={styles.teamMemberDataBox}>
-            <Text style={styles.sectionTitle}>Your Feedback Team Members:</Text>
-            {teammembers && teammembers.length > 0 ? (
-              teammembers.map((teammember) => (
-                <View
-                  key={teammember.teamMemberId}
-                  style={styles.teamMemberProfileBox}>
-                  <View style={styles.outerBorder}>
-                    <View style={styles.innerBorder}>
-                      <DefaultProfiler
-                        uri={teammember.teamMemberProfilePic}
-                        style={styles.teamMemberProfilePic}
-                      />
-                    </View>
-                  </View>
-                  <Text style={styles.contactName}>
-                    {teammember.teamMemberFirstName || "No First Name"}{" "}
-                    {teammember.teamMemberLastName || "No Last Name"}
-                  </Text>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noProfileData}>
-                No team members available.
-              </Text>
-            )}
-          </View>
-
-          <View style={sharedStyles.buttonColumn}>
-            <TouchableOpacity
-              style={
-                isHabitSettingsComplete
-                  ? sharedStyles.greyButton
-                  : sharedStyles.yellowButton
-              }
-              onPress={() => navigation.navigate("EditReviewScreen")}>
-              <Text style={sharedStyles.buttonText}>
-                Edit Your Habit Setting
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={
-                teammembers.length < 3
-                  ? sharedStyles.yellowButton
-                  : sharedStyles.greyButton
-              }
-              onPress={() => navigation.navigate("TeamInviteScreen")}>
-              <Text style={sharedStyles.buttonText}>Edit Team Members</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={
-                teammembers.length >= 3
-                  ? sharedStyles.yellowButton
-                  : sharedStyles.greyButton
-              }
-              onPress={() => navigation.navigate("FeedbackRequestScreen")}>
-              <Text style={sharedStyles.buttonText}>Request Feedback</Text>
-            </TouchableOpacity>
-
-            {hasFeedback && (
               <TouchableOpacity
-                style={sharedStyles.greyButton}
-                onPress={() => navigation.navigate("FeedbackDataScreen")}>
-                <Text style={sharedStyles.buttonText}>Review Feedback</Text>
+                style={sharedStyles.yellowButton}
+                onPress={() => navigation.navigate("CreateHabitScreen")}>
+                <Text style={sharedStyles.buttonText}>Start a New Habit</Text>
               </TouchableOpacity>
-            )}
-          </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.teamMemberDataBox}>
+                <Text style={styles.sectionTitle}>Your Habit:</Text>
+                {Array.isArray(habits) && habits.length > 0 ? (
+                  <View>
+                    <Text>{currentHabit?.habit || "No Habit Available"}</Text>
+                    <Text style={styles.sectionTitle}>
+                      What that looks like:
+                    </Text>
+                    <Text style={styles.centeredData}>
+                      {currentHabit?.description || "No Description Available"}
+                    </Text>
+                  </View>
+                ) : (
+                  <Text style={styles.noProfileData}>No habits available.</Text>
+                )}
+              </View>
+
+              <View style={styles.teamMemberDataBox}>
+                <Text style={styles.sectionTitle}>Your Feedback Cadence:</Text>
+                {Array.isArray(habits) && habits.length > 0 ? (
+                  habits.map((habit) => (
+                    <Text key={habit._id} style={styles.centeredData}>
+                      {habit.cadence || "No Feedback Cadence Available"}
+                    </Text>
+                  ))
+                ) : (
+                  <Text style={styles.noProfileData}>
+                    No feedback cadence available.
+                  </Text>
+                )}
+              </View>
+
+              <View style={styles.teamMemberDataBox}>
+                <Text style={styles.sectionTitle}>Your Reminder Cadence:</Text>
+                {Array.isArray(habits) && habits.length > 0 ? (
+                  habits.map((habit) => (
+                    <Text key={habit._id} style={styles.centeredData}>
+                      {habit.reminders && habit.reminders.isReminderEnabled
+                        ? `You will receive a ${
+                            habit.reminders.isTextReminderEnabled
+                              ? "text reminder"
+                              : habit.reminders.isEmailReminderEnabled
+                              ? "email reminder"
+                              : "reminder"
+                          } on ${
+                            Array.isArray(habit.reminders.selectedDays) &&
+                            habit.reminders.selectedDays.length > 0
+                              ? habit.reminders.selectedDays.join(", ")
+                              : "No days selected"
+                          } at ${
+                            habit.reminders.selectedTime?.hour ?? "--"
+                          }:${String(
+                            habit.reminders.selectedTime?.minute ?? "00"
+                          ).padStart(2, "0")} ${
+                            habit.reminders.selectedTime?.period ?? "--"
+                          }.`
+                        : "No Reminder Cadence Available"}
+                    </Text>
+                  ))
+                ) : (
+                  <Text style={styles.noProfileData}>
+                    No reminder schedule available.
+                  </Text>
+                )}
+              </View>
+
+              <View style={styles.teamMemberDataBox}>
+                <Text style={styles.sectionTitle}>
+                  Your Feedback Team Members:
+                </Text>
+                {teammembers && teammembers.length > 0 ? (
+                  teammembers.map((teammember) => (
+                    <View
+                      key={teammember.teamMemberId}
+                      style={styles.teamMemberProfileBox}>
+                      <View style={styles.outerBorder}>
+                        <View style={styles.innerBorder}>
+                          <DefaultProfiler
+                            uri={teammember.teamMemberProfilePic}
+                            style={styles.teamMemberProfilePic}
+                          />
+                        </View>
+                      </View>
+                      <Text style={styles.contactName}>
+                        {teammember.teamMemberFirstName || "No First Name"}{" "}
+                        {teammember.teamMemberLastName || "No Last Name"}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.noProfileData}>
+                    No team members available.
+                  </Text>
+                )}
+              </View>
+
+              <View style={sharedStyles.buttonColumn}>
+                <TouchableOpacity
+                  style={
+                    isHabitSettingsComplete
+                      ? sharedStyles.greyButton
+                      : sharedStyles.yellowButton
+                  }
+                  onPress={() => navigation.navigate("EditReviewScreen")}>
+                  <Text style={sharedStyles.buttonText}>
+                    Edit Your Habit Setting
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={
+                    teammembers.length < 3
+                      ? sharedStyles.yellowButton
+                      : sharedStyles.greyButton
+                  }
+                  onPress={() => navigation.navigate("TeamInviteScreen")}>
+                  <Text style={sharedStyles.buttonText}>Edit Team Members</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={
+                    teammembers.length >= 3
+                      ? sharedStyles.yellowButton
+                      : sharedStyles.greyButton
+                  }
+                  onPress={() => navigation.navigate("FeedbackRequestScreen")}>
+                  <Text style={sharedStyles.buttonText}>Request Feedback</Text>
+                </TouchableOpacity>
+
+                {hasFeedback && (
+                  <TouchableOpacity
+                    style={sharedStyles.greyButton}
+                    onPress={() => navigation.navigate("FeedbackDataScreen")}>
+                    <Text style={sharedStyles.buttonText}>Review Feedback</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </>
+          )}
         </View>
       </ScrollView>
     </View>
