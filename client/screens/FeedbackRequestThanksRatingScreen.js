@@ -168,6 +168,15 @@ export default function FeedbackRequestThanksRatingScreen() {
       const data = await response.json();
       // console.log("Data: ", data);
 
+      if (!response.ok) {
+        setDialogMessage(
+          data?.message ||
+            "Thanks rating has already been sbmitted.  You can not resubmit until next feedback period."
+        );
+        setShowDialog(true);
+        return;
+      }
+
       setDialogMessage("Feedback thanks rating updated successfully.");
       setShowDialog(true);
       // console.log("Navigating with params:", {

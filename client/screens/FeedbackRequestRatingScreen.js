@@ -20,7 +20,7 @@ import { sharedStyles } from "../styles/sharedStyles";
 export default function FeedbackRequestRatingScreen() {
   const navigation = useNavigation();
 
-  const { userContext } = useContext(UserContext) || {};
+  const { userContext, setUserContext } = useContext(UserContext) || {};
   const userNameContext = userContext?.userNameContext || "";
   const firstNameContext = userContext?.firstNameContext || "";
   const habitContextId = userContext?.habitContextId || "";
@@ -43,6 +43,22 @@ export default function FeedbackRequestRatingScreen() {
 
   const route = useRoute();
   const { teammemberId, token } = route.params || {};
+
+  useEffect(() => {
+    const shouldUpdate =
+      (!userContext?.token && token) ||
+      (!userContext?.userNameContext && userNameContext) ||
+      (!userContext?.habitContextId && habitContextId);
+
+    if (shouldUpdate) {
+      setUserContext({
+        ...userContext,
+        token,
+        userNameContext,
+        habitContextId,
+      });
+    }
+  }, [token, userNameContext, habitContextId]);
 
   if (!teammemberId) {
     console.error("❌ ERROR: No teammemberId found in route params.");
@@ -145,6 +161,15 @@ export default function FeedbackRequestRatingScreen() {
       );
 
       const data = await response.json();
+
+      if (!response.ok) {
+        setDialogMessage(
+          data?.message ||
+            "Rating has already been sbmitted.  You can not resubmit until next feedback period."
+        );
+        setShowDialog(true);
+        return;
+      }
 
       setDialogMessage("Feedback rating updated successfully.");
       setShowDialog(true);

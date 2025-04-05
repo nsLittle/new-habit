@@ -113,6 +113,15 @@ export default function FeedbackRequestQualitativeScreen() {
       const data = await response.json();
       // console.log("Data: ", data);
 
+      if (!response.ok) {
+        setDialogMessage(
+          data?.message ||
+            "Rating has already been sbmitted.  You can not resubmit until next feedback period."
+        );
+        setShowDialog(true);
+        return;
+      }
+
       setDialogMessage("Feedback text updated successfully.");
       setShowDialog(true);
       navigation.navigate("NoThankYouScreen");

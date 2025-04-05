@@ -238,7 +238,8 @@ exports.editFeedbackThanksRating = async (req, res) => {
 
   try {
     const { habit_id } = req.params;
-    const { feedbackThanksRating, teamMemberId } = req.body;
+    const { feedbackThanksRating, teamMemberContextId } = req.body;
+    const teamMemberId = teamMemberContextId;
 
     if (!habit_id || !teamMemberId || feedbackThanksRating === undefined) {
       return res.status(400).json({
