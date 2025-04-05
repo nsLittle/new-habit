@@ -74,13 +74,23 @@ export default function FeedbackRequestRatingScreen() {
         );
 
         if (!response.ok) {
-          console.error("No existing rating found.");
-          setRatingValue("");
-          setExistingRating("");
-          return false;
+          console.log("No existing rating found - yay.");
+          return;
         }
 
         const data = await response.json();
+        const existingFeedback = data?.feedback?.find(
+          (fb) => fb.teammemberId === teammemberId
+        );
+
+        if (existingFeedback?.feedbackRating) {
+          console.log(
+            "Found existing rating:",
+            existingFeedback.feedbackRating
+          );
+          setRatingValue(existingFeedback.feedbackRating);
+          setExistingRating(existingFeedback.feedbackRating);
+        }
       } catch (error) {
         console.error("Error checking existing rating:", error);
       }
@@ -205,6 +215,7 @@ export default function FeedbackRequestRatingScreen() {
           <TouchableOpacity
             style={sharedStyles.yellowButton}
             onPress={() => {
+              console.log("🟡 Save button pressed");
               handleSave();
             }}>
             <Text style={sharedStyles.buttonText}>Save ▶</Text>

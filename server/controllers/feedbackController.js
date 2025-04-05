@@ -8,10 +8,10 @@ const sendEmail = require("../utils/emailSender");
 const Feedback = require("../models/Feedback");
 
 exports.submitFeedback = async (req, res) => {
-  // console.log("I'm here to submit feedback...");
+  console.log("I'm here to submit feedback...");
   try {
     const receivedData = req.params;
-    // console.log("Received Data: ", receivedData);
+    console.log("Received Data: ", receivedData);
     const { feedbackRating } = req.body;
 
     // console.log("✅ Username:", receivedData.username);

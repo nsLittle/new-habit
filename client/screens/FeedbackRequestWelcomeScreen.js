@@ -72,37 +72,36 @@ export default function FeedbackRequestWelcomeScreen() {
       const userData = await userResponse.json();
       console.log("User data: ", userData);
       console.log("Profile Pic: ", userData.profilePic);
+      const profilePic = userData.profilePic;
+      console.log("Profile Pic: ", profilePic);
       const username = userData.username;
 
-      const [
-        habitsResponse,
-        // teamMembersResponse,
-        feedbackResponse,
-        teamMemberResponse,
-      ] = await Promise.all([
-        fetch(`${BASE_URL}/habit/${username}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        // fetch(`${BASE_URL}/teammember/${username}`, {
-        //   headers: { Authorization: `Bearer ${token}` },
-        // }),
-        fetch(`${BASE_URL}/feedback/${username}/${habitContextId}`, {
+      const habitsResponse = await fetch(`${BASE_URL}/habit/${username}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
+      const habitData = await habitsResponse.json();
+      console.log("Habit Data: ", habitData);
+      const habitId = habitData?.habits?.[0]?._id;
+      console.log("Habit ID:", habitId);
+      const habitInput = habitData?.habits?.[0]?.habit;
+      console.log("Habit Input: ", habitInput);
+
+      if (!habitId) throw new Error("No habit ID found.");
+
+      const [feedbackResponse, teamMemberResponse] = await Promise.all([
+        fetch(`${BASE_URL}/feedback/${username}/${habitId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${BASE_URL}/teammember/${username}/${teamMemberId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
-      console.log("Habit Response: ", habitsResponse);
-      console.log("feedbackResponse:", feedbackResponse);
 
-      if (!habitsResponse.ok) throw new Error("Failed to fetch habit data.");
       if (!feedbackResponse.ok) throw new Error("Failed to fetch feedback.");
       if (!teamMemberResponse.ok)
         throw new Error("Failed to fetch team member details.");
 
-      const habitData = await habitsResponse.json();
-      console.log("Habit Data: ", habitData);
       const feedbackData = await feedbackResponse.json();
       const teamMemberData = await teamMemberResponse.json();
 
@@ -115,9 +114,9 @@ export default function FeedbackRequestWelcomeScreen() {
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-        profilePic: userData.profilePic,
+        profilePicContext: userData.profilePic,
         habits: habitData.habit || [],
-        habitId: habitData?.habits[0]?._id,
+        habitContextInput: habitInput,
         teammembers: teamMemberData.teamMembers || [],
         feedbacks: feedbackData.feedback || [],
       }));
@@ -144,6 +143,7 @@ export default function FeedbackRequestWelcomeScreen() {
   }, [userNameContext, token, teamMemberId]);
 
   console.log("TEam member id: ", teamMemberId, "Token: ", token);
+  console.log("📸 profilePicContext:", profilePicContext);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
