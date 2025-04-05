@@ -14,10 +14,10 @@ exports.submitFeedback = async (req, res) => {
     console.log("Received Data: ", receivedData);
     const { feedbackRating } = req.body;
 
-    // console.log("✅ Username:", receivedData.username);
-    // console.log("✅ Habit ID:", receivedData.habit_id);
-    // console.log("✅ Team Member ID:", receivedData.teammemberId);
-    // console.log("✅ Feedback Rating:", feedbackRating);
+    console.log("✅ Username:", receivedData.username);
+    console.log("✅ Habit ID:", receivedData.habit_id);
+    console.log("✅ Team Member ID:", receivedData.teammemberId);
+    console.log("✅ Feedback Rating:", feedbackRating);
     const username = receivedData.username;
     const habit_id = receivedData.habit_id;
     const teammemberId = receivedData.teammemberId;
@@ -27,7 +27,7 @@ exports.submitFeedback = async (req, res) => {
     }
 
     const habit = await Habit.findById(habit_id);
-    // console.log("Found habit: ", habit);
+    console.log("Found habit: ", habit);
 
     if (!habit) {
       return res.status(404).json({ error: "Habit not found" });
