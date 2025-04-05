@@ -102,119 +102,254 @@ exports.submitFeedback = async (req, res) => {
   }
 };
 
-exports.editFeedbackRating = async (req, res) => {
-  // console.log("Editing existing feedback...");
-  // console.log("Incoming PATCH request:", req.params);
-  // console.log("Incoming Request Body:", req.body);
-  // console.log("Team Member Id: ", req.body.teamMemberId);
-
-  try {
-    const { username, habit_id } = req.params;
-    // console.log("Username: ", username, "with habit id: ", habit_id);
-
-    const { feedbackRating, teamMemberId } = req.body;
-    // console.log("Feedback Rating: ", feedbackRating);
-
-    if (!habit_id || feedbackRating === undefined || !teamMemberId) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const updatedFeedback = await Feedback.findOneAndUpdate(
-      { habitId: habit_id, teamMemberId },
-      { $set: { feedbackRating } },
-      { new: true }
-    );
-
-    if (!updatedFeedback) {
-      return res.status(404).json({ message: "Feedback not found" });
-    }
-
-    // console.log("Successfully updating feedback rating");
-    return res.status(200).json({
-      message: "Feedback rating updated successfully",
-      feedback: updatedFeedback,
-    });
-  } catch (error) {
-    console.error("Error updating feedback rating:", error);
-    if (!res.headersSent) {
-      return res
-        .status(500)
-        .json({ error: "Failed to update feedback rating." });
-    }
-  }
-};
-
-exports.editFeedbackThanksRating = async (req, res) => {
-  console.log("Editing feedback thanks rating...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
-
-  try {
-    const { habit_id } = req.params;
-    console.log("Req Param: ", req.params);
-    const { feedbackThanksRating, teamMemberContextId } = req.body;
-    console.log("Req Body: ", req.body);
-    console.log(
-      "Feedback Thanks Rating: ",
-      feedbackThanksRating,
-      "Team Member ID: ",
-      teamMemberContextId
-    );
-    console.log("Team Member ID: ", teamMemberContextId);
-
-    const updatedFeedback = await Feedback.findOneAndUpdate(
-      { habitId: habit_id },
-      { $set: { feedbackThanksRating } },
-      { new: true }
-    );
-
-    console.log("Updated Feedback: ", updatedFeedback);
-
-    if (!updatedFeedback) {
-      return res.status(404).json({ message: "Feedback not found" });
-    }
-
-    console.log("Successfully updateing feedback thanks rating");
-    return res.status(200).json({
-      message: "Feedback thanks rating updated successfully",
-      feedback: updatedFeedback,
-    });
-  } catch (error) {
-    console.error("Error updating feedback thanks rating:", error);
-    return res
-      .status(500)
-      .json({ error: "Failed to update feedback thanks rating" });
-  }
-};
-
 exports.editFeedbackTextRating = async (req, res) => {
-  console.log("Editing feedback text...");
+  console.log("📝 Editing feedback text...");
   console.log("Incoming PATCH request:", req.params);
   console.log("Incoming Request Body:", req.body);
 
   try {
     const { habit_id } = req.params;
     const { feedbackText, teamMemberId } = req.body;
-    console.log("Req Body: ", req.body);
 
-    const updatedFeedback = await Feedback.findOneAndUpdate(
-      { habitId: habit_id },
-      { $set: { feedbackText } },
-      { new: true }
-    );
+    if (!habit_id || !teamMemberId || !feedbackText) {
+      return res.status(400).json({
+        error: "Missing habit ID, team member ID, or feedback text.",
+      });
+    }
 
-    if (!updatedFeedback) {
+    const existingFeedback = await Feedback.findOne({
+      habitId: habit_id,
+      teamMemberId,
+    });
+
+    if (!existingFeedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    console.log("Successfully updated feedback text");
+    if (existingFeedback.feedbackText) {
+      return res.status(400).json({
+        message: "Feedback text has already been submitted.",
+      });
+    }
+
+    existingFeedback.feedbackText = feedbackText;
+    await existingFeedback.save();
+
+    console.log("✅ Successfully updated feedback text");
     return res.status(200).json({
       message: "Feedback text updated successfully",
-      feedback: updatedFeedback,
+      feedback: existingFeedback,
     });
   } catch (error) {
-    console.error("Error updating feedback text:", error);
+    console.error("❌ Error updating feedback text:", error);
     return res.status(500).json({ error: "Failed to update feedback text" });
+  }
+};
+
+// exports.editFeedbackRating = async (req, res) => {
+//   // console.log("Editing existing feedback...");
+//   // console.log("Incoming PATCH request:", req.params);
+//   // console.log("Incoming Request Body:", req.body);
+//   // console.log("Team Member Id: ", req.body.teamMemberId);
+
+//   try {
+//     const { username, habit_id } = req.params;
+//     // console.log("Username: ", username, "with habit id: ", habit_id);
+
+//     const { feedbackRating, teamMemberId } = req.body;
+//     // console.log("Feedback Rating: ", feedbackRating);
+
+//     if (!habit_id || feedbackRating === undefined || !teamMemberId) {
+//       return res.status(400).json({ error: "Missing required fields" });
+//     }
+
+//     const updatedFeedback = await Feedback.findOneAndUpdate(
+//       { habitId: habit_id, teamMemberId },
+//       { $set: { feedbackRating } },
+//       { new: true }
+//     );
+
+//     if (!updatedFeedback) {
+//       return res.status(404).json({ message: "Feedback not found" });
+//     }
+
+//     // console.log("Successfully updating feedback rating");
+//     return res.status(200).json({
+//       message: "Feedback rating updated successfully",
+//       feedback: updatedFeedback,
+//     });
+//   } catch (error) {
+//     console.error("Error updating feedback rating:", error);
+//     if (!res.headersSent) {
+//       return res
+//         .status(500)
+//         .json({ error: "Failed to update feedback rating." });
+//     }
+//   }
+// };
+
+// exports.editFeedbackThanksRating = async (req, res) => {
+//   console.log("Editing feedback thanks rating...");
+//   console.log("Incoming PATCH request:", req.params);
+//   console.log("Incoming Request Body:", req.body);
+
+//   try {
+//     const { habit_id } = req.params;
+//     console.log("Req Param: ", req.params);
+//     const { feedbackThanksRating, teamMemberContextId } = req.body;
+//     console.log("Req Body: ", req.body);
+//     console.log(
+//       "Feedback Thanks Rating: ",
+//       feedbackThanksRating,
+//       "Team Member ID: ",
+//       teamMemberContextId
+//     );
+//     console.log("Team Member ID: ", teamMemberContextId);
+
+//     const updatedFeedback = await Feedback.findOneAndUpdate(
+//       { habitId: habit_id },
+//       { $set: { feedbackThanksRating } },
+//       { new: true }
+//     );
+
+//     console.log("Updated Feedback: ", updatedFeedback);
+
+//     if (!updatedFeedback) {
+//       return res.status(404).json({ message: "Feedback not found" });
+//     }
+
+//     console.log("Successfully updateing feedback thanks rating");
+//     return res.status(200).json({
+//       message: "Feedback thanks rating updated successfully",
+//       feedback: updatedFeedback,
+//     });
+//   } catch (error) {
+//     console.error("Error updating feedback thanks rating:", error);
+//     return res
+//       .status(500)
+//       .json({ error: "Failed to update feedback thanks rating" });
+//   }
+// };
+
+exports.editFeedbackThanksRating = async (req, res) => {
+  console.log("🙏 Editing feedback thanks rating...");
+  console.log("Incoming PATCH request:", req.params);
+  console.log("Incoming Request Body:", req.body);
+
+  try {
+    const { habit_id } = req.params;
+    const { feedbackThanksRating, teamMemberId } = req.body;
+
+    if (!habit_id || !teamMemberId || feedbackThanksRating === undefined) {
+      return res.status(400).json({
+        error: "Missing habit ID, team member ID, or thanks rating.",
+      });
+    }
+
+    const existingFeedback = await Feedback.findOne({
+      habitId: habit_id,
+      teamMemberId,
+    });
+
+    if (!existingFeedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    if (existingFeedback.feedbackThanksRating !== undefined) {
+      return res.status(400).json({
+        message: "Thanks rating has already been submitted.",
+      });
+    }
+
+    existingFeedback.feedbackThanksRating = feedbackThanksRating;
+    await existingFeedback.save();
+
+    console.log("✅ Successfully updated thanks rating");
+    return res.status(200).json({
+      message: "Thanks rating updated successfully",
+      feedback: existingFeedback,
+    });
+  } catch (error) {
+    console.error("❌ Error updating thanks rating:", error);
+    return res.status(500).json({ error: "Failed to update thanks rating" });
+  }
+};
+
+// exports.editFeedbackTextRating = async (req, res) => {
+//   console.log("Editing feedback text...");
+//   console.log("Incoming PATCH request:", req.params);
+//   console.log("Incoming Request Body:", req.body);
+
+//   try {
+//     const { habit_id } = req.params;
+//     const { feedbackText, teamMemberId } = req.body;
+//     console.log("Req Body: ", req.body);
+
+//     const updatedFeedback = await Feedback.findOneAndUpdate(
+//       { habitId: habit_id, teamMemberId },
+//       { $set: { feedbackText } },
+//       { new: true }
+//     );
+
+//     if (!updatedFeedback) {
+//       return res.status(404).json({ message: "Feedback not found" });
+//     }
+
+//     console.log("Successfully updated feedback text");
+//     return res.status(200).json({
+//       message: "Feedback text updated successfully",
+//       feedback: updatedFeedback,
+//     });
+//   } catch (error) {
+//     console.error("Error updating feedback text:", error);
+//     return res.status(500).json({ error: "Failed to update feedback text" });
+//   }
+// };
+
+exports.editFeedbackRating = async (req, res) => {
+  console.log("⭐ Editing feedback rating...");
+  console.log("Incoming PATCH request:", req.params);
+  console.log("Incoming Request Body:", req.body);
+
+  try {
+    const { username, habit_id } = req.params;
+    const { feedbackRating, teamMemberId } = req.body;
+
+    if (!habit_id || !teamMemberId || feedbackRating === undefined) {
+      return res.status(400).json({
+        error: "Missing habit ID, team member ID, or rating.",
+      });
+    }
+
+    // Step 1: Find existing feedback by habit and team member
+    const existingFeedback = await Feedback.findOne({
+      habitId: habit_id,
+      teamMemberId,
+    });
+
+    if (!existingFeedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    // Step 2: Prevent overwriting if already submitted
+    if (existingFeedback.feedbackRating !== undefined) {
+      return res.status(400).json({
+        message: "Rating has already been submitted.",
+      });
+    }
+
+    // Step 3: Save new rating
+    existingFeedback.feedbackRating = feedbackRating;
+    await existingFeedback.save();
+
+    console.log("✅ Successfully updated feedback rating");
+    return res.status(200).json({
+      message: "Feedback rating updated successfully",
+      feedback: existingFeedback,
+    });
+  } catch (error) {
+    console.error("❌ Error updating feedback rating:", error);
+    return res.status(500).json({ error: "Failed to update feedback rating." });
   }
 };
 
