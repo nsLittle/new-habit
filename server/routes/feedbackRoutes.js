@@ -25,7 +25,7 @@ router.patch(
   protect,
   editFeedbackThanksRating
 );
-router.patch("/:username/:habit_id/text", protect, editFeedbackTextRating);
+router.patch("/:username/:habit_id/text", editFeedbackTextRating);
 router.delete("/:username/:habit_id", protect, deleteFeedback);
 
 module.exports = router;
