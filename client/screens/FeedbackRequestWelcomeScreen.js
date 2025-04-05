@@ -71,7 +71,10 @@ export default function FeedbackRequestWelcomeScreen() {
       if (!userResponse.ok) throw new Error("Failed to fetch user data.");
       const userData = await userResponse.json();
       console.log("User data: ", userData);
+      console.log("User Username: ", userData.username);
+      console.log("User First Name: ", userData.firstName);
       console.log("Profile Pic: ", userData.profilePic);
+      const firstName = userData.firstName;
       const profilePic = userData.profilePic;
       console.log("Profile Pic: ", profilePic);
       const username = userData.username;
@@ -109,14 +112,15 @@ export default function FeedbackRequestWelcomeScreen() {
 
       setUserContext((prev) => ({
         ...prev,
-        username: userData.username,
-        userId: userData._id,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
+        userIdContext: userData._id,
+        userNameContext: userData.username,
+        firstNameContext: userData.firstName,
+        lastNameContext: userData.lastName,
+        emailContext: userData.email,
         profilePicContext: userData.profilePic,
-        habits: habitData.habit || [],
+        habitContextId: habitId,
         habitContextInput: habitInput,
+        habits: habitData.habit || [],
         teammembers: teamMemberData.teamMembers || [],
         feedbacks: feedbackData.feedback || [],
       }));
@@ -158,9 +162,8 @@ export default function FeedbackRequestWelcomeScreen() {
               }
             />
           </View>
-          <Text style={styles.bodyTitleText}>
-            {firstNameContext} says, "{habitContextInput}"
-          </Text>
+          <Text style={styles.bodyTitleText}>{firstNameContext} says,</Text>
+          <Text style={styles.bodyTitleText}>"{habitContextInput}"</Text>
           <Text style={styles.bodySubText}>
             They are requesting your feedback on how well they are accomplishing
             this.

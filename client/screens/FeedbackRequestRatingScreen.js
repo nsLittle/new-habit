@@ -20,19 +20,23 @@ import { sharedStyles } from "../styles/sharedStyles";
 export default function FeedbackRequestRatingScreen() {
   const navigation = useNavigation();
 
-  const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    lastNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
-  } = userContext || {};
+  const { userContext } = useContext(UserContext) || {};
+  const userNameContext = userContext?.userNameContext || "";
+  const firstNameContext = userContext?.firstNameContext || "";
+  const habitContextId = userContext?.habitContextId || "";
+
+  // const {
+  //   userIdContext,
+  //   userNameContext,
+  //   firstNameContext,
+  //   lastNameContext,
+  //   emailContext,
+  //   profilePicContext,
+  //   habitContextId,
+  //   habitContextInput,
+  //   descriptionContextInput,
+  //   teamMemberContextId,
+  // } = userContext || {};
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -116,6 +120,10 @@ export default function FeedbackRequestRatingScreen() {
         setShowDialog(true);
         return;
       }
+
+      console.log("🚨 DEBUG userNameContext:", userNameContext);
+      console.log("🚨 DEBUG habitContextId:", habitContextId);
+      console.log("🚨 DEBUG teammemberId:", teammemberId);
 
       const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}/submit`;
 

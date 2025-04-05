@@ -188,14 +188,14 @@ exports.editFeedbackThanksRating = async (req, res) => {
 };
 
 exports.editFeedbackTextRating = async (req, res) => {
-  // console.log("Editing feedback text...");
-  // console.log("Incoming PATCH request:", req.params);
-  // console.log("Incoming Request Body:", req.body);
+  console.log("Editing feedback text...");
+  console.log("Incoming PATCH request:", req.params);
+  console.log("Incoming Request Body:", req.body);
 
   try {
     const { habit_id } = req.params;
     const { feedbackText, teamMemberId } = req.body;
-    // console.log("Req Body: ", req.body);
+    console.log("Req Body: ", req.body);
 
     const updatedFeedback = await Feedback.findOneAndUpdate(
       { habitId: habit_id },
@@ -207,7 +207,7 @@ exports.editFeedbackTextRating = async (req, res) => {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    // console.log("Successfully updated feedback text");
+    console.log("Successfully updated feedback text");
     return res.status(200).json({
       message: "Feedback text updated successfully",
       feedback: updatedFeedback,
