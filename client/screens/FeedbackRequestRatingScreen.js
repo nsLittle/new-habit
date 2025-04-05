@@ -117,10 +117,10 @@ export default function FeedbackRequestRatingScreen() {
         return;
       }
 
-      const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`;
+      const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}/submit`;
 
       const response = await fetch(
-        `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}`,
+        `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}/submit`,
 
         {
           method: "POST",
