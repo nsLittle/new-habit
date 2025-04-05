@@ -51,6 +51,11 @@ const startServer = async () => {
       next();
     });
 
+    app.use((req, res, next) => {
+      console.log(`📡 ${req.method} ${req.originalUrl}`);
+      next();
+    });
+
     app.get("/", (req, res) => {
       res.send("Server is running!");
     });

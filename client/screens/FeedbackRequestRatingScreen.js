@@ -120,7 +120,7 @@ export default function FeedbackRequestRatingScreen() {
       const url = `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}/submit`;
 
       const response = await fetch(
-        `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/${teammemberId}/submit`,
+        url,
 
         {
           method: "POST",
@@ -165,7 +165,7 @@ export default function FeedbackRequestRatingScreen() {
           <Dialog.Actions>
             <Button
               onPress={() => setShowDialog(false)}
-              labelStyle={sharedStyles.dialogButton}>
+              labelStyle={sharedStyles.dialogButtonConfirm}>
               OK
             </Button>
           </Dialog.Actions>
