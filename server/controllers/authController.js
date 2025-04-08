@@ -109,7 +109,7 @@ Until the app is available in the Apple App Store, the link below won’t open a
 <li>1. Open the Habit App manually (via Expo Go or Android install).</li>
 <li>2. Navigate to the “Feedback Request” screen.</li>
 <li>3. Web preview (for testers only):</li>
-<li>http://localhost:8081/email/password-reset/${token}
+<li>http://localhost:8081/email/password-reset/${resetToken}
 </li>
 </ul>`,
     };
