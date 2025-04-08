@@ -27,13 +27,13 @@ export default function ResetPasswordScreen() {
     resetUserContext("ResetPasswordScreen");
   }, []);
 
-  const navigation = useNavigation();
-
   const route = useRoute();
   const token =
     Platform.OS === "web"
       ? window.location.pathname.split("/").pop()
       : route.params?.token;
+
+  const navigation = useNavigation();
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -44,55 +44,25 @@ export default function ResetPasswordScreen() {
 
   const handlePasswordReset = async () => {
     try {
-      if (!email) {
-        setDialogMessage("Please enter your email.");
-        setShowDialog(true);
-        return;
-      }
-
       const response = await fetch(`${BASE_URL}/auth/password-reset`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ token, newPassword: password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setDialogMessage(data.message || "Error requesting password reset.");
+        setDialogMessage(data.message || "Error resetting password.");
         setShowDialog(true);
         return;
       }
 
-      const { token } = data;
-      if (!token) {
-        setDialogMessage("Error generating reset token.");
-        setShowDialog(true);
-        return;
-      }
-
-      const resetLink = __DEV__
-        ? `http://localhost:3000/reset-password/${token}`
-        : `myapp://reset-password/${token}`;
-
-      const subject = encodeURIComponent("Password Reset Request");
-      const body = encodeURIComponent(
-        `Hello,\n\nClick the link below to reset your password:\n${resetLink}\n\nIf you didn't request this, you can ignore this email.`
-      );
-
-      const emailURL = `mailto:${email}?subject=${subject}&body=${body}`;
-
-      Linking.openURL(emailURL).catch((err) =>
-        console.error("Error opening email:", err)
-      );
-
-      setDialogMessage("Success. A password reset email has been sent!");
+      setDialogMessage("Password reset successful. You can now log in.");
       setShowDialog(true);
-
       navigation.navigate("LoginScreen");
-      return;
     } catch (error) {
       console.error("Password reset error:", error);
     }
