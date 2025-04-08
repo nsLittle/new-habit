@@ -25,42 +25,6 @@ export default function ResetPasswordRequestScreen() {
   const [showDialog, setShowDialog] = useState(false);
   const [email, setEmail] = useState("");
 
-  // const handleResetEmail = async () => {
-  //   if (!email) {
-  //     setDialogMessage("Please enter a valid email address.");
-  //     setShowDialog(true);
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/auth/password-reset-request`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ email }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       setDialogMessage(data.message || "Error sending password reset email.");
-  //       setShowDialog(true);
-  //       return;
-  //     }
-
-  //     if (response.ok) {
-  //       if (response.ok && data?.message === "Password reset token generated") {
-  //         setDialogMessage("Password reset email successfully sent!");
-  //         setShowDialog(true);
-  //         navigation.navigate("ReviewScreen");
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Password reset request error:", error);
-  //   }
-  // };
-
   const handleResetEmail = async () => {
     if (!email) {
       setDialogMessage("Please enter a valid email address.");

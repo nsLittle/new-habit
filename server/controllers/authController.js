@@ -93,6 +93,9 @@ exports.passwordResetRequest = async (req, res) => {
     await user.save();
 
     const resetLink = `habitapp://password-reset/${user.username}/${resetToken}`;
+    console.log("✅ Found user:", user.username);
+    console.log("✅ Token generated:", resetToken);
+    console.log("✅ Hashed token:", hashedToken);
 
     const msg = {
       to: user.email,
@@ -126,7 +129,8 @@ Until the app is available in the Apple App Store, the link below won’t open a
       resetToken,
     });
   } catch (error) {
-    res.status(500).json({ error: "Error generating password reset token" });
+    console.error("❌ Unexpected error:", error);
+    res.status(500).json({ error: error.message || "Unknown error" });
   }
 };
 
