@@ -96,7 +96,10 @@ exports.passwordResetRequest = async (req, res) => {
 
     const msg = {
       to: user.email,
-      from: process.env.SENDGRID_FROM_EMAIL, // CHANGE TO WESTWOOD EMAIL!!!
+      from: {
+        email: process.env.SENDGRID_FROM_EMAIL,
+        name: "Habit App",
+      }, // CHANGE TO WESTWOOD EMAIL!!!
       subject: "Your Habit App Password Reset Link",
       text: `Use the following link to reset your password: ${resetLink}`,
       html: `<p>Use the following link to reset your password:</p><a href="${resetLink}">${resetLink}</a>`,
