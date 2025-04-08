@@ -72,7 +72,10 @@ exports.logout = async (req, res) => {
 };
 
 exports.passwordResetRequest = async (req, res) => {
+  console.log("Request received at /password-reset-request");
+  console.log("Request body:", req.body);
   const { email } = req.body;
+  console.log("Extracted email:", email);
 
   try {
     const user = await User.findOne({ email });
