@@ -33,17 +33,6 @@ export default function ResetPasswordRequestScreen() {
   //   }
 
   //   try {
-  //     const checkResponse = await fetch(
-  //       `${BASE_URL}/user/check-email/${email}`
-  //     );
-  //     const checkData = await checkResponse.json();
-
-  //     if (!checkData.exists) {
-  //       setDialogMessage("Email not found. Please enter a registered email.");
-  //       setShowDialog(true);
-  //       return;
-  //     }
-
   //     const response = await fetch(`${BASE_URL}/auth/password-reset-request`, {
   //       method: "POST",
   //       headers: {
@@ -53,43 +42,22 @@ export default function ResetPasswordRequestScreen() {
   //     });
 
   //     const data = await response.json();
-  //     if (!data) {
-  //       setDialogMessage(data.message || "Error requesting password reset.");
+
+  //     if (!response.ok) {
+  //       setDialogMessage(data.message || "Error sending password reset email.");
   //       setShowDialog(true);
   //       return;
   //     }
 
-  //     const token = data.resetToken;
-
-  //     if (!token) {
-  //       setDialogMessage("Error generating reset token.");
-  //       setShowDialog(true);
-  //       return;
+  //     if (response.ok) {
+  //       if (response.ok && data?.message === "Password reset token generated") {
+  //         setDialogMessage("Password reset email successfully sent!");
+  //         setShowDialog(true);
+  //         navigation.navigate("ReviewScreen");
+  //       }
   //     }
-
-  //     const subject = encodeURIComponent("Password Reset");
-  //     const deepLink = __DEV__
-  //       ? `http://localhost:8081/password-reset/${token}`
-  //       : `myapp://password-reset/${token}`;
-
-  //     const body = encodeURIComponent(
-  //       `Hello, you requested a password reset link:\n${deepLink}`
-  //     );
-
-  //     const emailAddress = email;
-
-  //     const emailURL = `mailto:${email}?subject=${subject}&body=${body}`;
-
-  //     Linking.openURL(emailURL).catch((err) =>
-  //       console.error("Error opening email:", err)
-  //     );
-
-  //     setDialogMessage("Password reset email successfully sent!");
-  //     setShowDialog(true);
   //   } catch (error) {
   //     console.error("Password reset request error:", error);
-  //     setDialogMessage("Something went wrong.");
-  //     setShowDialog(true);
   //   }
   // };
 
@@ -110,6 +78,8 @@ export default function ResetPasswordRequestScreen() {
       });
 
       const data = await response.json();
+      console.log("🔍 Response OK:", response.ok);
+      console.log("📬 Response data:", data);
 
       if (!response.ok) {
         setDialogMessage(data.message || "Error sending password reset email.");
@@ -117,8 +87,14 @@ export default function ResetPasswordRequestScreen() {
         return;
       }
 
-      setDialogMessage("Password reset email successfully sent!");
-      setShowDialog(true);
+      if (data?.message === "Password reset token generated") {
+        setDialogMessage("Password reset email successfully sent!");
+        setShowDialog(true);
+        navigation.navigate("ReviewScreen");
+      } else {
+        setDialogMessage("Unexpected response from server.");
+        setShowDialog(true);
+      }
     } catch (error) {
       console.error("Password reset request error:", error);
       setDialogMessage("Something went wrong.");

@@ -94,6 +94,14 @@ exports.passwordResetRequest = async (req, res) => {
 
     const resetLink = `habitapp://password-reset/${user.username}/${resetToken}`;
 
+    const msg = {
+      to: user.email,
+      from: process.env.SENDGRID_SENDER_EMAIL, // CHANGE TO WESTWOOD EMAIL!!!
+      subject: "Your Habit App Password Reset Link",
+      text: `Use the following link to reset your password: ${resetLink}`,
+      html: `<p>Use the following link to reset your password:</p><a href="${resetLink}">${resetLink}</a>`,
+    };
+
     try {
       await sendgrid.send(msg);
       console.log("✅ Email sent via SendGrid to", user.email);
