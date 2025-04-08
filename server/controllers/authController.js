@@ -77,6 +77,7 @@ exports.passwordResetRequest = async (req, res) => {
   console.log("Request body:", req.body);
   const { email } = req.body;
   console.log("Extracted email:", email);
+  console.log("✅ Checking DB connection:", mongoose.connection.readyState);
 
   try {
     const user = await User.findOne({ email });
