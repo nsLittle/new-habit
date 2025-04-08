@@ -90,6 +90,16 @@ exports.passwordResetRequest = async (req, res) => {
 
     const resetLink = `habitapp://password-reset/${user.username}/${resetToken}`;
 
+    try {
+      await sendgrid.send(msg);
+      console.log("✅ Email sent via SendGrid to", user.email);
+    } catch (err) {
+      console.error(
+        "❌ SendGrid send error:",
+        err.response?.body || err.message
+      );
+    }
+
     res.json({
       message: "Password reset token generated",
       resetToken,
