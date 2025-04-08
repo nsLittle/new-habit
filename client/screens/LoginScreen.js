@@ -163,9 +163,6 @@ export default function LoginScreen() {
                 color="gray"
               />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.infoIcon}>
-              <MaterialIcons name="info-outline" size={20} color="gray" />
-            </TouchableOpacity>
           </View>
         </View>
 

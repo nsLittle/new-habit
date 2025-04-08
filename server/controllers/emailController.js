@@ -22,8 +22,6 @@ exports.getScheduledEmails = async (req, res) => {
 };
 
 exports.triggerEmailRequest = async (req, res) => {
-  // console.log("I'm here triggering emails...");
-
   const { username, habit_id } = req.params;
   const { teamMembers } = req.body;
 
@@ -34,7 +32,6 @@ exports.triggerEmailRequest = async (req, res) => {
       const { firstName, lastName, email } = member;
       const token = generateTeamMemberToken(member.teamMember_id);
       const deepLink = `habitapp://FeedbackRequestWelcomeScreen/${member.teamMember_id}/${token}`;
-      console.log("📨 Email deepLink:", deepLink);
       const recipientEmail = email;
       const subject = `Feedback Request for Habit ${habit_id}`;
       const htmlContent = `
@@ -112,7 +109,6 @@ Until the app is available in the Apple App Store, the link below won’t open a
       });
     }
     lastFeedbackRequestDate = new Date();
-    // console.log("Last Feedback Reqeust End Date: ", lastFeedbackRequestDate);
 
     return res.json({
       message: "Feedback requests sent successfully to all team members",

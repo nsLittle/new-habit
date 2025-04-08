@@ -19,18 +19,7 @@ export default function CreateAccountScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    // userIdContext,
-    // userNameContext,
-    // firstNameContext,
-    // emailContext,
-    // profilePicContext,
-    // habitContextId,
-    // habitContextInput,
-    // descriptionContextInput,
-    // teamMemberContextId,
-    // token,
-  } = userContext || {};
+  const { userIdContext } = userContext || {};
 
   const resetUserContext = () => {
     setUserContext(null);
