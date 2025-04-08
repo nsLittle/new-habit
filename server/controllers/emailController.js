@@ -38,8 +38,6 @@ exports.triggerEmailRequest = async (req, res) => {
   <p>Hi ${firstName} ${lastName},</p>
   <p>${username} is working on their habit and would love to get your feedback!</p>
 
-<p>UPDATED TEST</p>
-
   <p>
 Until the app is available in the Apple App Store, the link below won’t open automatically when tapped. But you can still help:</p>
 <ul>  

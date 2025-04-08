@@ -99,7 +99,16 @@ exports.passwordResetRequest = async (req, res) => {
       from: "Habit App <notsolittle88@gmail.com>", // CHANGE TO WESTWOOD NO-REPLY EMAIL!!!
       subject: "Your Habit App Password Reset Link",
       text: `Use the following link to reset your password: ${resetLink}`,
-      html: `<p>Use the following link to reset your password:</p><a href="${resetLink}">${resetLink}</a>`,
+      html: `<p>Use the following link to reset your password:</p><a href="${resetLink}">${resetLink}</a>
+      <p>
+Until the app is available in the Apple App Store, the link below won’t open automatically when tapped. But you can still help:</p>
+<ul>  
+<li>1. Open the Habit App manually (via Expo Go or Android install).</li>
+<li>2. Navigate to the “Feedback Request” screen.</li>
+<li>3. Web preview (for testers only):</li>
+<li>http://localhost:8081/feedback-request/${member.teamMember_id}/${token}
+</li>
+</ul>`,
     };
 
     try {

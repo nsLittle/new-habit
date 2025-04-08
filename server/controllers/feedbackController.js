@@ -3,21 +3,13 @@ const feedbackController = require("../controllers/feedbackController");
 const { Habit } = require("../models/Habit");
 const User = require("../models/User");
 const sendEmail = require("../utils/emailSender");
-// console.log("Habit Model:", Habit);
 
 const Feedback = require("../models/Feedback");
 
 exports.submitFeedback = async (req, res) => {
-  console.log("I'm here to submit feedback...");
   try {
     const receivedData = req.params;
-    console.log("Received Data: ", receivedData);
     const { feedbackRating } = req.body;
-
-    console.log("✅ Username:", receivedData.username);
-    console.log("✅ Habit ID:", receivedData.habit_id);
-    console.log("✅ Team Member ID:", receivedData.teammemberId);
-    console.log("✅ Feedback Rating:", feedbackRating);
     const username = receivedData.username;
     const habit_id = receivedData.habit_id;
     const teammemberId = receivedData.teammemberId;
@@ -27,7 +19,6 @@ exports.submitFeedback = async (req, res) => {
     }
 
     const habit = await Habit.findById(habit_id);
-    console.log("Found habit: ", habit);
 
     if (!habit) {
       return res.status(404).json({ error: "Habit not found" });
@@ -73,8 +64,6 @@ exports.submitFeedback = async (req, res) => {
 
     await newFeedback.save();
 
-    console.log("New Feedback: ", newFeedback);
-
     res.status(201).json({
       message: "Feedback submitted successfully",
       feedbackId: newFeedback._id,
@@ -86,16 +75,12 @@ exports.submitFeedback = async (req, res) => {
     if (!res.headersSent) {
       return res.status(500).json({ error: "Failed to submit feedback" });
     } else {
-      console.error("🚨 ERROR: Response already sent, cannot send another.");
+      console.error("❌ ERROR: Response already sent, cannot send another.");
     }
   }
 };
 
 exports.editFeedbackTextRating = async (req, res) => {
-  console.log("📝 Editing feedback text...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
-
   try {
     const { habit_id } = req.params;
     const { feedbackText, teamMemberId } = req.body;
@@ -123,8 +108,6 @@ exports.editFeedbackTextRating = async (req, res) => {
 
     existingFeedback.feedbackText = feedbackText;
     await existingFeedback.save();
-
-    console.log("✅ Successfully updated feedback text");
     return res.status(200).json({
       message: "Feedback text updated successfully",
       feedback: existingFeedback,
@@ -136,10 +119,6 @@ exports.editFeedbackTextRating = async (req, res) => {
 };
 
 exports.editFeedbackThanksRating = async (req, res) => {
-  console.log("🙏 Editing feedback thanks rating...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
-
   try {
     const { habit_id } = req.params;
     const { feedbackThanksRating, teamMemberContextId } = req.body;
@@ -168,8 +147,6 @@ exports.editFeedbackThanksRating = async (req, res) => {
 
     existingFeedback.feedbackThanksRating = feedbackThanksRating;
     await existingFeedback.save();
-
-    console.log("✅ Successfully updated thanks rating");
     return res.status(200).json({
       message: "Thanks rating updated successfully",
       feedback: existingFeedback,
@@ -180,42 +157,7 @@ exports.editFeedbackThanksRating = async (req, res) => {
   }
 };
 
-// exports.editFeedbackTextRating = async (req, res) => {
-//   console.log("Editing feedback text...");
-//   console.log("Incoming PATCH request:", req.params);
-//   console.log("Incoming Request Body:", req.body);
-
-//   try {
-//     const { habit_id } = req.params;
-//     const { feedbackText, teamMemberId } = req.body;
-//     console.log("Req Body: ", req.body);
-
-//     const updatedFeedback = await Feedback.findOneAndUpdate(
-//       { habitId: habit_id, teamMemberId },
-//       { $set: { feedbackText } },
-//       { new: true }
-//     );
-
-//     if (!updatedFeedback) {
-//       return res.status(404).json({ message: "Feedback not found" });
-//     }
-
-//     console.log("Successfully updated feedback text");
-//     return res.status(200).json({
-//       message: "Feedback text updated successfully",
-//       feedback: updatedFeedback,
-//     });
-//   } catch (error) {
-//     console.error("Error updating feedback text:", error);
-//     return res.status(500).json({ error: "Failed to update feedback text" });
-//   }
-// };
-
 exports.editFeedbackRating = async (req, res) => {
-  console.log("⭐ Editing feedback rating...");
-  console.log("Incoming PATCH request:", req.params);
-  console.log("Incoming Request Body:", req.body);
-
   try {
     const { username, habit_id } = req.params;
     const { feedbackRating, teamMemberId } = req.body;
@@ -226,7 +168,6 @@ exports.editFeedbackRating = async (req, res) => {
       });
     }
 
-    // Step 1: Find existing feedback by habit and team member
     const existingFeedback = await Feedback.findOne({
       habitId: habit_id,
       teamMemberId,
@@ -236,18 +177,15 @@ exports.editFeedbackRating = async (req, res) => {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    // Step 2: Prevent overwriting if already submitted
     if (existingFeedback.feedbackRating !== undefined) {
       return res.status(400).json({
         message: "Rating has already been submitted.",
       });
     }
 
-    // Step 3: Save new rating
     existingFeedback.feedbackRating = feedbackRating;
     await existingFeedback.save();
 
-    console.log("✅ Successfully updated feedback rating");
     return res.status(200).json({
       message: "Feedback rating updated successfully",
       feedback: existingFeedback,
@@ -263,29 +201,16 @@ exports.getFeedback = async (req, res) => {
   try {
     const { username, habit_id } = req.params;
 
-    console.log("Received Params:", req.params);
-
     if (!mongoose.Types.ObjectId.isValid(habit_id)) {
       return res.status(400).json({ error: "Invalid habit ID format" });
     }
 
     const feedback = await Feedback.find({ habitId: habit_id });
 
-    console.log("Feedback:", feedback);
-
-    // if (!feedback.length) {
-    //   return res
-    //     .status(200)
-    //     .json({ message: "No feedback found for this habit", feedback: [] });
-    // }
-
-    console.log("Right before sneding feedback response...");
-
     res.status(200).json({
       message: "Feedback retrieved successfully",
       feedback,
     });
-    console.log("Right afetr sneding feedback response...");
   } catch (error) {
     console.error("❌ Error fetching feedback:", error);
     res.status(500).json({ error: "Failed to retrieve feedback" });
@@ -294,7 +219,7 @@ exports.getFeedback = async (req, res) => {
 
 exports.deleteFeedback = async (req, res) => {
   try {
-    const { feedbackId } = req.params; // Use feedbackId in params
+    const { feedbackId } = req.params;
 
     const deletedFeedback = await Feedback.findByIdAndDelete(feedbackId);
 
@@ -310,13 +235,11 @@ exports.deleteFeedback = async (req, res) => {
 
 exports.getAggregateFeedback = async (req, res) => {
   try {
-    const { habit_id } = req.params; // Expecting habit ID as a route param
+    const { habit_id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(habit_id)) {
       return res.status(400).json({ error: "Invalid habit ID format" });
     }
-
-    // console.log(`🔍 Fetching aggregated feedback for habit ID: ${habit_id}`);
 
     const aggregatedData = await aggregateFeedbackData(habit_id);
 
