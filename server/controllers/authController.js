@@ -2,6 +2,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+const crypto = require("crypto");
+
 exports.signup = async (req, res) => {
   try {
     const password = req.body.password;
@@ -69,12 +71,6 @@ exports.logout = async (req, res) => {
     .json({ message: "Logged out successfully. Remove token on client-side." });
 };
 
-const crypto = require("crypto");
-
-const crypto = require("crypto");
-const sendgrid = require("@sendgrid/mail");
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
-
 exports.passwordResetRequest = async (req, res) => {
   const { email } = req.body;
 
@@ -89,30 +85,17 @@ exports.passwordResetRequest = async (req, res) => {
       .digest("hex");
 
     user.passwordResetToken = hashedToken;
-    user.passwordResetExpires = Date.now() + 3600000; // 1 hour
+    user.passwordResetExpires = Date.now() + 3600000;
     await user.save();
 
     const resetLink = `habitapp://password-reset/${user.username}/${resetToken}`;
 
-    const msg = {
-      to: user.email,
-      from: "notsolittle88@gmail.com",
-      subject: "Password Reset Request",
-      text: `Hi ${user.username},\n\nYou requested a password reset. Click the link below to reset your password:\n\n${resetLink}`,
-      html: `<p>Hi ${user.username},</p>
-<p>You requested a password reset. Click the link below to reset your password:</p>
-<p><a href="${resetLink}">${resetLink}</a></p>
-<p>If you didn’t request this, you can ignore this email.</p>`,
-    };
-
-    await sendgrid.send(msg);
-
-    return res.json({ message: "Password reset email sent" });
+    res.json({
+      message: "Password reset token generated",
+      resetToken,
+    });
   } catch (error) {
-    console.error("Error sending password reset email:", error);
-    res
-      .status(500)
-      .json({ error: "Error generating or sending password reset token" });
+    res.status(500).json({ error: "Error generating password reset token" });
   }
 };
 
