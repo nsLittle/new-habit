@@ -40,11 +40,11 @@ import "./globals.css";
 const Stack = createStackNavigator();
 
 const linking = {
-  prefixes: ["habitapp://"],
+  prefixes: ["habitapp://", "http://localhost:8081"],
   config: {
     screens: {
       FeedbackRequestWelcomeScreen: "feedback-request/:teamMemberId/:token",
-      ResetPasswordScreen: "password-reset/:token",
+      ResetPasswordScreen: "email/password-reset/:token",
     },
   },
 };

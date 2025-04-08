@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { Button, Dialog, Portal } from "react-native-paper";
 import {
   heightPercentageToDP as hp,
@@ -15,7 +16,9 @@ import {
 } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function ResetPasswordScreen() {
   const { resetUserContext } = useContext(UserContext);
@@ -24,13 +27,13 @@ export default function ResetPasswordScreen() {
     resetUserContext("ResetPasswordScreen");
   }, []);
 
-  const url = new URL(window.location.href);
-  const token = url.pathname.split("/").pop(); // Extracts last segment
-  // console.log("Token:", token);
-
   const navigation = useNavigation();
 
-  // const routes = navigation.getState().routes;
+  const route = useRoute();
+  const token =
+    Platform.OS === "web"
+      ? window.location.pathname.split("/").pop()
+      : route.params?.token;
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -47,7 +50,7 @@ export default function ResetPasswordScreen() {
         return;
       }
 
-      const response = await fetch("${BASE_URL}/auth/request-password-reset", {
+      const response = await fetch(`${BASE_URL}/auth/password-reset`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,11 +59,8 @@ export default function ResetPasswordScreen() {
       });
 
       const data = await response.json();
-      // console.log("Response: ", response);
-      // console.log("Data: ", data);
 
       if (!response.ok) {
-        // console.log("Something went wrong.");
         setDialogMessage(data.message || "Error requesting password reset.");
         setShowDialog(true);
         return;
@@ -88,18 +88,18 @@ export default function ResetPasswordScreen() {
         console.error("Error opening email:", err)
       );
 
-      // console.log("Success", "A password reset email has been sent!");
       setDialogMessage("Success. A password reset email has been sent!");
       setShowDialog(true);
+
+      navigation.navigate("LoginScreen");
       return;
     } catch (error) {
       console.error("Password reset error:", error);
-      // console.log("Unable to send reset email.");
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
       <Portal>
         <Dialog
           visible={showDialog}
@@ -121,15 +121,15 @@ export default function ResetPasswordScreen() {
         </Dialog>
       </Portal>
 
-      <View style={styles.body}>
-        <View style={styles.bodyTitleContainer}>
-          <Text style={styles.bodyTitleText}>Reset Password</Text>
+      <View style={sharedStyles.body}>
+        <View style={sharedStyles.bodyIntroContainer}>
+          <Text style={sharedStyles.title}>Reset Password</Text>
         </View>
 
-        <View style={styles.inputContainer}>
-          <View style={styles.passwordContainer}>
+        <View style={sharedStyles.inputContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
-              style={styles.passwordInput}
+              style={sharedStyles.passwordInput}
               placeholder="Email"
               value={email}
               onChangeText={(text) => setEmail(text)}
@@ -137,9 +137,9 @@ export default function ResetPasswordScreen() {
             />
           </View>
 
-          <View style={styles.passwordContainer}>
+          <View style={sharedStyles.passwordContainer}>
             <TextInput
-              style={styles.passwordInput}
+              style={sharedStyles.passwordInput}
               placeholder="Password"
               secureTextEntry={!showPassword}
               value={password}
@@ -161,11 +161,11 @@ export default function ResetPasswordScreen() {
           </View>
         </View>
 
-        <View style={styles.resetContainer}>
+        <View style={sharedStyles.buttonRow}>
           <TouchableOpacity
-            style={styles.resetButton}
+            style={sharedStyles.yellowButton}
             onPress={handlePasswordReset}>
-            <Text style={styles.resetButtonText}>Reset Password</Text>
+            <Text style={sharedStyles.buttonText}>Reset Password</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -92,7 +92,7 @@ exports.passwordResetRequest = async (req, res) => {
     user.passwordResetExpires = Date.now() + 3600000;
     await user.save();
 
-    const resetLink = `habitapp://password-reset/${user.username}/${resetToken}`;
+    const resetLink = `habitapp://password-reset/${resetToken}`;
     console.log("✅ Found user:", user.username);
     console.log("✅ Token generated:", resetToken);
     console.log("✅ Hashed token:", hashedToken);
@@ -103,15 +103,9 @@ exports.passwordResetRequest = async (req, res) => {
       subject: "Your Habit App Password Reset Link",
       text: `Use the following link to reset your password: ${resetLink}`,
       html: `<p>Use the following link to reset your password:</p><a href="${resetLink}">${resetLink}</a>
-      <p>
-Until the app is available in the Apple App Store, the link below won’t open automatically when tapped. But you can still help:</p>
-<ul>  
-<li>1. Open the Habit App manually (via Expo Go or Android install).</li>
-<li>2. Navigate to the “Feedback Request” screen.</li>
-<li>3. Web preview (for testers only):</li>
-<li>http://localhost:8081/email/password-reset/${resetToken}
-</li>
-</ul>`,
+      <p>FOR TESTING</p>
+      <li>http://localhost:8081/email/password-reset/${resetToken} </li>
+      </ul>`,
     };
 
     try {
@@ -135,15 +129,19 @@ Until the app is available in the Apple App Store, the link below won’t open a
 };
 
 exports.passwordReset = async (req, res) => {
+  console.log("I'm here resetting password...");
   const { token, newPassword } = req.body;
 
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    console.log("Hashed Token: ", hashedToken);
 
     const user = await User.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
     });
+
+    console.log("User: ", user);
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token" });
@@ -151,6 +149,8 @@ exports.passwordReset = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
+
+    console.log("Salt: ", salt);
 
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
