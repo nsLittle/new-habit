@@ -131,6 +131,7 @@ exports.passwordResetRequest = async (req, res) => {
 exports.passwordReset = async (req, res) => {
   console.log("I'm here resetting password...");
   const { token, newPassword } = req.body;
+  console.log("Request body:", req.body);
 
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
