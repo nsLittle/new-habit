@@ -88,7 +88,27 @@ export default function TeamInviteScreen() {
             <Text>{dialogMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setShowDialog(false)}>OK</Button>
+            {selectedTeamMember ? (
+              <>
+                <Button
+                  onPress={() => {
+                    handleDelete(selectedTeamMember);
+                    setSelectedTeamMember(null);
+                    setShowDialog(false);
+                  }}>
+                  YES
+                </Button>
+                <Button
+                  onPress={() => {
+                    setSelectedTeamMember(null);
+                    setShowDialog(false);
+                  }}>
+                  NO
+                </Button>
+              </>
+            ) : (
+              <Button onPress={() => setShowDialog(false)}>OK</Button>
+            )}
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -125,7 +145,13 @@ export default function TeamInviteScreen() {
               <MaterialIcons
                 name="delete"
                 size={22}
-                onPress={() => handleDelete(member._id)}
+                onPress={() => {
+                  setSelectedTeamMember(member._id);
+                  setDialogMessage(
+                    "Are you sure you want to delete this team member?"
+                  );
+                  setShowDialog(true);
+                }}
               />
             </View>
           </View>

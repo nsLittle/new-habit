@@ -1,9 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import {
   Image,
-  Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -53,19 +51,7 @@ export default function EditTeammemberScreen() {
   const [userData, setUserData] = useState("");
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    // userIdContext,
-    userNameContext,
-    // firstNameContext,
-    // lastNameContext,
-    // emailContext,
-    // profilePicContext,
-    // habitContextId,
-    // habitContextInput,
-    // descriptionContextInput,
-    // teamMemberContextId,
-    token,
-  } = userContext || {};
+  const { userIdContext, userNameContext, token } = userContext || {};
 
   const handleSave = async () => {
     try {

@@ -240,13 +240,15 @@ export default function HabitDescriptionScreen() {
 
       <View style={sharedStyles.body}>
         <View style={styles.bodyTitleContainer}>
-          <Text style={sharedStyles.title}>Habit Description</Text>
+          <Text style={sharedStyles.title}>
+            What habit will you strengthen to achieve your goal?
+          </Text>
         </View>
 
         <View style={styles.inputContainer}>
           <TextInput
             style={[sharedStyles.input, { height: 200 }]}
-            placeholder="Describe yourself succesfully implementing the habit..."
+            placeholder="I will...(SMART goal)"
             maxLength={500}
             value={descriptionInput ?? ""}
             onChangeText={setDescriptionInput}
@@ -279,32 +281,6 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
   },
-  // dialogButtonNo: {
-  //   color: "red",
-  //   fontWeight: "bold",
-  //   fontSize: 18,
-  // },
-  // dialogButton: {
-  //   color: "green",
-  //   fontWeight: "bold",
-  //   fontSize: 18,
-  // },
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  // },
-  // body: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  // },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
   bodyTitleContainer: {
     paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
     alignItems: "center",
@@ -317,67 +293,4 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     position: "relative",
   },
-  // input: {
-  //   height: 80,
-  //   borderColor: "#A9A9A9",
-  //   borderWidth: 1,
-  //   padding: 10,
-  //   paddingTop: 0,
-  //   lineHeight: 50,
-  //   marginBottom: 10,
-  //   borderRadius: 5,
-  //   backgroundColor: "#F0F0F0",
-  //   width: "100%",
-  //   textAlignVertical: "top",
-  // },
-  // charCount: {
-  //   paddingTop: 5,
-  //   textAlign: "right",
-  //   color: "gray",
-  //   fontSize: 12,
-  //   alignSelf: "flex-end",
-  //   position: "absolute",
-  //   right: 10,
-  //   bottom: 20,
-  // },
-  // buttonRow: {
-  //   flexDirection: "row",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   paddingHorizontal: 20,
-  //   gap: 15,
-  //   marginTop: 50,
-  // },
-  // backButton: {
-  //   backgroundColor: "#D3D3D3",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 150,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // backButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
-  // saveButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 250,
-  //   height: 45,
-  //   justifyContent: "center",
-  // },
-  // saveButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  // },
 });

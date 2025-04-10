@@ -10,10 +10,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,10 +7,6 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
@@ -24,19 +19,6 @@ export default function FeedbackRequestRatingScreen() {
   const userNameContext = userContext?.userNameContext || "";
   const firstNameContext = userContext?.firstNameContext || "";
   const habitContextId = userContext?.habitContextId || "";
-
-  // const {
-  //   userIdContext,
-  //   userNameContext,
-  //   firstNameContext,
-  //   lastNameContext,
-  //   emailContext,
-  //   profilePicContext,
-  //   habitContextId,
-  //   habitContextInput,
-  //   descriptionContextInput,
-  //   teamMemberContextId,
-  // } = userContext || {};
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -252,16 +234,6 @@ export default function FeedbackRequestRatingScreen() {
               handleSave();
             }}>
             <Text style={sharedStyles.buttonText}>Save ▶</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={sharedStyles.greyButton}
-            onPress={() => {
-              navigation.navigate("NoThankYouScreen", {});
-            }}>
-            <Text style={sharedStyles.buttonText} title="No Thanks">
-              No Thanks
-            </Text>
           </TouchableOpacity>
         </View>
       </View>

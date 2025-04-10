@@ -41,6 +41,7 @@ export const sharedStyles = StyleSheet.create({
     fontSize: 32,
     textAlign: "center",
     paddingBottom: 30,
+    width: wp("65%"),
   },
   bodyText: {
     fontSize: 16,

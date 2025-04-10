@@ -1,4 +1,3 @@
-// Refactored EditReviewScreen.js for consistency and edit links
 import { useContext, useEffect, useState } from "react";
 import {
   Platform,
@@ -128,22 +127,6 @@ export default function EditReviewScreen() {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  // },
-  // body: {
-  //   alignItems: "center",
-  //   paddingTop: Platform.OS === "web" ? hp("15%") : hp("5%"),
-  //   paddingBottom: 60,
-  // },
-  // title: {
-  //   fontSize: 26,
-  //   fontWeight: "bold",
-  //   marginTop: 80,
-  //   marginBottom: 30,
-  // },
   section: {
     marginBottom: 20,
     width: wp("85%"),
@@ -159,27 +142,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8,
   },
-  // link: {
-  //   fontSize: 12,
-  //   color: "#6A8CAF",
-  //   textDecorationLine: "underline",
-  //   textAlign: "center",
-  //   fontWeight: "bold",
-  // },
-  // saveButton: {
-  //   backgroundColor: "#FFD700",
-  //   borderRadius: 25,
-  //   paddingVertical: 15,
-  //   paddingHorizontal: 20,
-  //   alignItems: "center",
-  //   width: 300,
-  //   height: 45,
-  //   justifyContent: "center",
-  //   marginTop: 40,
-  // },
-  // saveButtonText: {
-  //   color: "black",
-  //   fontSize: 12,
-  //   textAlign: "center",
-  // },
 });

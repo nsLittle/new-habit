@@ -67,7 +67,10 @@ export default function FeedbackDataScreen() {
 
     const grouped = {};
     feedbackData.forEach((fb) => {
-      const key = `${fb.cadenceStart}-${fb.cadenceEnd}`;
+      const start = new Date(fb.cadenceStart).toISOString().split("T")[0];
+      const end = new Date(fb.cadenceEnd).toISOString().split("T")[0];
+      const key = `${start}_${end}`;
+
       if (!grouped[key]) {
         grouped[key] = {
           feedbacks: [],
@@ -132,8 +135,10 @@ export default function FeedbackDataScreen() {
   const processedFeedback = processFeedback();
 
   return (
-    <View style={sharedStyles.container}>
-      <ScrollView contentContainerStyle={sharedStyles.scrollContainer}>
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: "white" }}
+        contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
         <Portal>
           <Dialog
             visible={showDialog}
@@ -212,7 +217,7 @@ export default function FeedbackDataScreen() {
             <Text>No feedback available.</Text>
           )}
 
-          {processedFeedback.lewngth >= 1 && (
+          {processedFeedback.length >= 1 && (
             <View style={sharedStyles.buttonRow}>
               <TouchableOpacity
                 style={sharedStyles.yellowButton}
@@ -244,7 +249,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 2,
     borderRadius: 6,
-    width: 300,
+    width: 500,
     borderColor: "#aaa",
     backgroundColor: "#f9f9f9",
   },
@@ -272,14 +277,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     borderColor: "#aaa",
-    width: 125,
+    width: 200,
   },
   metricNumber: {
-    fontSize: 36,
+    fontSize: 42,
     fontWeight: "bold",
   },
   metricLabel: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#666",
   },
   feedbackText: {

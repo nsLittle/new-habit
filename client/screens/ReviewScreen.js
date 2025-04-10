@@ -86,6 +86,7 @@ export default function ReviewScreen() {
       }
 
       const currentHabitId = incompleteHabits[0]?._id;
+      console.log(`${BASE_URL}/feedback/${userNameContext}/${currentHabitId}`);
 
       const feedbackResponse = await fetch(
         `${BASE_URL}/feedback/${userNameContext}/${currentHabitId}`,
@@ -173,29 +174,37 @@ export default function ReviewScreen() {
         style={{ flex: 1, backgroundColor: "white" }}
         contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
         <View style={sharedStyles.body}>
-          <Text style={[sharedStyles.title, { marginTop: 120 }]}>Review</Text>
+          <Text style={[sharedStyles.title, { marginTop: 100 }]}>Review</Text>
 
           {showStartPrompt ? (
             <>
               <Text style={styles.completedMessage}>
-                🎉 You’ve completed your last habit! Ready to start a new one?
+                🎉 You’ve achieved your goal by strengthening your habit! Ready
+                to start a new one?
               </Text>
               <TouchableOpacity
                 style={sharedStyles.yellowButton}
                 onPress={() => navigation.navigate("CreateHabitScreen")}>
-                <Text style={sharedStyles.buttonText}>Start a New Habit</Text>
+                <Text style={sharedStyles.buttonText}>
+                  Start a New Goal & Habit
+                </Text>
               </TouchableOpacity>
             </>
           ) : (
             <>
               <View style={styles.teamMemberDataBox}>
-                <Text style={styles.sectionTitle}>Your Habit:</Text>
+                <Text style={styles.sectionTitle}>Your Goal:</Text>
+                <Text style={styles.centeredDataSpecial}>
+                  You are on Habit Cycle #
+                  {currentHabit?.habitCycles?.length || 1}
+                </Text>
+
                 {Array.isArray(habits) && habits.length > 0 ? (
                   <View>
-                    <Text>{currentHabit?.habit || "No Habit Available"}</Text>
-                    <Text style={styles.sectionTitle}>
-                      What that looks like:
+                    <Text style={styles.centeredData}>
+                      {currentHabit?.habit || "No Habit Available"}
                     </Text>
+                    <Text style={styles.sectionTitle}>Your Habit:</Text>
                     <Text style={styles.centeredData}>
                       {currentHabit?.description || "No Description Available"}
                     </Text>
@@ -258,30 +267,32 @@ export default function ReviewScreen() {
                 <Text style={styles.sectionTitle}>
                   Your Feedback Team Members:
                 </Text>
-                {teammembers && teammembers.length > 0 ? (
-                  teammembers.map((teammember) => (
-                    <View
-                      key={teammember.teamMemberId}
-                      style={styles.teamMemberProfileBox}>
-                      <View style={styles.outerBorder}>
-                        <View style={styles.innerBorder}>
-                          <DefaultProfiler
-                            uri={teammember.teamMemberProfilePic}
-                            style={styles.teamMemberProfilePic}
-                          />
+                <View style={styles.teamMemberRowContainer}>
+                  {teammembers && teammembers.length > 0 ? (
+                    teammembers.map((teammember) => (
+                      <View
+                        key={teammember.teamMemberId}
+                        style={styles.teamMemberProfileBox}>
+                        <View style={styles.outerBorder}>
+                          <View style={styles.innerBorder}>
+                            <DefaultProfiler
+                              uri={teammember.teamMemberProfilePic}
+                              style={styles.teamMemberProfilePic}
+                            />
+                          </View>
                         </View>
+                        <Text style={styles.contactName}>
+                          {teammember.teamMemberFirstName || "No First Name"}{" "}
+                          {teammember.teamMemberLastName || "No Last Name"}
+                        </Text>
                       </View>
-                      <Text style={styles.contactName}>
-                        {teammember.teamMemberFirstName || "No First Name"}{" "}
-                        {teammember.teamMemberLastName || "No Last Name"}
-                      </Text>
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.noProfileData}>
-                    No team members available.
-                  </Text>
-                )}
+                    ))
+                  ) : (
+                    <Text style={styles.noProfileData}>
+                      No team members available.
+                    </Text>
+                  )}
+                </View>
               </View>
 
               <View style={sharedStyles.buttonColumn}>
@@ -319,7 +330,7 @@ export default function ReviewScreen() {
 
                 {hasFeedback && (
                   <TouchableOpacity
-                    style={sharedStyles.greyButton}
+                    style={sharedStyles.yellowButton}
                     onPress={() => navigation.navigate("FeedbackDataScreen")}>
                     <Text style={sharedStyles.buttonText}>Review Feedback</Text>
                   </TouchableOpacity>
@@ -375,6 +386,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     textAlign: "center",
   },
+  centeredDataSpecial: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#555",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  teamMemberRowContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 20,
+  },
   teamMemberProfileBox: {
     alignItems: "center",
     justifyContent: "center",
@@ -411,5 +436,8 @@ const styles = StyleSheet.create({
   contactEmail: {
     fontSize: 16,
     textAlign: "center",
+  },
+  completedMessage: {
+    paddingBottom: 30,
   },
 });

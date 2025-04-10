@@ -8,10 +8,6 @@ import {
   View,
 } from "react-native";
 import { Button, Dialog, Portal } from "react-native-paper";
-// import {
-//   heightPercentageToDP as hp,
-//   widthPercentageToDP as wp,
-// } from "react-native-responsive-screen";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";

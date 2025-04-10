@@ -1,8 +1,4 @@
-import { Platform, ScrollView, StyleSheet, View, Text } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import { sharedStyles } from "../styles/sharedStyles";
 
 export default function EndingCreditsScreen() {
@@ -45,48 +41,15 @@ export default function EndingCreditsScreen() {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flexGrow: 1,
-  //   backgroundColor: "white",
-  //   paddingHorizontal: wp("5%"),
-  // },
-  // body: {
-  //   flexGrow: 1,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   backgroundColor: "white",
-  //   paddingTop: Platform.OS === "web" ? hp("20%") : hp("2%"),
-  // },
-  // bodyTitleText: {
-  //   fontSize: 26,
-  //   textAlign: "center",
-  //   paddingBottom: 30,
-  //   fontWeight: "bold",
-  // },
   bodyIntroContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
   },
-  // bodyIntroText: {
-  //   textAlign: "center",
-  //   fontSize: 14,
-  //   paddingBottom: 15,
-  //   width: 225,
-  // },
   bodyIntroLink: {
     textAlign: "center",
     fontSize: 14,
     paddingBottom: 15,
     width: 225,
   },
-  // buttonRow: {
-  //   flexDirection: "row",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   width: "100%",
-  //   paddingHorizontal: 20,
-  //   gap: 15,
-  //   marginTop: 50,
-  // },
 });

@@ -19,18 +19,7 @@ export default function LoginScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    userIdContext,
-    // userNameContext,
-    // firstNameContext,
-    // emailContext,
-    // profilePicContext,
-    // habitContextId,
-    // habitContextInput,
-    // descriptionContextInput,
-    // teamMemberContextId,
-    // token,
-  } = userContext || {};
+  const { userIdContext } = userContext || {};
 
   useEffect(() => {
     if (userContext && Object.keys(userContext).length !== 0) {

@@ -18,7 +18,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "../constants/config";
 import { UserContext } from "../context/UserContext";
-import { retrieveProfile } from "../utils/fetchers";
 import { sharedStyles } from "../styles/sharedStyles";
 
 export default function EditAccountScreen() {
@@ -32,10 +31,6 @@ export default function EditAccountScreen() {
     lastNameContext,
     emailContext,
     profilePicContext,
-    habitContextId,
-    habitContextInput,
-    descriptionContextInput,
-    teamMemberContextId,
     token,
   } = userContext || {};
 

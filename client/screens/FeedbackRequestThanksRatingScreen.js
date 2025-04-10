@@ -34,23 +34,6 @@ export default function FeedbackRequestThanksRatingScreen() {
     token,
   } = userContext || {};
 
-  // useEffect(() => {
-  //   if (userContext) {
-  //     console.log("UserContext:", userContext);
-  //     console.log("User Id Context: ", userIdContext);
-  //     console.log("UserName Context: ", userNameContext);
-  //     console.log("First Name Context: ", firstNameContext);
-  //     console.log("Last Name Context: ", lastNameContext);
-  //     console.log("Email Context: ", emailContext);
-  //     console.log("Profile Pic Context: ", profilePicContext);
-  //     console.log("Habit Id Context: ", habitContextId);
-  //     console.log("Habit Input Context: ", habitContextInput);
-  //     console.log("Description Input Context: ", descriptionContextInput);
-  //     console.log("TeamMember Id Context: ", teamMemberContextId);
-  //     console.log("Token: ", token);
-  //   }
-  // }, [userContext]);
-
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
@@ -63,16 +46,8 @@ export default function FeedbackRequestThanksRatingScreen() {
     teamMemberRouteProfilePic,
   } = route.params || {};
 
-  // console.log("Received from FeedbackWelcomeScreen:", route.params);
-  // console.log("Team Member Id: ", teamMemberRouteId);
-  // console.log("Team Member First Name: ", teamMemberRouteFirstName);
-  // console.log("Team Member Last Name: ", teamMemberRouteLastName);
-  // console.log("Team Memeber Email: ", teamMemberRouteEmail);
-  // console.log("Team Member Profile Pic: ", teamMemberRouteProfilePic);
-
   const [ratingValue, setRatingValue] = useState("");
   const [existingRating, setExistingRating] = useState("");
-  // console.log("Rating Value: ", ratingValue);
 
   const ratings = [
     { value: 1, label: "Constructive follow-up", color: "#008000" }, // Green
@@ -84,8 +59,6 @@ export default function FeedbackRequestThanksRatingScreen() {
 
   useEffect(() => {
     const checkForExistingThanksRating = async () => {
-      // console.log(`Checking for existing thanks rating...`);
-
       try {
         const response = await fetch(
           `${BASE_URL}/feedback/${userNameContext}/${habitContextId}`,
@@ -106,7 +79,6 @@ export default function FeedbackRequestThanksRatingScreen() {
         }
 
         const data = await response.json();
-        // console.log("Data: ", data);
       } catch (error) {
         console.error("Error checking existing rating:", error);
       }
@@ -115,8 +87,6 @@ export default function FeedbackRequestThanksRatingScreen() {
   }, []);
 
   const handleSave = async () => {
-    // console.log("I'm here saving thanks rating...");
-
     if (!ratingValue) {
       setDialogMessage("Please select a feedback thanks rating.");
       setShowDialog(true);
@@ -124,17 +94,7 @@ export default function FeedbackRequestThanksRatingScreen() {
     }
 
     try {
-      // console.log("Saving thanks rating...");
-      // console.log(
-      //   "Username: ",
-      //   userNameContext,
-      //   "and Habit Id: ",
-      //   habitContextId,
-      //   "from Team Member Id: ",
-      //   teamMemberRouteId
-      // );
       const feedbackThanksRating = ratingValue;
-      // console.log("Feedback Thanks Rating :", feedbackThanksRating);
 
       const resolvedTeamMemberId = teamMemberRouteId;
 
@@ -146,8 +106,6 @@ export default function FeedbackRequestThanksRatingScreen() {
         setShowDialog(true);
         return;
       }
-
-      // console.log("✅ Using Team Member Id:", resolvedTeamMemberId);
 
       const response = await fetch(
         `${BASE_URL}/feedback/${userNameContext}/${habitContextId}/thanks-rating`,
@@ -166,7 +124,6 @@ export default function FeedbackRequestThanksRatingScreen() {
       );
 
       const data = await response.json();
-      // console.log("Data: ", data);
 
       if (!response.ok) {
         setDialogMessage(
@@ -179,13 +136,6 @@ export default function FeedbackRequestThanksRatingScreen() {
 
       setDialogMessage("Feedback thanks rating updated successfully.");
       setShowDialog(true);
-      // console.log("Navigating with params:", {
-      //   teamMemberRouteId,
-      //   teamMemberRouteFirstName,
-      //   teamMemberRouteLastName,
-      //   teamMemberRouteEmail,
-      //   teamMemberRouteProfilePic,
-      // });
       navigation.navigate("FeedbackRequestQualitativeScreen", {
         teamMemberRouteId,
         teamMemberRouteFirstName,
@@ -263,22 +213,9 @@ export default function FeedbackRequestThanksRatingScreen() {
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
-                // console.log("Save button pressed");
                 handleSave();
               }}>
               <Text>Save</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.noThanksButton}
-              onPress={() => {
-                // console.log("Team member declines feedback request.");
-                resetUserContext("NoThankYouScreen");
-                navigation.navigate("NoThankYouScreen", {});
-              }}>
-              <Text style={styles.noThanksButtonText} title="No Thanks">
-                No Thnaks
-              </Text>
             </TouchableOpacity>
           </View>
         </View>

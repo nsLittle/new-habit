@@ -17,20 +17,8 @@ export default function CreateHabitScreen() {
   const navigation = useNavigation();
 
   const { userContext, setUserContext } = useContext(UserContext) || {};
-  const {
-    userIdContext,
-    userNameContext,
-    firstNameContext,
-    lastNameContext,
-    emailContext,
-    profilePicContext,
-    habitContextId,
-    // habitContextInput,
-    // habitContextEndDate,
-    // descriptionContextInput,
-    // teamMemberContextId,
-    token,
-  } = userContext || {};
+  const { userIdContext, userNameContext, habitContextId, token } =
+    userContext || {};
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [showDialog, setShowDialog] = useState(false);
@@ -42,8 +30,6 @@ export default function CreateHabitScreen() {
 
   useEffect(() => {
     const checkForExistingHabit = async () => {
-      console.log(`Checking for existing habit...`);
-
       try {
         const response = await fetch(`${BASE_URL}/habit/${userNameContext}`, {
           method: "GET",
@@ -73,12 +59,6 @@ export default function CreateHabitScreen() {
             habitContextInput: incompleteHabit.habit,
             habitContextEndDate: incompleteHabit.endDate,
           }));
-
-          // if (incompleteHabit.habit.trim().length > 0) {
-          //   setDialogMessage("Do you want to edit your existing habit?");
-          //   setDialogAction("editOrSkip");
-          //   setShowDialog(true);
-          // }
         }
       } catch (error) {
         console.error("Error checking existing habit:", error);
@@ -251,13 +231,15 @@ export default function CreateHabitScreen() {
 
       <View style={sharedStyles.body}>
         <Text style={sharedStyles.title}>
-          What is the habit you want to practice?
+          What is the goal you want to achieve?
         </Text>
 
         <View style={sharedStyles.inputContainer}>
           <TextInput
             style={[sharedStyles.input, { height: 120 }]}
-            placeholder={habitInput ? habitInput : "I want to become a..."}
+            placeholder={
+              habitInput ? habitInput : "I want to become/achieve..."
+            }
             maxLength={100}
             value={habitInput}
             onChangeText={setHabitInput}
